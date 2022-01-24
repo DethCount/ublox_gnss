@@ -1,23 +1,23 @@
 #include "GNSS.h"
 
 SoftwareSerial ss(11, 10); // RX, TX
-GNSS gnss(&ss);
+GNSS *gnss = new GNSS(&ss);
 
 void setup()
 {
   Serial.begin(9600);
-  gnss.begin(PortRate::Bauds_9600); // Sets up the GNSS module to communicate with the Arduino over serial at 9600 baud
+  gnss->begin(PortRate::Bauds_9600); // Sets up the GNSS module to communicate with the Arduino over serial at 9600 baud
 
   UBXMessage* packet;
   
-  Serial.println("Enabling UBX time NAV data");
-  gnss.enableMessage(MessageId::Navigation_TimeUTC, false, 0x00);
+  Serial.println("Disabling UBX time NAV data");
+  gnss->configuration->enableMessage(MessageId::Navigation_TimeUTC, false, 0x00);
 
-  Serial.println("Enabling UBX position NAV data");
-  gnss.enableMessage(MessageId::Navigation_PosLLH, false, 0x00);
+  Serial.println("Disabling UBX position NAV data");
+  gnss->configuration->enableMessage(MessageId::Navigation_PosLLH, false, 0x00);
 
   /*
-  packet = gnss.getConfigurationRate();
+  packet = gnss->configuration->getRate();
   if (packet->isValid) {
     ConfigurationRate* cfgRate = static_cast<ConfigurationRate*>(packet);
     Serial.println("Configuration rate");
@@ -28,7 +28,7 @@ void setup()
   */
 
   ///*
-  packet = gnss.getNavigationPosVT();
+  packet = gnss->navigation->getPosVT();
   if (packet->isValid) {
     NavigationPosVT* posVT = static_cast<NavigationPosVT*>(packet);
     Serial.println("NavigationPosVT");
@@ -64,17 +64,17 @@ void setup()
   //*/
 
   Serial.println("Enabling UBX time NAV data");
-  gnss.enableMessage(MessageId::Navigation_TimeUTC, false, 0x01);
+  gnss->configuration->enableMessage(MessageId::Navigation_TimeUTC, false, 0x01);
 
   Serial.println("Enabling UBX position NAV data");
-  gnss.enableMessage(MessageId::Navigation_PosLLH, false, 0x01);
+  gnss->configuration->enableMessage(MessageId::Navigation_PosLLH, false, 0x01);
 }
 
 void loop()
 {
   UBXMessage* packet;
   
-  packet = gnss.nextUBXPacket();
+  packet = gnss->ubxClient->next();
   if (!packet->isValid) {
     Serial.println("Invalid packet");
     delay(10);

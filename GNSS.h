@@ -90,7 +90,7 @@ enum MessageId : unsigned int {
   Monitoring_Hardware = ((uint16_t) MessageClass::Monitoring) << 8 | 0x09,
   Monitoring_Hardware2 = ((uint16_t) MessageClass::Monitoring) << 8 | 0x0B,
   Monitoring_Receiver = ((uint16_t) MessageClass::Monitoring) << 8 | 0x21,
-  Aiding_Req = ((uint16_t) MessageClass::Aiding) << 8 | 0x00,
+  Aiding_Request = ((uint16_t) MessageClass::Aiding) << 8 | 0x00,
   Aiding_Init = ((uint16_t) MessageClass::Aiding) << 8 | 0x01,
   Aiding_HealthUTCIonosphere = ((uint16_t) MessageClass::Aiding) << 8 | 0x02,
   Aiding_Data = ((uint16_t) MessageClass::Aiding) << 8 | 0x10,
@@ -147,10 +147,10 @@ enum struct NavigationMode : byte {
 };
 
 enum struct DataRate : uint16_t {
-  F1Hz = 0xE803,
-  F2Hz = 0xFA01,
-  F3_33Hz = 0x2C01,
-  F4Hz = 0xFA00
+  F1Hz = 1000, // ms period
+  F2Hz = 500,
+  F3_33Hz = 300,
+  F4Hz = 250
 };
 
 enum struct PortRate : uint32_t {
@@ -230,14 +230,29 @@ class UBXAck : public UBXMessage {
 #include "Navigation/VelECEF.h"
 #include "Navigation/VelNED.h"
 
+#include "Configuration/Antenna.h"
+#include "Configuration/Datum.h"
+#include "Configuration/GNSSBlock.h"
+#include "Configuration/GNSS.h"
 #include "Configuration/Rate.h"
 
+#include "UBXParser.h"
+#include "UBXClient.h"
+
+#include "GNSSAiding.h"
+#include "GNSSNavigation.h"
+#include "GNSSConfiguration.h"
 
 // definition of UBX class IDs
 // source: U-blox7 V14 Receiver Description Protocol page 88 https://www.u-blox.com/sites/default/files/products/documents/u-blox7-V14_ReceiverDescriptionProtocolSpec_%28GPS.G7-SW-12001%29_Public.pdf
 
 class GNSS {
   public:
+    UBXClient *ubxClient;
+    GNSSAiding *aiding;
+    GNSSNavigation *navigation;
+    GNSSConfiguration *configuration;
+
     #ifdef __AVR__
       GNSS(SoftwareSerial *ss);
     #endif
@@ -245,203 +260,7 @@ class GNSS {
     GNSS(HardwareSerial *hs);
 
     void begin(PortRate baudrate);
-
-    void getConfiguration(void);
-
-    AidingAlmanach* getAidingAlmanach(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    AidingAlmanach* getAidingAlmanach(
-      uint8_t svid,
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    AidingAlmanachPlus* getAidingAlmanachPlus(
-      uint8_t idSize,
-      uint8_t type,
-      uint16_t ofs,
-      uint16_t size,
-      uint16_t fileId,
-      uint16_t dataSize,
-      uint8_t id1,
-      uint8_t id2,
-      uint16_t id3,
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    AidingAOP* getAidingAOP(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    AidingAOP* getAidingAOP(
-      uint8_t svid,
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    void getAidingData(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    AidingEphemeris* getAidingEphemeris(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    AidingEphemeris* getAidingEphemeris(
-      uint8_t svid,
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    AidingHealthUTCIonosphere* getAidingHealthUTCIonosphere(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    AidingInit* getAidingInit(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationAOPStatus* getNavigationAOPStatus(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationClock* getNavigationClock(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationDGPS* getNavigationDGPS(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationDOP* getNavigationDOP(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationPosECEF* getNavigationPosECEF(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationPosLLH* getNavigationPosLLH(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationPosVT* getNavigationPosVT(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationSBAS* getNavigationSBAS(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationSOL* getNavigationSOL(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationStatus* getNavigationStatus(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationSpaceVehiculeInfo* getNavigationSpaceVehiculeInfo(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationTimeGPS* getNavigationTimeGPS(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationTimeUTC* getNavigationTimeUTC(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationVelECEF* getNavigationVelECEF(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    NavigationVelNED* getNavigationVelNED(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    ConfigurationRate* getConfigurationRate(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    UBXRequestStatus enableMessage(
-      uint16_t msgId,
-      bool changePort = false,
-      byte port1 = 0x00,
-      byte port2 = 0x00,
-      byte port3 = 0x00,
-      byte port4 = 0x00,
-      byte port5 = 0x00,
-      byte port6 = 0x00,
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    UBXRequestStatus updatePortRate(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    UBXRequestStatus updateDataRate(
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    UBXMessage* nextUBXPacket(
-      unsigned int timeout = UBX_TIMEOUT,
-      MessageId expectedId = MessageId::None
-    );
-
-    UBXRequestStatus nextUBXACK(
-      UBXMessage* msg,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    void sendUBX(UBXMessage* msg);
-
-    UBXRequestStatus trySendUBXWithACK(
-      UBXMessage* msg,
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-
-    UBXMessage* trySendUBX(
-      UBXMessage* msg,
-      MessageId expectedResponseMsgId,
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
-    );
-  
   private:
-    NavigationMode navigationMode = NavigationMode::Pedestrian;
-    DataRate dataRate = DataRate::F4Hz;
-    PortRate portRate;
     Stream *stream = NULL;
     HardwareSerial *hwSerial = NULL;
     #ifdef __AVR__
@@ -449,107 +268,5 @@ class GNSS {
     #endif
 
     void sendConfiguration(void);
-
-  	void calcChecksum(UBXMessage* msg);
-
-    UBXMessage* parseUBXPacket(UBXMessage* msg);
-
-    UBXAck* parseUBX_ACK(UBXMessage* msg);
-    UBXAck* parseUBX_ACK(UBXAck* msg);
-
-    UBXMessage* parseUBX_Aiding(UBXMessage* msg);
-    UBXMessage* parseUBX_Navigation(UBXMessage* msg);
-    UBXMessage* parseUBX_Configuration(UBXMessage* msg);
-
-    AidingAlmanach* parseUBX_AidingAlmanach(UBXMessage* msg);
-    AidingAlmanach* parseUBX_AidingAlmanach(AidingAlmanach* msg);
-
-    AidingAlmanachPlus* parseUBX_AidingAlmanachPlus(UBXMessage* msg);
-    AidingAlmanachPlus* parseUBX_AidingAlmanachPlus(AidingAlmanachPlus* msg);
-
-    AidingAOP* parseUBX_AidingAOP(UBXMessage* msg);
-    AidingAOP* parseUBX_AidingAOP(AidingAOP* msg);
-
-    AidingEphemeris* parseUBX_AidingEphemeris(UBXMessage* msg);
-    AidingEphemeris* parseUBX_AidingEphemeris(AidingEphemeris* msg);
-
-    AidingHealthUTCIonosphere* parseUBX_AidingHealthUTCIonosphere(
-      UBXMessage* msg
-    );
-    AidingHealthUTCIonosphere* parseUBX_AidingHealthUTCIonosphere(
-      AidingHealthUTCIonosphere* msg
-    );
-
-    AidingInit* parseUBX_AidingInit(UBXMessage* msg);
-    AidingInit* parseUBX_AidingInit(AidingInit* msg);
-
-    NavigationAOPStatus* parseUBX_NavigationAOPStatus(UBXMessage* msg);
-    NavigationAOPStatus* parseUBX_NavigationAOPStatus(NavigationAOPStatus* msg);
-
-    NavigationClock* parseUBX_NavigationClock(UBXMessage* msg);
-    NavigationClock* parseUBX_NavigationClock(NavigationClock* msg);
-
-    NavigationDGPS* parseUBX_NavigationDGPS(UBXMessage* msg);
-    NavigationDGPS* parseUBX_NavigationDGPS(NavigationDGPS* msg);
-
-    NavigationDOP* parseUBX_NavigationDOP(UBXMessage* msg);
-    NavigationDOP* parseUBX_NavigationDOP(NavigationDOP* msg);
-
-    NavigationPosECEF* parseUBX_NavigationPosECEF(UBXMessage* msg);
-    NavigationPosECEF* parseUBX_NavigationPosECEF(NavigationPosECEF* msg);
-
-    NavigationPosLLH* parseUBX_NavigationPosLLH(UBXMessage* msg);
-    NavigationPosLLH* parseUBX_NavigationPosLLH(NavigationPosLLH* msg);
-
-    NavigationPosVT* parseUBX_NavigationPosVT(UBXMessage* msg);
-    NavigationPosVT* parseUBX_NavigationPosVT(NavigationPosVT* msg);
-
-    NavigationSBAS* parseUBX_NavigationSBAS(UBXMessage* msg);
-    NavigationSBAS* parseUBX_NavigationSBAS(NavigationSBAS* msg);
-
-    NavigationSOL* parseUBX_NavigationSOL(UBXMessage* msg);
-    NavigationSOL* parseUBX_NavigationSOL(NavigationSOL* msg);
-
-    NavigationStatus* parseUBX_NavigationStatus(UBXMessage* msg);
-    NavigationStatus* parseUBX_NavigationStatus(NavigationStatus* msg);
-
-    NavigationSpaceVehiculeInfo* parseUBX_NavigationSpaceVehiculeInfo(
-      UBXMessage* msg
-    );
-    NavigationSpaceVehiculeInfo* parseUBX_NavigationSpaceVehiculeInfo(
-      NavigationSpaceVehiculeInfo* msg
-    );
-
-    NavigationTimeGPS* parseUBX_NavigationTimeGPS(UBXMessage* msg);
-    NavigationTimeGPS* parseUBX_NavigationTimeGPS(NavigationTimeGPS* msg);
-
-    NavigationTimeUTC* parseUBX_NavigationTimeUTC(UBXMessage* msg);
-    NavigationTimeUTC* parseUBX_NavigationTimeUTC(NavigationTimeUTC* msg);
-
-    NavigationVelECEF* parseUBX_NavigationVelECEF(UBXMessage* msg);
-    NavigationVelECEF* parseUBX_NavigationVelECEF(NavigationVelECEF* msg);
-
-    NavigationVelNED* parseUBX_NavigationVelNED(UBXMessage* msg);
-    NavigationVelNED* parseUBX_NavigationVelNED(NavigationVelNED* msg);
-
-    ConfigurationRate* parseUBX_ConfigurationRate(UBXMessage* msg);
-    ConfigurationRate* parseUBX_ConfigurationRate(ConfigurationRate* msg);
-
-    uint8_t extractU1(uint8_t startIdx, byte* msgData);
-    int8_t extractI1(uint8_t startIdx, byte* msgData);
-    byte extractX1(uint8_t startIdx, byte* msgData);
-
-    uint16_t extractU2(uint8_t startIdx, byte* msgData);
-    int16_t extractI2(uint8_t startIdx, byte* msgData);
-    uint16_t extractX2(uint8_t startIdx, byte* msgData);
-
-    uint32_t extractU4(uint8_t startIdx, byte* msgData);
-    int32_t extractI4(uint8_t startIdx, byte* msgData);
-    uint32_t extractX4(uint8_t startIdx, byte* msgData);
-    uint32_t extractR4(uint8_t startIdx, byte* msgData);
-
-    uint64_t extractU8(uint8_t startIdx, byte* msgData);
-    int64_t extractI8(uint8_t startIdx, byte* msgData);
-    uint64_t extractR8(uint8_t startIdx, byte* msgData);
 };
 
