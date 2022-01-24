@@ -98,6 +98,141 @@ ConfigurationDatum* GNSSConfiguration::getDatum() {
 	));
 }
 
+ConfigurationGNSS* GNSSConfiguration::getGNSS() {
+	UBXMessage* getMsg = new UBXMessage();
+	getMsg->msgId = MessageId::Configuration_GlobalNavigationSatelliteSystem;
+	getMsg->payloadLength = 0;
+
+	#ifdef GNSS_DEBUG
+		Serial.print("Getting GNSS configuration... ");
+	#endif
+
+	return static_cast<ConfigurationGNSS*>(client->trySend(
+		getMsg,
+		MessageId::Configuration_GlobalNavigationSatelliteSystem
+	));
+}
+
+ConfigurationInformation* GNSSConfiguration::getInformation() {
+	UBXMessage* getMsg = new UBXMessage();
+	getMsg->msgId = MessageId::Configuration_Information;
+	getMsg->payloadLength = 0;
+
+	#ifdef GNSS_DEBUG
+		Serial.print("Getting GNSS protocols configuration... ");
+	#endif
+
+	return static_cast<ConfigurationInformation*>(client->trySend(
+		getMsg,
+		MessageId::Configuration_Information
+	));
+}
+
+ConfigurationInformation* GNSSConfiguration::getInformation(
+	GNSSProtocol protocolId
+) {
+	UBXMessage* getMsg = new UBXMessage();
+	getMsg->msgId = MessageId::Configuration_Information;
+	getMsg->payloadLength = 1;
+	getMsg->payload[0] = (uint8_t) protocolId;
+
+	#ifdef GNSS_DEBUG
+		Serial.print("Getting GNSS protocol configuration... ");
+	#endif
+
+	return static_cast<ConfigurationInformation*>(client->trySend(
+		getMsg,
+		MessageId::Configuration_Information
+	));
+}
+
+ConfigurationInterferenceMonitor* GNSSConfiguration::getInterferenceMonitor() {
+	UBXMessage* getMsg = new UBXMessage();
+	getMsg->msgId = MessageId::Configuration_InterferenceMonitor;
+	getMsg->payloadLength = 0;
+
+	#ifdef GNSS_DEBUG
+		Serial.print("Getting jamming/interference monitor configuration... ");
+	#endif
+
+	return static_cast<ConfigurationInterferenceMonitor*>(client->trySend(
+		getMsg,
+		MessageId::Configuration_InterferenceMonitor
+	));
+}
+
+ConfigurationLogFilter* GNSSConfiguration::getLogFilter() {
+	UBXMessage* getMsg = new UBXMessage();
+	getMsg->msgId = MessageId::Configuration_LogFilter;
+	getMsg->payloadLength = 0;
+
+	#ifdef GNSS_DEBUG
+		Serial.print("Getting log filter configuration... ");
+	#endif
+
+	return static_cast<ConfigurationLogFilter*>(client->trySend(
+		getMsg,
+		MessageId::Configuration_LogFilter
+	));
+}
+
+uint8_t GNSSConfiguration::getMsgRate(MessageId msgId) {
+	UBXMessage* getMsg = new UBXMessage();
+	getMsg->msgId = MessageId::Configuration_Messaging;
+	getMsg->payloadLength = 2;
+	getMsg->payload[0] = highByte(msgId); // class id
+	getMsg->payload[1] = lowByte(msgId); // msg id
+
+	#ifdef GNSS_DEBUG
+		Serial.print("Getting message rate... ");
+	#endif
+
+	ConfigurationMessaging *result = static_cast<ConfigurationMessaging*>(
+		client->trySend(
+			getMsg,
+			MessageId::Configuration_Messaging
+		)
+	);
+
+	result->isValid &= result->msgId == msgId;
+
+	return result->rate;
+}
+
+ConfigurationNavigation* GNSSConfiguration::getNavigation() {
+	UBXMessage* getMsg = new UBXMessage();
+	getMsg->msgId = MessageId::Configuration_Navigation;
+	getMsg->payloadLength = 0;
+
+	#ifdef GNSS_DEBUG
+		Serial.print("Getting navigation configuration... ");
+	#endif
+
+	return static_cast<ConfigurationNavigation*>(
+		client->trySend(
+			getMsg,
+			MessageId::Configuration_Navigation
+		)
+	);
+}
+
+ConfigurationNavigationExpert* GNSSConfiguration::getNavigationExpert() {
+	UBXMessage* getMsg = new UBXMessage();
+	getMsg->msgId = MessageId::Configuration_NavigationExpert;
+	getMsg->payloadLength = 0;
+
+	#ifdef GNSS_DEBUG
+		Serial.print("Getting expert navigation configuration... ");
+	#endif
+
+	return static_cast<ConfigurationNavigationExpert*>(
+		client->trySend(
+			getMsg,
+			MessageId::Configuration_NavigationExpert
+		)
+	);
+}
+
 ConfigurationRate* GNSSConfiguration::getRate() {
 	UBXMessage* getDataRate = new UBXMessage();
 	getDataRate->msgId = MessageId::Configuration_Rate;
@@ -111,6 +246,32 @@ ConfigurationRate* GNSSConfiguration::getRate() {
 		getDataRate,
 		MessageId::Configuration_Rate
 	));
+}
+
+UBXRequestStatus GNSSConfiguration::setRate(DataRate dataRate) {
+	UBXMessage* setDataRate = new UBXMessage();
+
+	setDataRate->msgId = MessageId::Configuration_Rate;
+
+	// measurement rate (in ms)
+	setDataRate->payload[0] = lowByte((uint16_t) dataRate);
+	setDataRate->payload[1] = highByte((uint16_t) dataRate);
+
+	// navigation rate, cannot be changed
+	setDataRate->payload[2] = 0x01;
+	setDataRate->payload[3] = 0x00;
+
+	// reference time (0: UTC, 1: GPS)
+	setDataRate->payload[4] = 0x01;
+	setDataRate->payload[5] = 0x00;
+
+	setDataRate->payloadLength = 6;
+
+	#ifdef GNSS_DEBUG
+		Serial.print("Setting Data Rate... ");
+	#endif
+
+	return client->trySendWithACK(setDataRate);
 }
 
 UBXRequestStatus GNSSConfiguration::enableMessage(
@@ -193,29 +354,4 @@ UBXRequestStatus GNSSConfiguration::setPortRate(PortRate portRate) {
 	#endif
 
 	return client->trySendWithACK(setPortRate);
-}
-
-UBXRequestStatus GNSSConfiguration::setDataRate(DataRate dataRate) {
-	UBXMessage* setDataRate = new UBXMessage();
-
-	setDataRate->msgId = MessageId::Configuration_Rate;
-
-	// measurement rate (in ms)
-	setDataRate->payload[0] = lowByte((uint16_t) dataRate);
-	setDataRate->payload[1] = highByte((uint16_t) dataRate);
-
-	// navigation rate, cannot be changed
-	setDataRate->payload[2] = 0x01;
-	setDataRate->payload[3] = 0x00;
-
-	// reference time (0: UTC, 1: GPS)
-	setDataRate->payload[4] = 0x01;
-	setDataRate->payload[5] = 0x00;
-	setDataRate->payloadLength = 6;
-
-	#ifdef GNSS_DEBUG
-		Serial.print("Setting Data Rate... ");
-	#endif
-
-	return client->trySendWithACK(setDataRate);
 }

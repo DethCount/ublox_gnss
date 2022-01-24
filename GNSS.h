@@ -140,10 +140,14 @@ enum struct UBXRequestStatus : uint8_t {
 };
 
 enum struct NavigationMode : byte {
+  Portable = 0x00,
+  Stationary = 0x02,
   Pedestrian = 0x03,
   Automotive = 0x04,
   Sea = 0x05,
-  Airborne = 0x06
+  Airborne1G = 0x06,
+  Airborne2G = 0x07,
+  Airborne4G = 0x08,
 };
 
 enum struct DataRate : uint16_t {
@@ -161,6 +165,11 @@ enum struct PortRate : uint32_t {
   Bauds_57600 = 57600,
   Bauds_115200 = 115200,
   Bauds_230400 = 230400
+};
+
+enum struct GNSSProtocol : uint8_t {
+  UBX = 0x00,
+  NMEA = 0x01
 };
 
 enum struct GNSSFixType : uint8_t {
@@ -234,6 +243,12 @@ class UBXAck : public UBXMessage {
 #include "Configuration/Datum.h"
 #include "Configuration/GNSSBlock.h"
 #include "Configuration/GNSS.h"
+#include "Configuration/Information.h"
+#include "Configuration/InterferenceMonitor.h"
+#include "Configuration/LogFilter.h"
+#include "Configuration/Messaging.h"
+#include "Configuration/Navigation.h"
+#include "Configuration/NavigationExpert.h"
 #include "Configuration/Rate.h"
 
 #include "UBXParser.h"

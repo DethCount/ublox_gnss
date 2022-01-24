@@ -22,7 +22,23 @@ class GNSSConfiguration {
 
     ConfigurationDatum* getDatum();
 
+    ConfigurationGNSS* getGNSS();
+
+    ConfigurationInformation* getInformation();
+    ConfigurationInformation* getInformation(GNSSProtocol protocolId);
+
+    ConfigurationInterferenceMonitor* getInterferenceMonitor();
+
+    ConfigurationLogFilter* getLogFilter();
+
+    uint8_t getMsgRate(MessageId msgId);
+
+    ConfigurationNavigation* getNavigation();
+
+    ConfigurationNavigationExpert* getNavigationExpert();
+
     ConfigurationRate* getRate();
+    UBXRequestStatus setRate(DataRate dataRate);
 
     UBXRequestStatus enableMessage(
       uint16_t msgId,
@@ -36,6 +52,4 @@ class GNSSConfiguration {
     );
 
     UBXRequestStatus setPortRate(PortRate portRate);
-
-    UBXRequestStatus setDataRate(DataRate dataRate);
 };

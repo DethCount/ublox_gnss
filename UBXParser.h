@@ -88,6 +88,47 @@ class UBXParser {
     ConfigurationDatum* parseConfigurationDatum(UBXMessage* msg);
     ConfigurationDatum* parseConfigurationDatum(ConfigurationDatum* msg);
 
+    ConfigurationGNSS* parseConfigurationGNSS(UBXMessage* msg);
+    ConfigurationGNSS* parseConfigurationGNSS(ConfigurationGNSS* msg);
+
+    ConfigurationInformation* parseConfigurationInformation(
+      UBXMessage* msg,
+      uint16_t startIdx = 0
+    );
+    ConfigurationInformation* parseConfigurationInformation(
+      ConfigurationInformation* msg,
+      uint16_t startIdx = 0
+    );
+
+    ConfigurationInterferenceMonitor* parseConfigurationInterferenceMonitor(
+      UBXMessage* msg
+    );
+    ConfigurationInterferenceMonitor* parseConfigurationInterferenceMonitor(
+      ConfigurationInterferenceMonitor* msg
+    );
+
+    ConfigurationLogFilter* parseConfigurationLogFilter(UBXMessage* msg);
+    ConfigurationLogFilter* parseConfigurationLogFilter(
+      ConfigurationLogFilter* msg
+    );
+
+    ConfigurationMessaging* parseConfigurationMessaging(UBXMessage* msg);
+    ConfigurationMessaging* parseConfigurationMessaging(
+      ConfigurationMessaging* msg
+    );
+
+    ConfigurationNavigation* parseConfigurationNavigation(UBXMessage* msg);
+    ConfigurationNavigation* parseConfigurationNavigation(
+      ConfigurationNavigation* msg
+    );
+
+    ConfigurationNavigationExpert* parseConfigurationNavigationExpert(
+      UBXMessage* msg
+    );
+    ConfigurationNavigationExpert* parseConfigurationNavigationExpert(
+      ConfigurationNavigationExpert* msg
+    );
+
     ConfigurationRate* parseConfigurationRate(UBXMessage* msg);
     ConfigurationRate* parseConfigurationRate(ConfigurationRate* msg);
 

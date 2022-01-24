@@ -133,6 +133,20 @@ UBXMessage* UBXParser::parseConfiguration(UBXMessage* msg)
       return parseConfigurationAntenna(msg);
     case MessageId::Configuration_Datum:
       return parseConfigurationDatum(msg);
+    case MessageId::Configuration_GlobalNavigationSatelliteSystem:
+      return parseConfigurationGNSS(msg);
+    case MessageId::Configuration_Information:
+      return parseConfigurationInformation(msg);
+    case MessageId::Configuration_InterferenceMonitor:
+      return parseConfigurationInterferenceMonitor(msg);
+    case MessageId::Configuration_LogFilter:
+      return parseConfigurationLogFilter(msg);
+    case MessageId::Configuration_Messaging:
+      return parseConfigurationMessaging(msg);
+    case MessageId::Configuration_Navigation:
+      return parseConfigurationNavigation(msg);
+    case MessageId::Configuration_NavigationExpert:
+      return parseConfigurationNavigationExpert(msg);
     case MessageId::Configuration_Rate:
       return parseConfigurationRate(msg);
     default:
@@ -860,6 +874,233 @@ ConfigurationDatum* UBXParser::parseConfigurationDatum(ConfigurationDatum* msg)
   msg->rotY = extractR4(40, msg->payload);
   msg->rotZ = extractR4(44, msg->payload);
   msg->scale = extractR4(48, msg->payload);
+
+  return msg;
+}
+
+ConfigurationGNSS* UBXParser::parseConfigurationGNSS(UBXMessage* msg)
+{
+  return parseConfigurationGNSS(static_cast<ConfigurationGNSS*>(msg));
+}
+
+ConfigurationGNSS* UBXParser::parseConfigurationGNSS(ConfigurationGNSS* msg)
+{
+  msg->isValid &= msg->payloadLength >= 4;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->msgVer = extractU1(0, msg->payload);
+  msg->numTrkChHw = extractU1(1, msg->payload);
+  msg->numTrkChUse = extractU1(2, msg->payload);
+  msg->numConfigBlocks = extractU1(3, msg->payload);
+
+  msg->isValid &= msg->payloadLength == 4 + 8 * msg->numConfigBlocks;
+
+  if (!msg->isValid || msg->numConfigBlocks <= 0) {
+    return msg;
+  }
+
+  uint16_t idx = 4;
+  for (unsigned short i = 0; i < ConfigurationGNSS::MAX_NB_BLOCKS; i++) {
+    ConfigurationGNSSBlock *block = new ConfigurationGNSSBlock();
+    block->gnssId = extractU1(idx, msg->payload);
+    block->resTrkCh = extractU1(idx + 1, msg->payload);
+    block->maxTrkCh = extractU1(idx + 2, msg->payload);
+    // reserved1 U1
+    block->maxTrkCh = extractX4(idx + 4, msg->payload);
+    idx += 8;
+  }
+
+  return msg;
+}
+
+ConfigurationInformation* UBXParser::parseConfigurationInformation(
+  UBXMessage* msg,
+  uint16_t startIdx = 0
+) {
+  return parseConfigurationInformation(
+    static_cast<ConfigurationInformation*>(msg),
+    startIdx
+  );
+}
+
+ConfigurationInformation* UBXParser::parseConfigurationInformation(
+  ConfigurationInformation* msg,
+  uint16_t startIdx
+) {
+  msg->isValid &= msg->payloadLength >= startIdx + 10;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->protocolId = (GNSSProtocol) extractU1(startIdx, msg->payload);
+  // reserved0 U1
+  // reserved1 U2
+
+  for (uint8_t i = 0; i < ConfigurationInformation::MAX_NB_MSG_CLASS; i++) {
+    msg->infMsgMask[i] = extractX1(startIdx + 4 + i, msg->payload);
+  }
+
+  if (msg->payloadLength > startIdx + 10) {
+    msg->next = parseConfigurationInformation(msg, startIdx + 10);
+  }
+
+  return msg;
+}
+
+ConfigurationInterferenceMonitor* UBXParser::parseConfigurationInterferenceMonitor(
+  UBXMessage* msg
+) {
+  return parseConfigurationInterferenceMonitor(
+    static_cast<ConfigurationInterferenceMonitor*>(msg)
+  );
+}
+
+ConfigurationInterferenceMonitor* UBXParser::parseConfigurationInterferenceMonitor(
+  ConfigurationInterferenceMonitor* msg
+) {
+  msg->isValid &= msg->payloadLength == 8;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->config = extractX4(0, msg->payload);
+  msg->config2 = extractX4(4, msg->payload);
+
+  return msg;
+}
+
+ConfigurationLogFilter* UBXParser::parseConfigurationLogFilter(
+  UBXMessage* msg
+) {
+  return parseConfigurationLogFilter(static_cast<ConfigurationLogFilter*>(msg));
+}
+
+ConfigurationLogFilter* UBXParser::parseConfigurationLogFilter(
+  ConfigurationLogFilter* msg
+) {
+  msg->isValid &= msg->payloadLength == 12;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->version = extractU1(0, msg->payload);
+  msg->flags = extractX1(1, msg->payload);
+  msg->minInterval = extractU2(2, msg->payload);
+  msg->timeThreshold = extractU2(4, msg->payload);
+  msg->speedThreshold = extractU2(6, msg->payload);
+  msg->positionThreshold = extractU4(8, msg->payload);
+
+  return msg;
+}
+
+ConfigurationMessaging* UBXParser::parseConfigurationMessaging(
+  UBXMessage* msg
+) {
+  return parseConfigurationMessaging(static_cast<ConfigurationMessaging*>(msg));
+}
+
+ConfigurationMessaging* UBXParser::parseConfigurationMessaging(
+  ConfigurationMessaging* msg
+) {
+  msg->isValid &= msg->payloadLength == 3;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->msgClass = extractU1(0, msg->payload);
+  msg->msgId = (msg->msgClass << 8) | extractX1(1, msg->payload);
+  msg->rate = extractU1(2, msg->payload);
+
+  return msg;
+}
+
+ConfigurationNavigation* UBXParser::parseConfigurationNavigation(
+  UBXMessage* msg
+) {
+  return parseConfigurationNavigation(static_cast<ConfigurationNavigation*>(msg));
+}
+
+ConfigurationNavigation* UBXParser::parseConfigurationNavigation(
+  ConfigurationNavigation* msg
+) {
+  msg->isValid &= msg->payloadLength == 36;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->mask = extractX2(0, msg->payload);
+  msg->dynModel = (NavigationMode) extractU1(2, msg->payload);
+  msg->fixMode = (GNSSFixType) extractU1(3, msg->payload);
+  msg->fixedAlt = (double) extractI4(4, msg->payload) * 1e-2;
+  msg->fixedAltVar = (double) extractU4(8, msg->payload) * 1e-4;
+  msg->minElev = extractI1(12, msg->payload);
+  msg->drLimit = extractU1(13, msg->payload);
+  msg->pDOP = (double) extractU2(14, msg->payload) * 1e-1;
+  msg->tDOP = (double) extractU2(16, msg->payload) * 1e-1;
+  msg->pAcc = extractU2(18, msg->payload);
+  msg->tAcc = extractU2(20, msg->payload);
+  msg->staticHoldThresh = extractU1(22, msg->payload);
+  msg->dgpsTimeOut = extractU1(23, msg->payload);
+  msg->cnoThreshNumSVs = extractU1(24, msg->payload);
+  msg->cnoThresh = extractU1(25, msg->payload);
+  // reserved2 U2
+  // reserved3 U4
+  // reserved4 U4
+
+  return msg;
+}
+
+ConfigurationNavigationExpert* UBXParser::parseConfigurationNavigationExpert(
+  UBXMessage* msg
+) {
+  return parseConfigurationNavigationExpert(
+    static_cast<ConfigurationNavigationExpert*>(msg)
+  );
+}
+
+ConfigurationNavigationExpert* UBXParser::parseConfigurationNavigationExpert(
+  ConfigurationNavigationExpert* msg
+) {
+  msg->isValid &= msg->payloadLength == 40;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->version = extractU2(0, msg->payload);
+  msg->mask1 = extractX2(2, msg->payload);
+  // reserved0 U4
+  // reserved1 U1
+  // reserved2 U1
+  msg->minSVs = extractU1(10, msg->payload);
+  msg->maxSVs = extractU1(11, msg->payload);
+  msg->minCNO = extractU1(12, msg->payload);
+  // reserved5 U1
+  msg->iniFix3D = 0x01 == extractU1(13, msg->payload);
+  // reserved6 U1
+  // reserved7 U1
+  // reserved8 U1
+  msg->wknRollover = extractU2(18, msg->payload);
+  // reserved9 U4
+  // reserved10 U1
+  // reserved11 U1
+  msg->usePPP = 0x01 == extractU1(26, msg->payload);
+  msg->aopCfg = extractU1(27, msg->payload);
+  // reserved12 U1
+  // reserved13 U1
+  msg->aopOrbMaxErr = extractU2(30, msg->payload);
+  // reserved14 U1
+  // reserved15 U1
+  // reserved3 U2
+  // reserved4 U4
 
   return msg;
 }
