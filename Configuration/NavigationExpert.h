@@ -1,5 +1,4 @@
-class ConfigurationNavigationExpert : public UBXMessage
-{
+class ConfigurationNavigationExpert : public UBXMessage {
   public:
     uint16_t version;
     uint16_t mask1;
@@ -12,7 +11,9 @@ class ConfigurationNavigationExpert : public UBXMessage
     uint8_t aopCfg;
     uint16_t aopOrbMaxErr;
 
-    ConfigurationNavigationExpert() {}
+    ConfigurationNavigationExpert() {
+      msgId = MessageId::Configuration_NavigationExpert;
+    }
 
     ConfigurationNavigationExpert(UBXMessage & msg) {
       isValid = msg.isValid;

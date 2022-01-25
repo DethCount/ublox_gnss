@@ -1,5 +1,4 @@
-class ConfigurationLogFilter : public UBXMessage
-{
+class ConfigurationLogFilter : public UBXMessage {
   public:
     uint8_t version;
     byte flags;
@@ -8,7 +7,9 @@ class ConfigurationLogFilter : public UBXMessage
     uint16_t speedThreshold;
     uint32_t positionThreshold;
 
-    ConfigurationLogFilter() {}
+    ConfigurationLogFilter() {
+      msgId = MessageId::Configuration_LogFilter;
+    }
 
     ConfigurationLogFilter(UBXMessage & msg) {
       isValid = msg.isValid;

@@ -8,6 +8,7 @@ class UBXParser {
     UBXMessage* parseAiding(UBXMessage* msg);
     UBXMessage* parseNavigation(UBXMessage* msg);
     UBXMessage* parseConfiguration(UBXMessage* msg);
+    UBXMessage* parseInformation(UBXMessage* msg);
 
     AidingAlmanach* parseAidingAlmanach(UBXMessage* msg);
     AidingAlmanach* parseAidingAlmanach(AidingAlmanach* msg);
@@ -129,8 +130,61 @@ class UBXParser {
       ConfigurationNavigationExpert* msg
     );
 
+    ConfigurationNMEA* parseConfigurationNMEA(UBXMessage* msg);
+    ConfigurationNMEA* parseConfigurationNMEA(ConfigurationNMEA* msg);
+
+    ConfigurationPort* parseConfigurationPort(
+      UBXMessage* msg,
+      uint16_t startIdx = 0
+    );
+    ConfigurationPort* parseConfigurationPort(
+      ConfigurationPort* msg,
+      uint16_t startIdx = 0
+    );
+
+    ConfigurationPower* parseConfigurationPower(UBXMessage* msg);
+    ConfigurationPower* parseConfigurationPower(ConfigurationPower* msg);
+
     ConfigurationRate* parseConfigurationRate(UBXMessage* msg);
     ConfigurationRate* parseConfigurationRate(ConfigurationRate* msg);
+
+    ConfigurationRemoteInventory* parseConfigurationRemoteInventory(
+      UBXMessage* msg
+    );
+    ConfigurationRemoteInventory* parseConfigurationRemoteInventory(
+      ConfigurationRemoteInventory* msg
+    );
+
+    ConfigurationReceiver* parseConfigurationReceiver(UBXMessage* msg);
+    ConfigurationReceiver* parseConfigurationReceiver(
+      ConfigurationReceiver* msg
+    );
+
+    ConfigurationSBAS* parseConfigurationSBAS(UBXMessage* msg);
+    ConfigurationSBAS* parseConfigurationSBAS(ConfigurationSBAS* msg);
+
+    ConfigurationTimePulse* parseConfigurationTimePulse(UBXMessage* msg);
+    ConfigurationTimePulse* parseConfigurationTimePulse(
+      ConfigurationTimePulse* msg
+    );
+
+    ConfigurationUSB* parseConfigurationUSB(UBXMessage* msg);
+    ConfigurationUSB* parseConfigurationUSB(ConfigurationUSB* msg);
+
+    InformationDebug* parseInformationDebug(UBXMessage* msg);
+    InformationDebug* parseInformationDebug(InformationDebug* msg);
+
+    InformationError* parseInformationError(UBXMessage* msg);
+    InformationError* parseInformationError(InformationError* msg);
+
+    InformationNotice* parseInformationNotice(UBXMessage* msg);
+    InformationNotice* parseInformationNotice(InformationNotice* msg);
+
+    InformationTest* parseInformationTest(UBXMessage* msg);
+    InformationTest* parseInformationTest(InformationTest* msg);
+
+    InformationWarning* parseInformationWarning(UBXMessage* msg);
+    InformationWarning* parseInformationWarning(InformationWarning* msg);
 
     uint8_t extractU1(uint8_t startIdx, byte* msgData);
     int8_t extractI1(uint8_t startIdx, byte* msgData);

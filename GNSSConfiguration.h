@@ -7,13 +7,15 @@ class GNSSConfiguration {
 
     ConfigurationAntenna* getAntenna();
 
-    void sendCommand(
+    void reset(uint16_t navBbrMask, ConfigurationResetMode resetMode);
+
+    void execCommand(
       uint32_t clearMask,
       uint32_t saveMask,
       uint32_t loadMask
     );
 
-    void sendCommand(
+    void execCommand(
       uint32_t clearMask,
       uint32_t saveMask,
       uint32_t loadMask,
@@ -32,14 +34,6 @@ class GNSSConfiguration {
     ConfigurationLogFilter* getLogFilter();
 
     uint8_t getMsgRate(MessageId msgId);
-
-    ConfigurationNavigation* getNavigation();
-
-    ConfigurationNavigationExpert* getNavigationExpert();
-
-    ConfigurationRate* getRate();
-    UBXRequestStatus setRate(DataRate dataRate);
-
     UBXRequestStatus enableMessage(
       uint16_t msgId,
       bool changePort = false,
@@ -51,5 +45,32 @@ class GNSSConfiguration {
       byte port6 = 0x00
     );
 
+    ConfigurationNavigation* getNavigation();
+
+    ConfigurationNavigationExpert* getNavigationExpert();
+
+    ConfigurationNMEA* getNMEA();
+
+    ConfigurationPort* getPort();
+    ConfigurationPort* getPort(PortId portId);
     UBXRequestStatus setPortRate(PortRate portRate);
+
+    ConfigurationPower* getPower();
+
+    ConfigurationRate* getRate();
+    UBXRequestStatus setRate(
+      DataRate dataRate,
+      GNSSReferenceTime timeRef = GNSSReferenceTime::GPS
+    );
+
+    ConfigurationRemoteInventory* getRemoteInventory();
+
+    ConfigurationReceiver* getReceiver();
+
+    ConfigurationSBAS* getSBAS();
+
+    ConfigurationTimePulse* getTimePulse();
+    ConfigurationTimePulse* getTimePulse(uint8_t tpIdx);
+
+    ConfigurationUSB* getUSB();
 };

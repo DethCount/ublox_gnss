@@ -1,5 +1,4 @@
-class ConfigurationNavigation : public UBXMessage
-{
+class ConfigurationNavigation : public UBXMessage {
   public:
     uint16_t mask;
     NavigationMode dynModel;
@@ -17,7 +16,9 @@ class ConfigurationNavigation : public UBXMessage
     uint8_t cnoThreshNumSVs;
     uint8_t cnoThresh;
 
-    ConfigurationNavigation() {}
+    ConfigurationNavigation() {
+      msgId = MessageId::Configuration_Navigation;
+    }
 
     ConfigurationNavigation(UBXMessage & msg) {
       isValid = msg.isValid;

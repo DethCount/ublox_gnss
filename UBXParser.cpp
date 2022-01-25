@@ -147,8 +147,46 @@ UBXMessage* UBXParser::parseConfiguration(UBXMessage* msg)
       return parseConfigurationNavigation(msg);
     case MessageId::Configuration_NavigationExpert:
       return parseConfigurationNavigationExpert(msg);
+    case MessageId::Configuration_NationalMarineElectronicsAssociation:
+      return parseConfigurationNMEA(msg);
+    case MessageId::Configuration_Port:
+      return parseConfigurationPort(msg);
+    case MessageId::Configuration_Power:
+      return parseConfigurationPower(msg);
     case MessageId::Configuration_Rate:
       return parseConfigurationRate(msg);
+    case MessageId::Configuration_RemoteInventory:
+      return parseConfigurationRemoteInventory(msg);
+    case MessageId::Configuration_Receiver:
+      return parseConfigurationReceiver(msg);
+    case MessageId::Configuration_SatelliteBasedAugmentationSystems:
+      return parseConfigurationSBAS(msg);
+    case MessageId::Configuration_TimePulse:
+      return parseConfigurationTimePulse(msg);
+    case MessageId::Configuration_USB:
+      return parseConfigurationUSB(msg);
+    default:
+      break;
+  }
+
+  return msg;
+}
+
+
+UBXMessage* UBXParser::parseInformation(UBXMessage* msg)
+{
+  switch (msg->msgId)
+  {
+    case MessageId::Information_Debug:
+      return parseInformationDebug(msg);
+    case MessageId::Information_Error:
+      return parseInformationError(msg);
+    case MessageId::Information_Notice:
+      return parseInformationNotice(msg);
+    case MessageId::Information_Test:
+      return parseInformationTest(msg);
+    case MessageId::Information_Warning:
+      return parseInformationWarning(msg);
     default:
       break;
   }
@@ -1105,6 +1143,117 @@ ConfigurationNavigationExpert* UBXParser::parseConfigurationNavigationExpert(
   return msg;
 }
 
+ConfigurationNMEA* UBXParser::parseConfigurationNMEA(UBXMessage* msg) {
+  return parseConfigurationNMEA(
+    static_cast<ConfigurationNMEA*>(msg)
+  );
+}
+
+ConfigurationNMEA* UBXParser::parseConfigurationNMEA(ConfigurationNMEA* msg) {
+  msg->isValid &= msg->payloadLength >= 4;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->filter = extractX1(0, msg->payload);
+  msg->nmeaVersion = extractU1(1, msg->payload);
+  msg->numSV = extractU1(2, msg->payload);
+  msg->flags = extractX1(3, msg->payload);
+
+  if (msg->payloadLength <= 4) {
+    return msg;
+  }
+
+  msg->isValid &= msg->payloadLength == 12;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->gnssToFilter = extractX4(4, msg->payload);
+  msg->svNumbering = extractU1(8, msg->payload);
+  msg->mainTalkerId = extractU1(9, msg->payload);
+  msg->gsvTalkerId = extractU1(10, msg->payload);
+  // reserved U1
+
+  return msg;
+}
+
+ConfigurationPort* UBXParser::parseConfigurationPort(
+  UBXMessage* msg,
+  uint16_t startIdx
+) {
+  return parseConfigurationPort(
+    static_cast<ConfigurationPort*>(msg),
+    startIdx
+  );
+}
+
+ConfigurationPort* UBXParser::parseConfigurationPort(
+  ConfigurationPort* msg,
+  uint16_t startIdx
+) {
+  msg->isValid &= msg->payloadLength >= startIdx + 20;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->portId = (PortId) extractU1(startIdx, msg->payload);
+  // reserved0 U1
+  msg->txReady = extractX2(startIdx + 2, msg->payload);
+  msg->mode = extractX4(startIdx + 4, msg->payload);
+  msg->baudRate = (PortRate) extractU4(startIdx + 8, msg->payload);
+  msg->inProtoMask = extractX2(startIdx + 12, msg->payload);
+  msg->outProtoMask = extractX2(startIdx + 14, msg->payload);
+  msg->flags = extractX2(startIdx + 16, msg->payload);
+  // reserved5 U2
+
+  if (msg->payloadLength > startIdx + 20) {
+    msg->next = parseConfigurationPort(msg, startIdx + 20);
+  }
+
+  return msg;
+}
+
+ConfigurationPower* UBXParser::parseConfigurationPower(UBXMessage* msg) {
+  return parseConfigurationPower(
+    static_cast<ConfigurationPower*>(msg)
+  );
+}
+
+ConfigurationPower* UBXParser::parseConfigurationPower(
+  ConfigurationPower* msg
+) {
+  msg->isValid &= msg->payloadLength == 44;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->version = extractU1(0, msg->payload);
+  // reserved1 U1
+  // reserved2 U1
+  // reserved3 U1
+  msg->flags = extractX4(4, msg->payload);
+  msg->updatePeriod = extractU4(8, msg->payload);
+  msg->searchPeriod = extractU4(12, msg->payload);
+  msg->gridOffset = extractU4(16, msg->payload);
+  msg->onTime = extractU2(18, msg->payload);
+  msg->minAcqTime = extractU2(20, msg->payload);
+  // reserved4 U2
+  // reserved5 U2
+  // reserved6 U4
+  // reserved7 U4
+  // reserved8 U1
+  // reserved9 U1
+  // reserved10 U2
+  // reserved11 U4
+
+  return msg;
+}
+
 ConfigurationRate* UBXParser::parseConfigurationRate(UBXMessage* msg)
 {
   return parseConfigurationRate(static_cast<ConfigurationRate*>(msg));
@@ -1115,10 +1264,159 @@ ConfigurationRate* UBXParser::parseConfigurationRate(ConfigurationRate* msg)
   msg->isValid &= msg->payloadLength == 6;
 
   if (msg->isValid) {
-    msg->measRate = extractU2(0, msg->payload);
+    msg->measRate = (DataRate) extractU2(0, msg->payload);
     msg->navRate = extractU2(2, msg->payload);
-    msg->timeRef = extractU2(4, msg->payload);
+    msg->timeRef = (GNSSReferenceTime) extractU2(4, msg->payload);
   }
+
+  return msg;
+}
+
+ConfigurationRemoteInventory* UBXParser::parseConfigurationRemoteInventory(
+  UBXMessage* msg
+) {
+  return parseConfigurationRemoteInventory(
+    static_cast<ConfigurationRemoteInventory*>(msg)
+  );
+}
+
+ConfigurationRemoteInventory* UBXParser::parseConfigurationRemoteInventory(
+  ConfigurationRemoteInventory* msg
+) {
+  msg->isValid &= msg->payloadLength >= 1
+    && msg->payloadLength <= 1 + ConfigurationRemoteInventory::MAX_DATA_SIZE;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->flags = extractX1(0, msg->payload);
+  msg->dataSize = msg->payloadLength - 1;
+  msg->dataPayloadOffsetStart = 1;
+
+  return msg;
+}
+
+ConfigurationReceiver* UBXParser::parseConfigurationReceiver(UBXMessage* msg) {
+  return parseConfigurationReceiver(
+    static_cast<ConfigurationReceiver*>(msg)
+  );
+}
+
+ConfigurationReceiver* UBXParser::parseConfigurationReceiver(
+  ConfigurationReceiver* msg
+) {
+  msg->isValid &= msg->payloadLength == 2;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  // reserved1 U1
+  msg->lpMode = (LowPowerMode) extractU1(1, msg->payload);
+
+  return msg;
+}
+
+ConfigurationSBAS* UBXParser::parseConfigurationSBAS(UBXMessage* msg) {
+  return parseConfigurationSBAS(static_cast<ConfigurationSBAS*>(msg));
+}
+
+ConfigurationSBAS* UBXParser::parseConfigurationSBAS(ConfigurationSBAS* msg) {
+  msg->isValid &= msg->payloadLength == 8;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->mode = extractX1(0, msg->payload);
+  msg->usage = extractX1(1, msg->payload);
+  msg->maxSBAS = extractU1(2, msg->payload);
+  msg->scanmode2 = extractX1(3, msg->payload);
+  msg->scanmode1 = extractX4(4, msg->payload);
+
+  return msg;
+}
+
+ConfigurationTimePulse* UBXParser::parseConfigurationTimePulse(
+  UBXMessage* msg
+) {
+  return parseConfigurationTimePulse(
+    static_cast<ConfigurationTimePulse*>(msg)
+  );
+}
+
+ConfigurationTimePulse* UBXParser::parseConfigurationTimePulse(
+  ConfigurationTimePulse* msg
+) {
+  msg->isValid &= msg->payloadLength == 32;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->tpIdx = extractU1(0, msg->payload);
+  // reserved0 U1
+  // reserved1 U2
+  msg->antCableDelay = extractI2(4, msg->payload);
+  msg->rfGroupDelay = extractI2(6, msg->payload);
+  msg->freqPeriod = extractU4(8, msg->payload);
+  msg->freqPeriodLock = extractU4(12, msg->payload);
+  msg->pulseLenRatio = extractU4(16, msg->payload);
+  msg->pulseLenRatioLock = extractU4(20, msg->payload);
+  msg->userConfigDelay = extractI4(24, msg->payload);
+  msg->flags = extractX4(28, msg->payload);
+
+  return msg;
+}
+
+ConfigurationUSB* UBXParser::parseConfigurationUSB(UBXMessage* msg) {
+  return parseConfigurationUSB(
+    static_cast<ConfigurationUSB*>(msg)
+  );
+}
+
+ConfigurationUSB* UBXParser::parseConfigurationUSB(ConfigurationUSB* msg) {
+  msg->isValid &= msg->payloadLength == 12
+    + ConfigurationUSB::VENDOR_NAME_SIZE
+    + ConfigurationUSB::PRODUCT_NAME_SIZE
+    + ConfigurationUSB::SERIAL_NUMBER_SIZE;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->vendorId = extractU2(0, msg->payload);
+  msg->productId = extractU2(2, msg->payload);
+  // reserved1 U2
+  // reserved2 U2
+  msg->powerConsumption = extractU2(8, msg->payload);
+  msg->flags = extractX2(10, msg->payload);
+
+  int idx = 12;
+
+  extractCH(
+    12,
+    msg->payload,
+    ConfigurationUSB::VENDOR_NAME_SIZE,
+    msg->vendorString
+  );
+  idx += ConfigurationUSB::VENDOR_NAME_SIZE;
+
+  extractCH(
+    idx,
+    msg->payload,
+    ConfigurationUSB::PRODUCT_NAME_SIZE,
+    msg->productString
+  );
+  idx += ConfigurationUSB::PRODUCT_NAME_SIZE;
+
+  extractCH(
+    idx,
+    msg->payload,
+    ConfigurationUSB::SERIAL_NUMBER_SIZE,
+    msg->serialNumber
+  );
 
   return msg;
 }
@@ -1249,8 +1547,12 @@ char UBXParser::extractCH(uint8_t startIdx, byte* msgData)
   return char(msgData[startIdx]);
 }
 
-void UBXParser::extractCH(uint8_t startIdx, byte* msgData, int length, char* out)
-{
+void UBXParser::extractCH(
+  uint8_t startIdx,
+  byte* msgData,
+  int length,
+  char* out
+) {
   for (int i = 0; i < length; i++) {
     out[i] = extractCH(startIdx + i, msgData);
   }

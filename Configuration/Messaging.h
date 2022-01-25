@@ -1,11 +1,12 @@
-class ConfigurationMessaging : public UBXMessage
-{
+class ConfigurationMessaging : public UBXMessage {
   public:
     MessageClass msgClass;
     MessageId msgId;
     uint8_t rate;
 
-    ConfigurationMessaging() {}
+    ConfigurationMessaging() {
+      msgId = MessageId::Configuration_Messaging;
+    }
 
     ConfigurationMessaging(UBXMessage & msg) {
       isValid = msg.isValid;

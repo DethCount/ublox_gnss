@@ -71,8 +71,8 @@ enum MessageId : unsigned int {
   Configuration_Configuration = ((uint16_t) MessageClass::Configuration) << 8 | 0x09,
   Configuration_Receiver = ((uint16_t) MessageClass::Configuration) << 8 | 0x11,
   Configuration_Antenna = ((uint16_t) MessageClass::Configuration) << 8 | 0x13,
-  Configuration_SBAS = ((uint16_t) MessageClass::Configuration) << 8 | 0x16,
-  Configuration_NMEA = ((uint16_t) MessageClass::Configuration) << 8 | 0x17,
+  Configuration_SatelliteBasedAugmentationSystems = ((uint16_t) MessageClass::Configuration) << 8 | 0x16,
+  Configuration_NationalMarineElectronicsAssociation = ((uint16_t) MessageClass::Configuration) << 8 | 0x17,
   Configuration_USB = ((uint16_t) MessageClass::Configuration) << 8 | 0x18,
   Configuration_NavigationExpert = ((uint16_t) MessageClass::Configuration) << 8 | 0x23,
   Configuration_Navigation = ((uint16_t) MessageClass::Configuration) << 8 | 0x24,
@@ -167,6 +167,13 @@ enum struct PortRate : uint32_t {
   Bauds_230400 = 230400
 };
 
+enum struct PortId : uint8_t {
+  DDC = 0x00,
+  UART = 0x01,
+  USB = 0x03,
+  SPI = 0x04
+};
+
 enum struct GNSSProtocol : uint8_t {
   UBX = 0x00,
   NMEA = 0x01
@@ -179,6 +186,26 @@ enum struct GNSSFixType : uint8_t {
   D3 = 0x03,
   GNSSWithDeadReckoning = 0x04,
   Time = 0x05
+};
+
+enum struct GNSSReferenceTime : uint16_t {
+  UTC = 0x00,
+  GPS = 0x01
+};
+
+enum struct ConfigurationResetMode : uint8_t {
+  HardwareResetImmediatly = 0x00,
+  ControlledSoftwareReset = 0x01,
+  ControlledSoftwareResetGNSSOnly = 0x02,
+  HardwareResetAfterShutdown = 0x04,
+  ControlledGNSSStop = 0x08,
+  ControlledGNSSStart = 0x09
+};
+
+enum struct LowPowerMode : uint8_t {
+  Continuous = 0x00,
+  PowerSave = 0x01,
+  Continuous2 = 0x04,
 };
 
 const int UBX_MSG_PAYLOAD_SIZE = 0x0FFF;
@@ -249,7 +276,21 @@ class UBXAck : public UBXMessage {
 #include "Configuration/Messaging.h"
 #include "Configuration/Navigation.h"
 #include "Configuration/NavigationExpert.h"
+#include "Configuration/NMEA.h"
+#include "Configuration/Port.h"
+#include "Configuration/Power.h"
 #include "Configuration/Rate.h"
+#include "Configuration/RemoteInventory.h"
+#include "Configuration/Receiver.h"
+#include "Configuration/SBAS.h"
+#include "Configuration/TimePulse.h"
+#include "Configuration/USB.h"
+
+#include "Information/Debug.h"
+#include "Information/Error.h"
+#include "Information/Notice.h"
+#include "Information/Test.h"
+#include "Information/Warning.h"
 
 #include "UBXParser.h"
 #include "UBXClient.h"

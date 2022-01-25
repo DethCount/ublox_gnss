@@ -1,12 +1,13 @@
-class ConfigurationInformation : public UBXMessage
-{
+class ConfigurationInformation : public UBXMessage {
   public:
     static const uint8_t MAX_NB_MSG_CLASS = 6;
     GNSSProtocol protocolId;
     byte infMsgMask[MAX_NB_MSG_CLASS];
     ConfigurationInformation* next;
 
-    ConfigurationInformation() {}
+    ConfigurationInformation() {
+      msgId = MessageId::Configuration_Information;
+    }
 
     ConfigurationInformation(UBXMessage & msg) {
       isValid = msg.isValid;

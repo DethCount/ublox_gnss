@@ -14,7 +14,9 @@ class ConfigurationDatum : public UBXMessage {
     uint32_t rotZ;
     uint32_t scale;
 
-    ConfigurationDatum() {}
+    ConfigurationDatum() {
+      msgId = MessageId::Configuration_Datum;
+    }
 
     ConfigurationDatum(UBXMessage & msg) {
       isValid = msg.isValid;

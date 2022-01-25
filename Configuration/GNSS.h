@@ -8,7 +8,9 @@ class ConfigurationGNSS : public UBXMessage {
     uint8_t numConfigBlocks;
     ConfigurationGNSSBlock blocks[MAX_NB_BLOCKS];
 
-    ConfigurationGNSS() {}
+    ConfigurationGNSS() {
+      msgId = MessageId::Configuration_GlobalNavigationSatelliteSystem;
+    }
 
     ConfigurationGNSS(UBXMessage & msg) {
       isValid = msg.isValid;

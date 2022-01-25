@@ -1,8 +1,12 @@
 class ConfigurationRate : public UBXMessage {
   public:
-    uint16_t measRate;
+    DataRate measRate;
     uint16_t navRate;
-    uint16_t timeRef;
+    GNSSReferenceTime timeRef;
+
+    ConfigurationRate() {
+      msgId = MessageId::Configuration_Rate;
+    }
 
     ConfigurationRate(UBXMessage& msg) {
       isValid = msg.isValid;
@@ -10,12 +14,6 @@ class ConfigurationRate : public UBXMessage {
       payloadLength = msg.payloadLength;
       memcpy(payload, msg.payload, UBX_MSG_PAYLOAD_SIZE);
       memcpy(checksum, msg.checksum, 2);
-    }
-
-    ConfigurationRate() {
-      isValid = false;
-      msgId = MessageId::Configuration_Rate;
-      payloadLength = 0;
     }
 
     virtual ~ConfigurationRate() {}

@@ -3,7 +3,9 @@ class ConfigurationAntenna : public UBXMessage {
     uint16_t flags;
     uint16_t pins;
 
-    ConfigurationAntenna() {}
+    ConfigurationAntenna() {
+      msgId = MessageId::Configuration_Antenna;
+    }
 
     ConfigurationAntenna(UBXMessage & msg) {
       isValid = msg.isValid;
