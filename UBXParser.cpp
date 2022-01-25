@@ -14,6 +14,8 @@ UBXMessage* UBXParser::parse(UBXMessage* msg)
       return parseNavigation(msg);
     case MessageClass::Configuration:
       return parseConfiguration(msg);
+    case MessageClass::Information:
+      return parseInformation(msg);
     default:
       break;
   }
@@ -1418,6 +1420,58 @@ ConfigurationUSB* UBXParser::parseConfigurationUSB(ConfigurationUSB* msg) {
     msg->serialNumber
   );
 
+  return msg;
+}
+
+InformationDebug* UBXParser::parseInformationDebug(UBXMessage* msg) {
+  return parseInformationDebug(
+    static_cast<InformationDebug*>(msg)
+  );
+}
+
+InformationDebug* UBXParser::parseInformationDebug(InformationDebug* msg) {
+  return msg;
+}
+
+InformationError* UBXParser::parseInformationError(UBXMessage* msg) {
+  return parseInformationError(
+    static_cast<InformationError*>(msg)
+  );
+}
+
+InformationError* UBXParser::parseInformationError(InformationError* msg) {
+  return msg;
+}
+
+InformationNotice* UBXParser::parseInformationNotice(UBXMessage* msg) {
+  return parseInformationNotice(
+    static_cast<InformationNotice*>(msg)
+  );
+}
+
+InformationNotice* UBXParser::parseInformationNotice(InformationNotice* msg) {
+  return msg;
+}
+
+InformationTest* UBXParser::parseInformationTest(UBXMessage* msg) {
+  return parseInformationTest(
+    static_cast<InformationTest*>(msg)
+  );
+}
+
+InformationTest* UBXParser::parseInformationTest(InformationTest* msg) {
+  return msg;
+}
+
+InformationWarning* UBXParser::parseInformationWarning(UBXMessage* msg) {
+  return parseInformationWarning(
+    static_cast<InformationWarning*>(msg)
+  );
+}
+
+InformationWarning* UBXParser::parseInformationWarning(
+  InformationWarning* msg
+) {
   return msg;
 }
 
