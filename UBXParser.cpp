@@ -16,6 +16,8 @@ UBXMessage* UBXParser::parse(UBXMessage* msg)
       return parseConfiguration(msg);
     case MessageClass::Information:
       return parseInformation(msg);
+    case MessageClass::Log:
+      return parseLog(msg);
     default:
       break;
   }
@@ -174,7 +176,6 @@ UBXMessage* UBXParser::parseConfiguration(UBXMessage* msg)
   return msg;
 }
 
-
 UBXMessage* UBXParser::parseInformation(UBXMessage* msg)
 {
   switch (msg->msgId)
@@ -189,6 +190,25 @@ UBXMessage* UBXParser::parseInformation(UBXMessage* msg)
       return parseInformationTest(msg);
     case MessageId::Information_Warning:
       return parseInformationWarning(msg);
+    default:
+      break;
+  }
+
+  return msg;
+}
+
+UBXMessage* UBXParser::parseLog(UBXMessage* msg)
+{
+  switch (msg->msgId)
+  {
+    case MessageId::Log_FindTime:
+      return parseLogFindTime(msg);
+    case MessageId::Log_Info:
+      return parseLogInfo(msg);
+    case MessageId::Log_RetrievePosition:
+      return parseLogRetrievePosition(msg);
+    case MessageId::Log_RetrieveString:
+      return parseLogRetrieveString(msg);
     default:
       break;
   }
@@ -1472,6 +1492,143 @@ InformationWarning* UBXParser::parseInformationWarning(UBXMessage* msg) {
 InformationWarning* UBXParser::parseInformationWarning(
   InformationWarning* msg
 ) {
+  return msg;
+}
+
+LogFindTime* UBXParser::parseLogFindTime(UBXMessage* msg) {
+  return parseLogFindTime(
+    static_cast<LogFindTime*>(msg)
+  );
+}
+
+LogFindTime* UBXParser::parseLogFindTime(LogFindTime* msg) {
+  msg->isValid &= msg->payloadLength == 8;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->version = extractU1(0, msg->payload);
+  msg->type = extractU1(1, msg->payload);
+  // reserved1 U2
+  msg->entryNumber = extractU4(4, msg->payload);
+
+  return msg;
+}
+
+LogInfo* UBXParser::parseLogInfo(UBXMessage* msg) {
+  return parseLogInfo(
+    static_cast<LogInfo*>(msg)
+  );
+}
+
+LogInfo* UBXParser::parseLogInfo(LogInfo* msg) {
+  msg->isValid &= msg->payloadLength == 48;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->version = extractU1(0, msg->payload);
+  // reserved1 U1[3]
+  msg->filestoreCapacity = extractU4(4, msg->payload);
+  // reserved2 U4
+  // reserved3 U4
+  msg->currentMaxLogSize = extractU4(16, msg->payload);
+  msg->currentLogSize = extractU4(20, msg->payload);
+  msg->entryCount = extractU4(24, msg->payload);
+  msg->oldestYear = extractU2(28, msg->payload);
+  msg->oldestMonth = extractU1(30, msg->payload);
+  msg->oldestDay = extractU1(31, msg->payload);
+  msg->oldestHour = extractU1(32, msg->payload);
+  msg->oldestMinute = extractU1(33, msg->payload);
+  msg->oldestSecond = extractU1(34, msg->payload);
+  // reserved4 U1
+  msg->newestYear = extractU2(36, msg->payload);
+  msg->newestMonth = extractU1(38, msg->payload);
+  msg->newestDay = extractU1(39, msg->payload);
+  msg->newestHour = extractU1(40, msg->payload);
+  msg->newestMinute = extractU1(41, msg->payload);
+  msg->newestSecond = extractU1(42, msg->payload);
+  // reserved5 U1
+  msg->status = extractX1(44, msg->payload);
+  // reserved6 U1[3]
+
+  return msg;
+}
+
+LogRetrievePosition* UBXParser::parseLogRetrievePosition(UBXMessage* msg) {
+  return parseLogRetrievePosition(
+    static_cast<LogRetrievePosition*>(msg)
+  );
+}
+
+LogRetrievePosition* UBXParser::parseLogRetrievePosition(
+  LogRetrievePosition* msg
+) {
+  msg->isValid &= msg->payloadLength == 40;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->entryIndex = extractU4(0, msg->payload);
+  msg->lon = ((double) extractI4(4, msg->payload)) * 1e-7;
+  msg->lat = ((double) extractI4(8, msg->payload)) * 1e-7;
+  msg->hMSL = ((double) extractI4(12, msg->payload)) * 1e-7;
+  msg->hAcc = extractU4(16, msg->payload);
+  msg->gSpeed = extractU4(20, msg->payload);
+  msg->heading = extractU4(24, msg->payload);
+  msg->version = extractU1(28, msg->payload);
+  msg->fixType = (GNSSFixType) extractU1(29, msg->payload);
+  msg->year = extractU2(30, msg->payload);
+  msg->month = extractU1(32, msg->payload);
+  msg->day = extractU1(33, msg->payload);
+  msg->hour = extractU1(34, msg->payload);
+  msg->minute = extractU1(35, msg->payload);
+  msg->second = extractU1(36, msg->payload);
+  // reserved1 U1
+  msg->numSV = extractU1(38, msg->payload);
+  // reserved2 U1
+
+  return msg;
+}
+
+LogRetrieveString* UBXParser::parseLogRetrieveString(UBXMessage* msg) {
+  return parseLogRetrieveString(
+    static_cast<LogRetrieveString*>(msg)
+  );
+}
+
+LogRetrieveString* UBXParser::parseLogRetrieveString(
+  LogRetrieveString* msg
+) {
+  msg->isValid &= msg->payloadLength >= 16;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->entryIndex = extractU4(0, msg->payload);
+  msg->version = extractU1(4, msg->payload);
+  // reserved1 U1
+  msg->year = extractU2(6, msg->payload);
+  msg->month = extractU1(8, msg->payload);
+  msg->day = extractU1(9, msg->payload);
+  msg->hour = extractU1(10, msg->payload);
+  msg->minute = extractU1(11, msg->payload);
+  msg->second = extractU1(12, msg->payload);
+  // reserved2 U1
+  msg->byteCount = extractU2(14, msg->payload);
+
+  msg->isValid &= msg->payloadLength == 16 + msg->byteCount;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->bytesPayloadOffsetStart = 16;
+
   return msg;
 }
 

@@ -9,6 +9,7 @@ class UBXParser {
     UBXMessage* parseNavigation(UBXMessage* msg);
     UBXMessage* parseConfiguration(UBXMessage* msg);
     UBXMessage* parseInformation(UBXMessage* msg);
+    UBXMessage* parseLog(UBXMessage* msg);
 
     AidingAlmanach* parseAidingAlmanach(UBXMessage* msg);
     AidingAlmanach* parseAidingAlmanach(AidingAlmanach* msg);
@@ -185,6 +186,18 @@ class UBXParser {
 
     InformationWarning* parseInformationWarning(UBXMessage* msg);
     InformationWarning* parseInformationWarning(InformationWarning* msg);
+
+    LogFindTime* parseLogFindTime(UBXMessage* msg);
+    LogFindTime* parseLogFindTime(LogFindTime* msg);
+
+    LogInfo* parseLogInfo(UBXMessage* msg);
+    LogInfo* parseLogInfo(LogInfo* msg);
+
+    LogRetrievePosition* parseLogRetrievePosition(UBXMessage* msg);
+    LogRetrievePosition* parseLogRetrievePosition(LogRetrievePosition* msg);
+
+    LogRetrieveString* parseLogRetrieveString(UBXMessage* msg);
+    LogRetrieveString* parseLogRetrieveString(LogRetrieveString* msg);
 
     uint8_t extractU1(uint8_t startIdx, byte* msgData);
     int8_t extractI1(uint8_t startIdx, byte* msgData);

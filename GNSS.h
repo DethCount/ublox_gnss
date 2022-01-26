@@ -27,7 +27,7 @@ enum MessageClass : uint8_t {
   Aiding          = 0x0B, // AssistNow Aiding Messages: Ephemeris, Almanac, other A-GPS data input
   Timing          = 0x0D, // Timing Messages: Time Pulse Output, Timemark Results
   NMEAStandard    = 0x0F,
-  Logging         = 0x21, // Logging Messages: Log creation, deletion, info and retrieval
+  Log             = 0x21, // Logging Messages: Log creation, deletion, info and retrieval
   NMEA            = 0xF0,
   NMEAPUBX        = 0xF1,
 };
@@ -102,14 +102,14 @@ enum MessageId : unsigned int {
   Timing_Pulse = ((uint16_t) MessageClass::Timing) << 8 | 0x01,
   Timing_Mark = ((uint16_t) MessageClass::Timing) << 8 | 0x03,
   Timing_Verification = ((uint16_t) MessageClass::Timing) << 8 | 0x06,
-  Logging_Erase = ((uint16_t) MessageClass::Logging) << 8 | 0x03,
-  Logging_CreateFile = ((uint16_t) MessageClass::Logging) << 8 | 0x07,
-  Logging_String = ((uint16_t) MessageClass::Logging) << 8 | 0x04,
-  Logging_Info = ((uint16_t) MessageClass::Logging) << 8 | 0x08,
-  Logging_Retrieve = ((uint16_t) MessageClass::Logging) << 8 | 0x09,
-  Logging_RetrievePos = ((uint16_t) MessageClass::Logging) << 8 | 0x0B,
-  Logging_RetrieveString = ((uint16_t) MessageClass::Logging) << 8 | 0x0D,
-  Logging_FindTime = ((uint16_t) MessageClass::Logging) << 8 | 0x0E,
+  Log_Erase = ((uint16_t) MessageClass::Log) << 8 | 0x03,
+  Log_Create = ((uint16_t) MessageClass::Log) << 8 | 0x07,
+  Log_String = ((uint16_t) MessageClass::Log) << 8 | 0x04,
+  Log_Info = ((uint16_t) MessageClass::Log) << 8 | 0x08,
+  Log_Retrieve = ((uint16_t) MessageClass::Log) << 8 | 0x09,
+  Log_RetrievePosition = ((uint16_t) MessageClass::Log) << 8 | 0x0B,
+  Log_RetrieveString = ((uint16_t) MessageClass::Log) << 8 | 0x0D,
+  Log_FindTime = ((uint16_t) MessageClass::Log) << 8 | 0x0E,
   NMEA_GGA = ((uint16_t) MessageClass::NMEA << 8) | 0x00,
   NMEA_GLL = ((uint16_t) MessageClass::NMEA << 8) | 0x01,
   NMEA_GSA = ((uint16_t) MessageClass::NMEA << 8) | 0x02,
@@ -208,6 +208,12 @@ enum struct LowPowerMode : uint8_t {
   Continuous2 = 0x04,
 };
 
+enum struct GNSSLogSize : uint8_t {
+  MaximumSafeSize = 0x00,
+  MinimumSize = 0x01,
+  UserDefined = 0x02
+};
+
 const int UBX_MSG_PAYLOAD_SIZE = 0x0FFF;
 class UBXMessage {
   public:
@@ -292,12 +298,18 @@ class UBXAck : public UBXMessage {
 #include "Information/Test.h"
 #include "Information/Warning.h"
 
+#include "Log/FindTime.h"
+#include "Log/Info.h"
+#include "Log/RetrievePosition.h"
+#include "Log/RetrieveString.h"
+
 #include "UBXParser.h"
 #include "UBXClient.h"
 
 #include "GNSSAiding.h"
 #include "GNSSNavigation.h"
 #include "GNSSConfiguration.h"
+#include "GNSSLog.h"
 
 // definition of UBX class IDs
 // source: U-blox7 V14 Receiver Description Protocol page 88 https://www.u-blox.com/sites/default/files/products/documents/u-blox7-V14_ReceiverDescriptionProtocolSpec_%28GPS.G7-SW-12001%29_Public.pdf
