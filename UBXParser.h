@@ -10,6 +10,7 @@ class UBXParser {
     UBXMessage* parseConfiguration(UBXMessage* msg);
     UBXMessage* parseInformation(UBXMessage* msg);
     UBXMessage* parseLog(UBXMessage* msg);
+    UBXMessage* parseMonitoring(UBXMessage* msg);
 
     AidingAlmanach* parseAidingAlmanach(UBXMessage* msg);
     AidingAlmanach* parseAidingAlmanach(AidingAlmanach* msg);
@@ -198,6 +199,42 @@ class UBXParser {
 
     LogRetrieveString* parseLogRetrieveString(UBXMessage* msg);
     LogRetrieveString* parseLogRetrieveString(LogRetrieveString* msg);
+
+    MonitoringHardwareExtended* parseMonitoringHardwareExtended(
+      UBXMessage* msg
+    );
+    MonitoringHardwareExtended* parseMonitoringHardwareExtended(
+      MonitoringHardwareExtended* msg
+    );
+
+    MonitoringHardware* parseMonitoringHardware(UBXMessage* msg);
+    MonitoringHardware* parseMonitoringHardware(MonitoringHardware* msg);
+
+    MonitoringIO* parseMonitoringIO(UBXMessage* msg, uint16_t startIdx = 0);
+    MonitoringIO* parseMonitoringIO(MonitoringIO* msg, uint16_t startIdx = 0);
+
+    MonitoringMsgParseProcess* parseMonitoringMsgParseProcess(UBXMessage* msg);
+    MonitoringMsgParseProcess* parseMonitoringMsgParseProcess(
+      MonitoringMsgParseProcess* msg
+    );
+
+    MonitoringReceiver* parseMonitoringReceiver(UBXMessage* msg);
+    MonitoringReceiver* parseMonitoringReceiver(MonitoringReceiver* msg);
+
+    MonitoringReceiverBuffer* parseMonitoringReceiverBuffer(UBXMessage* msg);
+    MonitoringReceiverBuffer* parseMonitoringReceiverBuffer(
+      MonitoringReceiverBuffer* msg
+    );
+
+    MonitoringTransmitterBuffer* parseMonitoringTransmitterBuffer(
+      UBXMessage* msg
+    );
+    MonitoringTransmitterBuffer* parseMonitoringTransmitterBuffer(
+      MonitoringTransmitterBuffer* msg
+    );
+
+    MonitoringVersion* parseMonitoringVersion(UBXMessage* msg);
+    MonitoringVersion* parseMonitoringVersion(MonitoringVersion* msg);
 
     uint8_t extractU1(uint8_t startIdx, byte* msgData);
     int8_t extractI1(uint8_t startIdx, byte* msgData);

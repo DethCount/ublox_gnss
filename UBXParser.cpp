@@ -18,6 +18,8 @@ UBXMessage* UBXParser::parse(UBXMessage* msg)
       return parseInformation(msg);
     case MessageClass::Log:
       return parseLog(msg);
+    case MessageClass::Monitoring:
+      return parseMonitoring(msg);
     default:
       break;
   }
@@ -98,7 +100,7 @@ UBXMessage* UBXParser::parseNavigation(UBXMessage* msg)
       return parseNavigationClock(msg);
     case MessageId::Navigation_DGPS:
       return parseNavigationDGPS(msg);
-    case MessageId::Navigation_DOP:
+    case MessageId::Navigation_DillutionOfPrecision:
       return parseNavigationDOP(msg);
     case MessageId::Navigation_PosECEF:
       return parseNavigationPosECEF(msg);
@@ -209,6 +211,31 @@ UBXMessage* UBXParser::parseLog(UBXMessage* msg)
       return parseLogRetrievePosition(msg);
     case MessageId::Log_RetrieveString:
       return parseLogRetrieveString(msg);
+    default:
+      break;
+  }
+
+  return msg;
+}
+
+UBXMessage* UBXParser::parseMonitoring(UBXMessage* msg)
+{
+  switch (msg->msgId)
+  {
+    case MessageId::Monitoring_Hardware:
+      return parseMonitoringHardware(msg);
+    case MessageId::Monitoring_HardwareExtended:
+      return parseMonitoringHardwareExtended(msg);
+    case MessageId::Monitoring_IO:
+      return parseMonitoringIO(msg);
+    case MessageId::Monitoring_MsgParseProcess:
+      return parseMonitoringMsgParseProcess(msg);
+    case MessageId::Monitoring_Receiver:
+      return parseMonitoringReceiver(msg);
+    case MessageId::Monitoring_ReceiverBuffer:
+      return parseMonitoringReceiverBuffer(msg);
+    case MessageId::Monitoring_TransmitterBuffer:
+      return parseMonitoringTransmitterBuffer(msg);
     default:
       break;
   }
@@ -1631,6 +1658,309 @@ LogRetrieveString* UBXParser::parseLogRetrieveString(
   }
 
   msg->bytesPayloadOffsetStart = 16;
+
+  return msg;
+}
+
+MonitoringHardware* UBXParser::parseMonitoringHardware(UBXMessage* msg) {
+  return parseMonitoringHardware(
+    static_cast<MonitoringHardware*>(msg)
+  );
+}
+
+MonitoringHardware* UBXParser::parseMonitoringHardware(
+  MonitoringHardware* msg
+) {
+  msg->isValid &= msg->payloadLength == 28 + MonitoringHardware::NB_PINS + 15;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->pinSel = extractX4(0, msg->payload);
+  msg->pinBank = extractX4(4, msg->payload);
+  msg->pinDir = extractX4(8, msg->payload);
+  msg->pinVal = extractX4(12, msg->payload);
+  msg->noisePerMS = extractU2(16, msg->payload);
+  msg->agcCnt = extractU2(18, msg->payload);
+  msg->aStatus = (AntennaSupervisorStatus) extractU1(20, msg->payload);
+  msg->aPower = (AntennaPowerStatus) extractU1(21, msg->payload);
+  msg->flags = extractX1(22, msg->payload);
+  // reserved1 U1
+  msg->usedMask = extractX4(24, msg->payload);
+
+  int idx = 28;
+  for (uint8_t i = 0; i < MonitoringHardware::NB_PINS; i++) {
+    msg->VP[i] = extractU1(idx, msg->payload);
+    idx++;
+  }
+
+  msg->jamInd = extractU1(idx, msg->payload);
+  idx++;
+  // reserved3 U2
+  idx += 2;
+
+  msg->pinIrq = extractX4(idx, msg->payload);
+  idx += 4;
+  msg->pullHigh = extractX4(idx, msg->payload);
+  idx += 4;
+  msg->pullLow = extractX4(idx, msg->payload);
+  idx += 4;
+
+  return msg;
+}
+
+MonitoringHardwareExtended* UBXParser::parseMonitoringHardwareExtended(
+  UBXMessage* msg
+) {
+  return parseMonitoringHardwareExtended(
+    static_cast<MonitoringHardwareExtended*>(msg)
+  );
+}
+
+MonitoringHardwareExtended* UBXParser::parseMonitoringHardwareExtended(
+  MonitoringHardwareExtended* msg
+) {
+  msg->isValid &= msg->payloadLength == 28;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->ofsI = extractI1(0, msg->payload);
+  msg->magI = extractU1(1, msg->payload);
+  msg->ofsQ = extractI1(2, msg->payload);
+  msg->magQ = extractU1(3, msg->payload);
+  msg->cfgSource = extractU1(4, msg->payload);
+  // reserved0 U1[3]
+  msg->lowLevCfg = extractU4(8, msg->payload);
+  // reserved1 U4[2]
+  msg->postStatus = extractU4(20, msg->payload);
+  // reserved2 U4
+
+  return msg;
+}
+
+MonitoringIO* UBXParser::parseMonitoringIO(UBXMessage* msg, uint16_t startIdx) {
+  return parseMonitoringIO(
+    static_cast<MonitoringIO*>(msg),
+    startIdx
+  );
+}
+
+MonitoringIO* UBXParser::parseMonitoringIO(
+  MonitoringIO* msg,
+  uint16_t startIdx
+) {
+  msg->isValid &= msg->payloadLength >= startIdx + 20;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->rxBytes = extractU4(startIdx, msg->payload);
+  msg->txBytes = extractU4(startIdx + 4, msg->payload);
+  msg->parityErrs = extractU2(startIdx + 8, msg->payload);
+  msg->framingErrs = extractU2(startIdx + 10, msg->payload);
+  msg->overrunErrs = extractU2(startIdx + 12, msg->payload);
+  msg->breakCond = extractU2(startIdx + 14, msg->payload);
+  msg->rxBusy = extractU1(startIdx + 16, msg->payload);
+  msg->txBusy = extractU1(startIdx + 17, msg->payload);
+  // reserved1 U2
+
+  if (msg->payloadLength > startIdx + 20) {
+    msg->next = parseMonitoringIO(msg, startIdx + 20);
+  }
+
+  return msg;
+}
+
+MonitoringMsgParseProcess* UBXParser::parseMonitoringMsgParseProcess(
+  UBXMessage* msg
+) {
+  return parseMonitoringMsgParseProcess(
+    static_cast<MonitoringMsgParseProcess*>(msg)
+  );
+}
+
+MonitoringMsgParseProcess* UBXParser::parseMonitoringMsgParseProcess(
+  MonitoringMsgParseProcess* msg
+) {
+  msg->isValid &= msg->payloadLength
+    == 2 * GNSS_NB_PORTS
+        * GNSS_NB_PROTOCOLS
+      + 4 * GNSS_NB_PORTS;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  for (uint8_t p = 0; p < GNSS_NB_PORTS; p++) {
+    for (uint8_t pr = 0; pr < GNSS_NB_PROTOCOLS; pr++) {
+      msg->msgs[p][pr] = extractU2(
+        2 * (
+          GNSS_NB_PROTOCOLS * p + pr
+        ),
+        msg->payload
+      );
+    }
+
+    msg->skipped[p] = extractU4(
+      2 * GNSS_NB_PORTS
+        * GNSS_NB_PROTOCOLS
+      + 4 * p,
+      msg->payload
+    );
+  }
+
+  return msg;
+}
+
+MonitoringReceiver* UBXParser::parseMonitoringReceiver(
+  UBXMessage* msg
+) {
+  return parseMonitoringReceiver(
+    static_cast<MonitoringReceiver*>(msg)
+  );
+}
+
+MonitoringReceiver* UBXParser::parseMonitoringReceiver(
+  MonitoringReceiver* msg
+) {
+  msg->isValid &= msg->payloadLength == 1;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->flags = extractX1(0, msg->payload);
+
+  return msg;
+}
+
+MonitoringReceiverBuffer* UBXParser::parseMonitoringReceiverBuffer(
+  UBXMessage* msg
+) {
+  return parseMonitoringReceiverBuffer(
+    static_cast<MonitoringReceiverBuffer*>(msg)
+  );
+}
+
+MonitoringReceiverBuffer* UBXParser::parseMonitoringReceiverBuffer(
+  MonitoringReceiverBuffer* msg
+) {
+  msg->isValid &= msg->payloadLength == 24;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  for (uint8_t p = 0; p < GNSS_NB_PORTS; p++) {
+    msg->pending[p] = extractU2(
+      2 * p,
+      msg->payload
+    );
+
+    msg->usage[p] = extractU1(
+      2 * GNSS_NB_PORTS + p,
+      msg->payload
+    );
+
+    msg->usage[p] = extractU1(
+      2 * GNSS_NB_PORTS + GNSS_NB_PORTS + p,
+      msg->payload
+    );
+  }
+
+  return msg;
+}
+
+MonitoringTransmitterBuffer* UBXParser::parseMonitoringTransmitterBuffer(
+  UBXMessage* msg
+) {
+  return parseMonitoringTransmitterBuffer(
+    static_cast<MonitoringTransmitterBuffer*>(msg)
+  );
+}
+
+MonitoringTransmitterBuffer* UBXParser::parseMonitoringTransmitterBuffer(
+  MonitoringTransmitterBuffer* msg
+) {
+  msg->isValid &= msg->payloadLength == 24;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  for (uint8_t p = 0; p < GNSS_NB_PORTS; p++) {
+    msg->pending[p] = extractU2(
+      2 * p,
+      msg->payload
+    );
+
+    msg->usage[p] = extractU1(
+      2 * GNSS_NB_PORTS + p,
+      msg->payload
+    );
+
+    msg->usage[p] = extractU1(
+      2 * GNSS_NB_PORTS + GNSS_NB_PORTS + p,
+      msg->payload
+    );
+  }
+
+  return msg;
+}
+
+MonitoringVersion* UBXParser::parseMonitoringVersion(UBXMessage* msg) {
+  return parseMonitoringVersion(
+    static_cast<MonitoringVersion*>(msg)
+  );
+}
+
+MonitoringVersion* UBXParser::parseMonitoringVersion(MonitoringVersion* msg) {
+  int extensionsLength = msg->payloadLength - (
+    MonitoringVersion::SOFTWARE_VERSION_SIZE
+    + MonitoringVersion::HARDWARE_VERSION_SIZE
+  );
+
+  float nbExtensions = extensionsLength / MonitoringVersion::EXTENSION_SIZE;
+
+  msg->isValid &= msg->payloadLength
+      >= MonitoringVersion::SOFTWARE_VERSION_SIZE
+        + MonitoringVersion::HARDWARE_VERSION_SIZE
+    & nbExtensions == int(nbExtensions);
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  int idx = 0;
+  extractCH(
+    idx,
+    msg->payload,
+    msg->swVersion,
+    MonitoringVersion::SOFTWARE_VERSION_SIZE
+  );
+  idx += MonitoringVersion::SOFTWARE_VERSION_SIZE;
+
+  extractCH(
+    idx,
+    msg->payload,
+    msg->hwVersion,
+    MonitoringVersion::HARDWARE_VERSION_SIZE
+  );
+  idx += MonitoringVersion::HARDWARE_VERSION_SIZE;
+
+  for (int i = 0; i < nbExtensions; i++) {
+    extractCH(
+      idx,
+      msg->payload,
+      msg->extension[i],
+      MonitoringVersion::EXTENSION_SIZE
+    );
+    idx += MonitoringVersion::EXTENSION_SIZE;
+  }
 
   return msg;
 }

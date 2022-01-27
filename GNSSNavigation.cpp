@@ -51,7 +51,7 @@ NavigationDGPS* GNSSNavigation::getDGPS() {
 
 NavigationDOP* GNSSNavigation::getDOP() {
 	UBXMessage* getMsg = new UBXMessage();
-	getMsg->msgId = MessageId::Navigation_DOP;
+	getMsg->msgId = MessageId::Navigation_DillutionOfPrecision;
 	getMsg->payloadLength = 0;
 
 	#ifdef GNSS_DEBUG
@@ -60,7 +60,7 @@ NavigationDOP* GNSSNavigation::getDOP() {
 
 	return static_cast<NavigationDOP*>(client->trySend(
 		getMsg,
-		MessageId::Navigation_DOP
+		MessageId::Navigation_DillutionOfPrecision
 	));
 }
 

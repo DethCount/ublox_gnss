@@ -7,6 +7,8 @@
 
 #define GNSS_DEBUG
 
+#define GNSS_NB_PORTS 6
+#define GNSS_NB_PROTOCOLS 8
 #define DGPS_MAX_CHANNELS 0xFF
 #define SBAS_MAX_ITEMS 0xFF
 #define SVINFO_MAX_ITEMS 0xFF
@@ -106,6 +108,20 @@ enum struct GNSSLogSize : uint8_t {
   UserDefined = 0x02
 };
 
+enum struct AntennaSupervisorStatus : uint8_t {
+  Init = 0,
+  Unknown = 1,
+  OK = 2,
+  Short = 3,
+  Open = 4
+};
+
+enum struct AntennaPowerStatus : uint8_t {
+  Off = 0,
+  On = 1,
+  Unknown = 2
+};
+
 #include "GPS/Subframe.h"
 #include "GPS/Subframe1.h"
 #include "GPS/Subframe2.h"
@@ -167,6 +183,16 @@ enum struct GNSSLogSize : uint8_t {
 #include "Log/RetrievePosition.h"
 #include "Log/RetrieveString.h"
 
+#include "Monitoring/Hardware.h"
+#include "Monitoring/HardwareExtended.h"
+#include "Monitoring/IO.h"
+#include "Monitoring/MsgParseProcess.h"
+#include "Monitoring/Buffer.h"
+#include "Monitoring/Receiver.h"
+#include "Monitoring/ReceiverBuffer.h"
+#include "Monitoring/TransmitterBuffer.h"
+#include "Monitoring/Version.h"
+
 #include "UBXParser.h"
 #include "UBXClient.h"
 
@@ -174,6 +200,7 @@ enum struct GNSSLogSize : uint8_t {
 #include "GNSSNavigation.h"
 #include "GNSSConfiguration.h"
 #include "GNSSLog.h"
+#include "GNSSMonitoring.h"
 
 // definition of UBX class IDs
 // source: U-blox7 V14 Receiver Description Protocol page 88 https://www.u-blox.com/sites/default/files/products/documents/u-blox7-V14_ReceiverDescriptionProtocolSpec_%28GPS.G7-SW-12001%29_Public.pdf
