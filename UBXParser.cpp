@@ -324,18 +324,21 @@ AidingEphemeris* UBXParser::parseAidingEphemeris(AidingEphemeris* msg)
   if (msg->how != 0) {
     short idx = 8;
 
-    for (short i = 0; i < AidingEphemeris::WORDS_PER_SUBFRAME; i++) {
-      msg->subframe1[i] = extractU4(idx, msg->payload);
+    msg->subframe1 = new GPSSubframe1();
+    for (short i = 0; i < GPSSubframe::NB_WORDS; i++) {
+      msg->subframe1->words[i] = extractU4(idx, msg->payload);
       idx += 4;
     }
 
-    for (short i = 0; i < AidingEphemeris::WORDS_PER_SUBFRAME; i++) {
-      msg->subframe2[i] = extractU4(idx, msg->payload);
+    msg->subframe2 = new GPSSubframe2();
+    for (short i = 0; i < GPSSubframe::NB_WORDS; i++) {
+      msg->subframe2->words[i] = extractU4(idx, msg->payload);
       idx += 4;
     }
 
-    for (short i = 0; i < AidingEphemeris::WORDS_PER_SUBFRAME; i++) {
-      msg->subframe3[i] = extractU4(idx, msg->payload);
+    msg->subframe3 = new GPSSubframe3();
+    for (short i = 0; i < GPSSubframe3::NB_WORDS; i++) {
+      msg->subframe3->words[i] = extractU4(idx, msg->payload);
       idx += 4;
     }
   }

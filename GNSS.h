@@ -106,6 +106,11 @@ enum struct GNSSLogSize : uint8_t {
   UserDefined = 0x02
 };
 
+#include "GPS/Subframe.h"
+#include "GPS/Subframe1.h"
+#include "GPS/Subframe2.h"
+#include "GPS/Subframe3.h"
+
 #include "Aiding/Almanach.h"
 #include "Aiding/AlmanachPlus.h"
 #include "Aiding/AOP.h"

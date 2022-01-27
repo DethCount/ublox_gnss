@@ -1,12 +1,10 @@
 class AidingEphemeris : public UBXMessage {
   public:
-    static const uint8_t WORDS_PER_SUBFRAME = 8;
-
     uint32_t svid;
     uint32_t how;
-    uint32_t subframe1[WORDS_PER_SUBFRAME];
-    uint32_t subframe2[WORDS_PER_SUBFRAME];
-    uint32_t subframe3[WORDS_PER_SUBFRAME];
+    GPSSubframe1 *subframe1;
+    GPSSubframe2 *subframe2;
+    GPSSubframe3 *subframe3;
 
     AidingEphemeris() {}
 
