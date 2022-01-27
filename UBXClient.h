@@ -1,5 +1,10 @@
 class UBXClient {
   public:
+    static const uint8_t NUM_TRIES = 3;
+    static const uint16_t TIMEOUT = 2000;
+    static const byte SYNC_1 = 0xB5;
+    static const byte SYNC_2 = 0x62;
+
     Stream *stream;
     UBXParser *parser;
     unsigned short numTries;
@@ -7,8 +12,8 @@ class UBXClient {
 
     UBXClient(
       Stream *s,
-      unsigned short numTries = UBX_NUM_TRIES,
-      unsigned int timeout = UBX_TIMEOUT
+      unsigned short numTries = NUM_TRIES,
+      unsigned int timeout = TIMEOUT
     );
 
     UBXMessage* next(MessageId expectedId = MessageId::None);

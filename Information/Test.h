@@ -8,7 +8,7 @@ class InformationTest : public UBXMessage {
       isValid = msg.isValid;
       msgId = msg.msgId;
       payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, UBX_MSG_PAYLOAD_SIZE);
+      memcpy(payload, msg.payload, PAYLOAD_SIZE);
       memcpy(checksum, msg.checksum, 2);
     }
 

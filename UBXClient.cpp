@@ -92,17 +92,17 @@ void UBXClient::send(UBXMessage* msg)
     calcChecksum(msg);
   }
 
-  stream->write(UBX_SYNC_1);
+  stream->write(SYNC_1);
   stream->flush();
   #ifdef GNSS_DEBUG
     Serial.println("sendUBX");
-    Serial.println(UBX_SYNC_1, HEX);
+    Serial.println(SYNC_1, HEX);
   #endif
 
-  stream->write(UBX_SYNC_2);
+  stream->write(SYNC_2);
   stream->flush();
   #ifdef GNSS_DEBUG
-    Serial.println(UBX_SYNC_2, HEX);
+    Serial.println(SYNC_2, HEX);
   #endif
 
   stream->write(highByte(msg->msgId));
@@ -190,14 +190,14 @@ UBXMessage* UBXClient::next(MessageId expectedId, unsigned int timeout)
       if (!packet->isValid) {
         byteIdx = 0;
 
-        if (incoming_char == UBX_SYNC_1) {
+        if (incoming_char == SYNC_1) {
           Serial.println("Incoming packet");
           packet->isValid = true;
           hasValidChecksum = true;
           checksum[0] = 0x00;
           checksum[1] = 0x00;
           classId = NULL;
-          memset(packet->payload, 0x00, UBX_MSG_PAYLOAD_SIZE);
+          memset(packet->payload, 0x00, UBXMessage::PAYLOAD_SIZE);
           byteIdx++;
         }
 
@@ -206,7 +206,7 @@ UBXMessage* UBXClient::next(MessageId expectedId, unsigned int timeout)
 
       if (byteIdx == 1) {
         Serial.println("byte 1");
-        packet->isValid = incoming_char == UBX_SYNC_2;
+        packet->isValid = incoming_char == SYNC_2;
         byteIdx++;
       } else if (byteIdx == 2) {
         Serial.println("byte 2");
@@ -238,11 +238,11 @@ UBXMessage* UBXClient::next(MessageId expectedId, unsigned int timeout)
 
         Serial.print("payloadLength: ");
         Serial.println(packet->payloadLength);
-        packet->isValid &= packet->payloadLength <= UBX_MSG_PAYLOAD_SIZE;
+        packet->isValid &= packet->payloadLength <= UBXMessage::PAYLOAD_SIZE;
         byteIdx++;
       } else if (byteIdx >= 6 && byteIdx < 6 + packet->payloadLength) {
         Serial.println("byte 6");
-        if (byteIdx < UBX_MSG_PAYLOAD_SIZE) {
+        if (byteIdx < UBXMessage::PAYLOAD_SIZE) {
           packet->payload[byteIdx - 6] = incoming_char;
           checksum[0] += incoming_char;
           checksum[1] += checksum[0];

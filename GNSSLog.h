@@ -33,7 +33,7 @@ class GNSSLog {
       uint32_t startNumber = 0,
       uint32_t entryCount = GNSSLog::RETRIEVE_MAX_ENTRIES,
       uint8_t version = 0,
-      uint8_t numTries = UBX_NUM_TRIES
+      uint8_t numTries = UBXClient::NUM_TRIES
     );
 
     void log(char* str, uint8_t length);
