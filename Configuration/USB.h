@@ -17,12 +17,9 @@ class ConfigurationUSB : public UBXMessage {
       msgId = MessageId::Configuration_USB;
     }
 
-    ConfigurationUSB(UBXMessage& msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    ConfigurationUSB(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~ConfigurationUSB() {}

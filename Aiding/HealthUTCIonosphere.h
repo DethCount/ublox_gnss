@@ -20,14 +20,13 @@ class AidingHealthUTCIonosphere : public UBXMessage {
     uint32_t klobB3;
     uint32_t flags;
 
-  	AidingHealthUTCIonosphere() {}
+  	AidingHealthUTCIonosphere() {
+      msgId = MessageId::Aiding_HealthUTCIonosphere;
+    }
 
-  	AidingHealthUTCIonosphere(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+  	AidingHealthUTCIonosphere(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
   	}
 
     virtual ~AidingHealthUTCIonosphere() {}

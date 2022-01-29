@@ -1,11 +1,13 @@
 class GPSSubframe1 : public GPSSubframe  {
   public:
+    GPSSubframe1(bool raw = false) : GPSSubframe(raw) {}
+
     uint16_t getWeekNumber() { // WN
-      return ((uint16_t)(words[0] >> 14)) & 0x3FF;
+      return ((uint16_t)(words[raw ? 2 : 0] >> 14)) & 0x3FF;
     }
 
     uint8_t getUserRangeAccuracyIndex() { // URA Index
-      return ((uint8_t)(words[0] >> 8)) & 0xF;
+      return ((uint8_t)(words[raw ? 2 : 0] >> 8)) & 0xF;
     }
 
     uint16_t getUserRangeAccuracyIndexInMeters() {
@@ -47,31 +49,31 @@ class GPSSubframe1 : public GPSSubframe  {
     }
 
     uint8_t getSpaceVehiculeHealth() { // SV health
-      return ((uint8_t)(words[0] >> 2)) & 0x3F;
+      return ((uint8_t)(words[raw ? 2 : 0] >> 2)) & 0x3F;
     }
 
     uint16_t getIssueOfDataClock() { // IODC
-      return ((((uint16_t)words[0]) & 0x3) << 8)
-        | ((uint16_t)(words[5] >> 16) & 0xFF);
+      return ((((uint16_t)words[raw ? 2 : 0]) & 0x3) << 8)
+        | ((uint16_t)(words[raw ? 7 : 5] >> 16) & 0xFF);
     }
 
     uint8_t getTelemetryGroupDelayDifferential() { // T(gd)
-      return ((uint8_t)words[4]) & 0xFF;
+      return ((uint8_t)words[raw ? 6 : 4]) & 0xFF;
     }
 
     uint16_t getTimeOfClock() { // t(oc)
-      return ((uint16_t)words[5]) & 0xFFFF;
+      return ((uint16_t)words[raw ? 7 : 5]) & 0xFFFF;
     }
 
     uint32_t getSVClockBiasCorrectionCoefficient() { // a(f0)
-      return (words[7] >> 2) & 0x3FFFFF;
+      return (words[raw ? 9 : 7] >> 2) & 0x3FFFFF;
     }
 
     uint16_t getSVClockDriftCorrectionCoefficient() { // a(f1)
-      return (uint16_t)words[6];
+      return (uint16_t)words[raw ? 8 : 6];
     }
 
     uint8_t getSVClockDriftRateCorrectionCoefficient() { // a(f2)
-      return (uint8_t)(words[6] >> 16);
+      return (uint8_t)(words[raw ? 8 : 6] >> 16);
     }
 };

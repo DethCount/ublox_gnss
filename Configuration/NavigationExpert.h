@@ -15,12 +15,9 @@ class ConfigurationNavigationExpert : public UBXMessage {
       msgId = MessageId::Configuration_NavigationExpert;
     }
 
-    ConfigurationNavigationExpert(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    ConfigurationNavigationExpert(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~ConfigurationNavigationExpert() {}

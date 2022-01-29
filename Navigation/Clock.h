@@ -6,12 +6,13 @@ class NavigationClock : public UBXMessage {
     uint32_t tAcc;
     uint32_t fAcc;
 
-    NavigationClock(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    NavigationClock() {
+      msgId = MessageId::Navigation_Clock;
+    }
+
+    NavigationClock(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~NavigationClock() {}

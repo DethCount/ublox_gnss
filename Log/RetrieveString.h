@@ -9,18 +9,15 @@ class LogRetrieveString : public UBXMessage {
     uint8_t minute;
     uint8_t second;
     uint16_t byteCount;
-    uint16_t bytesPayloadOffsetStart;
+    uint16_t bytes[UBXPacket::PAYLOAD_SIZE];
 
     LogRetrieveString() {
       msgId = MessageId::Log_RetrieveString;
     }
 
-    LogRetrieveString(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    LogRetrieveString(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~LogRetrieveString() {}

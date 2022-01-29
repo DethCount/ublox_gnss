@@ -22,12 +22,9 @@ class MonitoringHardware : public UBXMessage {
       msgId = MessageId::Monitoring_Hardware;
     }
 
-    MonitoringHardware(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    MonitoringHardware(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~MonitoringHardware() {}

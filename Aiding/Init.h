@@ -14,14 +14,13 @@ class AidingInit : public UBXMessage {
     uint32_t clkDAccOrFreqAcc;
     uint32_t flags;
 
-  	AidingInit() {}
+  	AidingInit() {
+      msgId = MessageId::Aiding_Init;
+    }
 
-  	AidingInit(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+  	AidingInit(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
   	}
 
     virtual ~AidingInit() {}

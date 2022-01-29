@@ -1,240 +1,105 @@
 class UBXParser {
   public:
-    UBXMessage* parse(UBXMessage* msg);
+    UBXMessage* parse(UBXPacket* packet);
 
-    UBXAck* parseACK(UBXMessage* msg);
-    UBXAck* parseACK(UBXAck* msg);
+    UBXAck* parseACK(UBXPacket* packet);
+    UBXMessage* parseAiding(UBXPacket* packet);
+    UBXMessage* parseNavigation(UBXPacket* packet);
+    UBXMessage* parseConfiguration(UBXPacket* packet);
+    UBXMessage* parseInformation(UBXPacket* packet);
+    UBXMessage* parseLog(UBXPacket* packet);
+    UBXMessage* parseMonitoring(UBXPacket* packet);
+    UBXMessage* parseReceiverManager(UBXPacket* packet);
 
-    UBXMessage* parseAiding(UBXMessage* msg);
-    UBXMessage* parseNavigation(UBXMessage* msg);
-    UBXMessage* parseConfiguration(UBXMessage* msg);
-    UBXMessage* parseInformation(UBXMessage* msg);
-    UBXMessage* parseLog(UBXMessage* msg);
-    UBXMessage* parseMonitoring(UBXMessage* msg);
-
-    AidingAlmanach* parseAidingAlmanach(UBXMessage* msg);
-    AidingAlmanach* parseAidingAlmanach(AidingAlmanach* msg);
-
-    AidingAlmanachPlus* parseAidingAlmanachPlus(UBXMessage* msg);
-    AidingAlmanachPlus* parseAidingAlmanachPlus(AidingAlmanachPlus* msg);
-
-    AidingAOP* parseAidingAOP(UBXMessage* msg);
-    AidingAOP* parseAidingAOP(AidingAOP* msg);
-
-    AidingEphemeris* parseAidingEphemeris(UBXMessage* msg);
-    AidingEphemeris* parseAidingEphemeris(AidingEphemeris* msg);
-
+    AidingAlmanach* parseAidingAlmanach(UBXPacket* packet);
+    AidingAlmanachPlus* parseAidingAlmanachPlus(UBXPacket* packet);
+    AidingAOP* parseAidingAOP(UBXPacket* packet);
+    AidingEphemeris* parseAidingEphemeris(UBXPacket* packet);
     AidingHealthUTCIonosphere* parseAidingHealthUTCIonosphere(
-      UBXMessage* msg
+      UBXPacket* packet
     );
-    AidingHealthUTCIonosphere* parseAidingHealthUTCIonosphere(
-      AidingHealthUTCIonosphere* msg
-    );
+    AidingInit* parseAidingInit(UBXPacket* packet);
 
-    AidingInit* parseAidingInit(UBXMessage* msg);
-    AidingInit* parseAidingInit(AidingInit* msg);
-
-    NavigationAOPStatus* parseNavigationAOPStatus(UBXMessage* msg);
-    NavigationAOPStatus* parseNavigationAOPStatus(NavigationAOPStatus* msg);
-
-    NavigationClock* parseNavigationClock(UBXMessage* msg);
-    NavigationClock* parseNavigationClock(NavigationClock* msg);
-
-    NavigationDGPS* parseNavigationDGPS(UBXMessage* msg);
-    NavigationDGPS* parseNavigationDGPS(NavigationDGPS* msg);
-
-    NavigationDOP* parseNavigationDOP(UBXMessage* msg);
-    NavigationDOP* parseNavigationDOP(NavigationDOP* msg);
-
-    NavigationPosECEF* parseNavigationPosECEF(UBXMessage* msg);
-    NavigationPosECEF* parseNavigationPosECEF(NavigationPosECEF* msg);
-
-    NavigationPosLLH* parseNavigationPosLLH(UBXMessage* msg);
-    NavigationPosLLH* parseNavigationPosLLH(NavigationPosLLH* msg);
-
-    NavigationPosVT* parseNavigationPosVT(UBXMessage* msg);
-    NavigationPosVT* parseNavigationPosVT(NavigationPosVT* msg);
-
-    NavigationSBAS* parseNavigationSBAS(UBXMessage* msg);
-    NavigationSBAS* parseNavigationSBAS(NavigationSBAS* msg);
-
-    NavigationSOL* parseNavigationSOL(UBXMessage* msg);
-    NavigationSOL* parseNavigationSOL(NavigationSOL* msg);
-
-    NavigationStatus* parseNavigationStatus(UBXMessage* msg);
-    NavigationStatus* parseNavigationStatus(NavigationStatus* msg);
-
+    NavigationAOPStatus* parseNavigationAOPStatus(UBXPacket* packet);
+    NavigationClock* parseNavigationClock(UBXPacket* packet);
+    NavigationDGPS* parseNavigationDGPS(UBXPacket* packet);
+    NavigationDOP* parseNavigationDOP(UBXPacket* packet);
+    NavigationPosECEF* parseNavigationPosECEF(UBXPacket* packet);
+    NavigationPosLLH* parseNavigationPosLLH(UBXPacket* packet);
+    NavigationPosVT* parseNavigationPosVT(UBXPacket* packet);
+    NavigationSBAS* parseNavigationSBAS(UBXPacket* packet);
+    NavigationSOL* parseNavigationSOL(UBXPacket* packet);
+    NavigationStatus* parseNavigationStatus(UBXPacket* packet);
     NavigationSpaceVehiculeInfo* parseNavigationSpaceVehiculeInfo(
-      UBXMessage* msg
+      UBXPacket* packet
     );
-    NavigationSpaceVehiculeInfo* parseNavigationSpaceVehiculeInfo(
-      NavigationSpaceVehiculeInfo* msg
-    );
+    NavigationTimeGPS* parseNavigationTimeGPS(UBXPacket* packet);
+    NavigationTimeUTC* parseNavigationTimeUTC(UBXPacket* packet);
+    NavigationVelECEF* parseNavigationVelECEF(UBXPacket* packet);
+    NavigationVelNED* parseNavigationVelNED(UBXPacket* packet);
 
-    NavigationTimeGPS* parseNavigationTimeGPS(UBXMessage* msg);
-    NavigationTimeGPS* parseNavigationTimeGPS(NavigationTimeGPS* msg);
-
-    NavigationTimeUTC* parseNavigationTimeUTC(UBXMessage* msg);
-    NavigationTimeUTC* parseNavigationTimeUTC(NavigationTimeUTC* msg);
-
-    NavigationVelECEF* parseNavigationVelECEF(UBXMessage* msg);
-    NavigationVelECEF* parseNavigationVelECEF(NavigationVelECEF* msg);
-
-    NavigationVelNED* parseNavigationVelNED(UBXMessage* msg);
-    NavigationVelNED* parseNavigationVelNED(NavigationVelNED* msg);
-
-    ConfigurationAntenna* parseConfigurationAntenna(UBXMessage* msg);
-    ConfigurationAntenna* parseConfigurationAntenna(
-      ConfigurationAntenna* msg
-    );
-
-    ConfigurationDatum* parseConfigurationDatum(UBXMessage* msg);
-    ConfigurationDatum* parseConfigurationDatum(ConfigurationDatum* msg);
-
-    ConfigurationGNSS* parseConfigurationGNSS(UBXMessage* msg);
-    ConfigurationGNSS* parseConfigurationGNSS(ConfigurationGNSS* msg);
-
+    ConfigurationAntenna* parseConfigurationAntenna(UBXPacket* packet);
+    ConfigurationDatum* parseConfigurationDatum(UBXPacket* packet);
+    ConfigurationGNSS* parseConfigurationGNSS(UBXPacket* packet);
     ConfigurationInformation* parseConfigurationInformation(
-      UBXMessage* msg,
+      UBXPacket* packet,
       uint16_t startIdx = 0
-    );
-    ConfigurationInformation* parseConfigurationInformation(
-      ConfigurationInformation* msg,
-      uint16_t startIdx = 0
-    );
-
-    ConfigurationInterferenceMonitor* parseConfigurationInterferenceMonitor(
-      UBXMessage* msg
     );
     ConfigurationInterferenceMonitor* parseConfigurationInterferenceMonitor(
-      ConfigurationInterferenceMonitor* msg
+      UBXPacket* packet
     );
-
-    ConfigurationLogFilter* parseConfigurationLogFilter(UBXMessage* msg);
-    ConfigurationLogFilter* parseConfigurationLogFilter(
-      ConfigurationLogFilter* msg
-    );
-
-    ConfigurationMessaging* parseConfigurationMessaging(UBXMessage* msg);
-    ConfigurationMessaging* parseConfigurationMessaging(
-      ConfigurationMessaging* msg
-    );
-
-    ConfigurationNavigation* parseConfigurationNavigation(UBXMessage* msg);
-    ConfigurationNavigation* parseConfigurationNavigation(
-      ConfigurationNavigation* msg
-    );
-
+    ConfigurationLogFilter* parseConfigurationLogFilter(UBXPacket* packet);
+    ConfigurationMessaging* parseConfigurationMessaging(UBXPacket* packet);
+    ConfigurationNavigation* parseConfigurationNavigation(UBXPacket* packet);
     ConfigurationNavigationExpert* parseConfigurationNavigationExpert(
-      UBXMessage* msg
+      UBXPacket* packet
     );
-    ConfigurationNavigationExpert* parseConfigurationNavigationExpert(
-      ConfigurationNavigationExpert* msg
-    );
-
-    ConfigurationNMEA* parseConfigurationNMEA(UBXMessage* msg);
-    ConfigurationNMEA* parseConfigurationNMEA(ConfigurationNMEA* msg);
-
+    ConfigurationNMEA* parseConfigurationNMEA(UBXPacket* packet);
     ConfigurationPort* parseConfigurationPort(
-      UBXMessage* msg,
+      UBXPacket* packet,
       uint16_t startIdx = 0
     );
-    ConfigurationPort* parseConfigurationPort(
-      ConfigurationPort* msg,
-      uint16_t startIdx = 0
-    );
-
-    ConfigurationPower* parseConfigurationPower(UBXMessage* msg);
-    ConfigurationPower* parseConfigurationPower(ConfigurationPower* msg);
-
-    ConfigurationRate* parseConfigurationRate(UBXMessage* msg);
-    ConfigurationRate* parseConfigurationRate(ConfigurationRate* msg);
-
+    ConfigurationPower* parseConfigurationPower(UBXPacket* packet);
+    ConfigurationRate* parseConfigurationRate(UBXPacket* packet);
     ConfigurationRemoteInventory* parseConfigurationRemoteInventory(
-      UBXMessage* msg
+      UBXPacket* packet
     );
-    ConfigurationRemoteInventory* parseConfigurationRemoteInventory(
-      ConfigurationRemoteInventory* msg
-    );
+    ConfigurationReceiver* parseConfigurationReceiver(UBXPacket* packet);
+    ConfigurationSBAS* parseConfigurationSBAS(UBXPacket* packet);
+    ConfigurationTimePulse* parseConfigurationTimePulse(UBXPacket* packet);
+    ConfigurationUSB* parseConfigurationUSB(UBXPacket* packet);
 
-    ConfigurationReceiver* parseConfigurationReceiver(UBXMessage* msg);
-    ConfigurationReceiver* parseConfigurationReceiver(
-      ConfigurationReceiver* msg
-    );
+    InformationDebug* parseInformationDebug(UBXPacket* packet);
+    InformationError* parseInformationError(UBXPacket* packet);
+    InformationNotice* parseInformationNotice(UBXPacket* packet);
+    InformationTest* parseInformationTest(UBXPacket* packet);
+    InformationWarning* parseInformationWarning(UBXPacket* packet);
 
-    ConfigurationSBAS* parseConfigurationSBAS(UBXMessage* msg);
-    ConfigurationSBAS* parseConfigurationSBAS(ConfigurationSBAS* msg);
-
-    ConfigurationTimePulse* parseConfigurationTimePulse(UBXMessage* msg);
-    ConfigurationTimePulse* parseConfigurationTimePulse(
-      ConfigurationTimePulse* msg
-    );
-
-    ConfigurationUSB* parseConfigurationUSB(UBXMessage* msg);
-    ConfigurationUSB* parseConfigurationUSB(ConfigurationUSB* msg);
-
-    InformationDebug* parseInformationDebug(UBXMessage* msg);
-    InformationDebug* parseInformationDebug(InformationDebug* msg);
-
-    InformationError* parseInformationError(UBXMessage* msg);
-    InformationError* parseInformationError(InformationError* msg);
-
-    InformationNotice* parseInformationNotice(UBXMessage* msg);
-    InformationNotice* parseInformationNotice(InformationNotice* msg);
-
-    InformationTest* parseInformationTest(UBXMessage* msg);
-    InformationTest* parseInformationTest(InformationTest* msg);
-
-    InformationWarning* parseInformationWarning(UBXMessage* msg);
-    InformationWarning* parseInformationWarning(InformationWarning* msg);
-
-    LogFindTime* parseLogFindTime(UBXMessage* msg);
-    LogFindTime* parseLogFindTime(LogFindTime* msg);
-
-    LogInfo* parseLogInfo(UBXMessage* msg);
-    LogInfo* parseLogInfo(LogInfo* msg);
-
-    LogRetrievePosition* parseLogRetrievePosition(UBXMessage* msg);
-    LogRetrievePosition* parseLogRetrievePosition(LogRetrievePosition* msg);
-
-    LogRetrieveString* parseLogRetrieveString(UBXMessage* msg);
-    LogRetrieveString* parseLogRetrieveString(LogRetrieveString* msg);
+    LogFindTime* parseLogFindTime(UBXPacket* packet);
+    LogInfo* parseLogInfo(UBXPacket* packet);
+    LogRetrievePosition* parseLogRetrievePosition(UBXPacket* packet);
+    LogRetrieveString* parseLogRetrieveString(UBXPacket* packet);
 
     MonitoringHardwareExtended* parseMonitoringHardwareExtended(
-      UBXMessage* msg
+      UBXPacket* packet
     );
-    MonitoringHardwareExtended* parseMonitoringHardwareExtended(
-      MonitoringHardwareExtended* msg
-    );
-
-    MonitoringHardware* parseMonitoringHardware(UBXMessage* msg);
-    MonitoringHardware* parseMonitoringHardware(MonitoringHardware* msg);
-
-    MonitoringIO* parseMonitoringIO(UBXMessage* msg, uint16_t startIdx = 0);
-    MonitoringIO* parseMonitoringIO(MonitoringIO* msg, uint16_t startIdx = 0);
-
-    MonitoringMsgParseProcess* parseMonitoringMsgParseProcess(UBXMessage* msg);
-    MonitoringMsgParseProcess* parseMonitoringMsgParseProcess(
-      MonitoringMsgParseProcess* msg
-    );
-
-    MonitoringReceiver* parseMonitoringReceiver(UBXMessage* msg);
-    MonitoringReceiver* parseMonitoringReceiver(MonitoringReceiver* msg);
-
-    MonitoringReceiverBuffer* parseMonitoringReceiverBuffer(UBXMessage* msg);
-    MonitoringReceiverBuffer* parseMonitoringReceiverBuffer(
-      MonitoringReceiverBuffer* msg
-    );
-
+    MonitoringHardware* parseMonitoringHardware(UBXPacket* packet);
+    MonitoringIO* parseMonitoringIO(UBXPacket* packet, uint16_t startIdx = 0);
+    MonitoringMsgParseProcess* parseMonitoringMsgParseProcess(UBXPacket* packet);
+    MonitoringReceiver* parseMonitoringReceiver(UBXPacket* packet);
+    MonitoringReceiverBuffer* parseMonitoringReceiverBuffer(UBXPacket* packet);
     MonitoringTransmitterBuffer* parseMonitoringTransmitterBuffer(
-      UBXMessage* msg
+      UBXPacket* packet
     );
-    MonitoringTransmitterBuffer* parseMonitoringTransmitterBuffer(
-      MonitoringTransmitterBuffer* msg
-    );
+    MonitoringVersion* parseMonitoringVersion(UBXPacket* packet);
 
-    MonitoringVersion* parseMonitoringVersion(UBXMessage* msg);
-    MonitoringVersion* parseMonitoringVersion(MonitoringVersion* msg);
+    ReceiverManagerAlmanach* parseReceiverManagerAlmanach(UBXPacket* packet);
+    ReceiverManagerEphemeris* parseReceiverManagerEphemeris(UBXPacket* packet);
+    ReceiverManagerRaw* parseReceiverManagerRaw(UBXPacket* packet);
+    ReceiverManagerSubframe* parseReceiverManagerSubframe(UBXPacket* packet);
+    ReceiverManagerSpaceVehiculeInfo* parseReceiverManagerSpaceVehiculeInfo(
+      UBXPacket* packet
+    );
 
     uint8_t extractU1(uint8_t startIdx, byte* msgData);
     int8_t extractI1(uint8_t startIdx, byte* msgData);

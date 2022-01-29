@@ -3,4 +3,11 @@ class MonitoringReceiverBuffer : public MonitoringBuffer {
     MonitoringReceiverBuffer() {
       msgId = MessageId::Monitoring_ReceiverBuffer;
     }
+
+    MonitoringReceiverBuffer(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
+    }
+
+    virtual ~MonitoringReceiverBuffer() {}
 };

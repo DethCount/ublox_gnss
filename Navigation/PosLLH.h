@@ -8,12 +8,13 @@ class NavigationPosLLH : public UBXMessage {
     uint32_t hAcc;
     uint32_t vAcc;
 
-    NavigationPosLLH(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    NavigationPosLLH() {
+      msgId = MessageId::Navigation_PosLLH;
+    }
+
+    NavigationPosLLH(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~NavigationPosLLH() {}

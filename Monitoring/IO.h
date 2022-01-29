@@ -14,12 +14,9 @@ class MonitoringIO : public UBXMessage {
       msgId = MessageId::Monitoring_IO;
     }
 
-    MonitoringIO(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    MonitoringIO(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~MonitoringIO() {}

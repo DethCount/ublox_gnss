@@ -11,16 +11,15 @@ class AidingAlmanachPlus : public UBXMessage {
     uint8_t id1;
     uint8_t id2;
     uint16_t id3;
-    uint16_t dataPayloadOffsetStart;
+    uint16_t data[MAX_DATA_SIZE];
 
-    AidingAlmanachPlus() {}
+    AidingAlmanachPlus() {
+      msgId = MessageId::Aiding_AlmanachPlus;
+    }
 
-    AidingAlmanachPlus(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    AidingAlmanachPlus(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~AidingAlmanachPlus() {}

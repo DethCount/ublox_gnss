@@ -3,20 +3,6 @@ enum struct DGPSStatus : uint8_t {
   PRAndPRR = 0x01
 };
 
-
-class NavigationDGPSChannel {
-  public:
-    uint8_t svid;
-    byte flags;
-    uint16_t ageC;
-    uint32_t prc;
-    uint32_t prrc;
-
-    NavigationDGPSChannel() {}
-
-    virtual ~NavigationDGPSChannel() {}
-};
-
 class NavigationDGPS : public UBXMessage {
   public:
     uint32_t iTOW;
@@ -25,14 +11,15 @@ class NavigationDGPS : public UBXMessage {
     int baseHealth;
     uint8_t numCh;
     DGPSStatus status;
-    NavigationDGPSChannel* channels[DGPS_MAX_CHANNELS];
+    NavigationDGPSChannel* channels[GNSS_MAX_SVID];
 
-    NavigationDGPS(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    NavigationDGPS() {
+      msgId = MessageId::Navigation_DGPS;
+    }
+
+    NavigationDGPS(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~NavigationDGPS() {}

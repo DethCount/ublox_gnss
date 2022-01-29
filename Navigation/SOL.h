@@ -18,12 +18,13 @@ class NavigationSOL : public UBXMessage {
     uint8_t numSV;
     // reserved2 U4
 
-    NavigationSOL(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    NavigationSOL() {
+      msgId = MessageId::Navigation_SOL;
+    }
+
+    NavigationSOL(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~NavigationSOL() {}

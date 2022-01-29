@@ -7,12 +7,9 @@ class MonitoringMsgParseProcess : public UBXMessage {
       msgId = MessageId::Monitoring_MsgParseProcess;
     }
 
-    MonitoringMsgParseProcess(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    MonitoringMsgParseProcess(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~MonitoringMsgParseProcess() {}

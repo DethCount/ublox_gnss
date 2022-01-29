@@ -4,16 +4,15 @@ class AidingAOP : public UBXMessage {
 
   	uint8_t svid;
   	uint8_t dataSize;
-    uint8_t dataPayloadOffsetStart;
+    uint8_t data[MAX_DATA_SIZE];
 
-    AidingAOP() {}
+    AidingAOP() {
+      msgId = MessageId::Aiding_AOP;
+    }
 
-    AidingAOP(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    AidingAOP(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~AidingAOP() {}

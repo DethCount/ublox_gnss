@@ -8,12 +8,9 @@ class ConfigurationRate : public UBXMessage {
       msgId = MessageId::Configuration_Rate;
     }
 
-    ConfigurationRate(UBXMessage& msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    ConfigurationRate(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~ConfigurationRate() {}

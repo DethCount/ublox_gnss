@@ -7,12 +7,13 @@ class NavigationTimeGPS : public UBXMessage {
     byte valid;
     uint32_t tAcc;
 
-    NavigationTimeGPS(UBXMessage& msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    NavigationTimeGPS() {
+      msgId = MessageId::Navigation_TimeGPS;
+    }
+
+    NavigationTimeGPS(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~NavigationTimeGPS() {}

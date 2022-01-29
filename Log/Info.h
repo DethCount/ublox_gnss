@@ -23,12 +23,9 @@ class LogInfo : public UBXMessage {
       msgId = MessageId::Log_Info;
     }
 
-    LogInfo(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    LogInfo(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~LogInfo() {}

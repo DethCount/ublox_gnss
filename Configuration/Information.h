@@ -9,12 +9,9 @@ class ConfigurationInformation : public UBXMessage {
       msgId = MessageId::Configuration_Information;
     }
 
-    ConfigurationInformation(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    ConfigurationInformation(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~ConfigurationInformation() {}

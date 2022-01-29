@@ -8,12 +8,13 @@ class NavigationStatus : public UBXMessage {
     uint32_t ttff;
     uint32_t msss;
 
-    NavigationStatus(UBXMessage& msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    NavigationStatus() {
+      msgId = MessageId::Navigation_Status;
+    }
+
+    NavigationStatus(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~NavigationStatus() {}

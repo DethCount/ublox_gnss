@@ -4,14 +4,15 @@ class NavigationSpaceVehiculeInfo : public UBXMessage {
     uint8_t numCh;
     byte globalFlags;
     // reserved2 U2
-    NavigationSpaceVehicule* spaceVehicules[SVINFO_MAX_ITEMS];
+    NavigationSpaceVehicule* spaceVehicules[GNSS_MAX_SVID];
 
-    NavigationSpaceVehiculeInfo(UBXMessage& msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    NavigationSpaceVehiculeInfo() {
+      msgId = MessageId::Navigation_SpaceVehiculeInfo;
+    }
+
+    NavigationSpaceVehiculeInfo(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~NavigationSpaceVehiculeInfo() {}

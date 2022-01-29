@@ -24,11 +24,11 @@ class UBXClient {
 
     UBXRequestStatus nextACK(UBXMessage* msg);
 
-    void calcChecksum(UBXMessage* msg);
+    void calcChecksum(UBXPacket* packet);
 
-    void send(UBXMessage* msg);
+    void send(UBXPacket* packet);
 
-    UBXRequestStatus trySendWithACK(UBXMessage* msg);
+    UBXRequestStatus trySendWithACK(UBXPacket* packet);
 
-    UBXMessage* trySend(UBXMessage* msg, MessageId expectedResponseMsgId);
+    UBXMessage* trySend(UBXPacket* packet, MessageId expectedResponseMsgId);
 };

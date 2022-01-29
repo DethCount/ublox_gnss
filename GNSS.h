@@ -9,14 +9,13 @@
 
 #define GNSS_NB_PORTS 6
 #define GNSS_NB_PROTOCOLS 8
-#define DGPS_MAX_CHANNELS 0xFF
-#define SBAS_MAX_ITEMS 0xFF
-#define SVINFO_MAX_ITEMS 0xFF
+#define GNSS_MAX_SVID 0xFF
 
 #include "UBX/MessageClass.h"
 #include "UBX/MessageId.h"
 #include "UBX/RequestStatus.h"
 #include "UBX/Message.h"
+#include "UBX/Packet.h"
 #include "UBX/Ack.h"
 
 enum struct NavigationMode : byte {
@@ -136,6 +135,7 @@ enum struct AntennaPowerStatus : uint8_t {
 
 #include "Navigation/AOPStatus.h"
 #include "Navigation/Clock.h"
+#include "Navigation/DGPSChannel.h"
 #include "Navigation/DGPS.h"
 #include "Navigation/DOP.h"
 #include "Navigation/PosECEF.h"
@@ -193,6 +193,14 @@ enum struct AntennaPowerStatus : uint8_t {
 #include "Monitoring/TransmitterBuffer.h"
 #include "Monitoring/Version.h"
 
+#include "ReceiverManager/Almanach.h"
+#include "ReceiverManager/Ephemeris.h"
+#include "ReceiverManager/RawSpaceVehicule.h"
+#include "ReceiverManager/Raw.h"
+#include "ReceiverManager/Subframe.h"
+#include "ReceiverManager/SpaceVehicule.h"
+#include "ReceiverManager/SpaceVehiculeInfo.h"
+
 #include "UBXParser.h"
 #include "UBXClient.h"
 
@@ -201,6 +209,7 @@ enum struct AntennaPowerStatus : uint8_t {
 #include "GNSSConfiguration.h"
 #include "GNSSLog.h"
 #include "GNSSMonitoring.h"
+#include "GNSSReceiverManager.h"
 
 // definition of UBX class IDs
 // source: U-blox7 V14 Receiver Description Protocol page 88 https://www.u-blox.com/sites/default/files/products/documents/u-blox7-V14_ReceiverDescriptionProtocolSpec_%28GPS.G7-SW-12001%29_Public.pdf

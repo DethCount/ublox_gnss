@@ -6,18 +6,15 @@ class ConfigurationGNSS : public UBXMessage {
     uint8_t numTrkChHw;
     uint8_t numTrkChUse;
     uint8_t numConfigBlocks;
-    ConfigurationGNSSBlock blocks[MAX_NB_BLOCKS];
+    ConfigurationGNSSBlock* blocks[MAX_NB_BLOCKS];
 
     ConfigurationGNSS() {
       msgId = MessageId::Configuration_GlobalNavigationSatelliteSystem;
     }
 
-    ConfigurationGNSS(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    ConfigurationGNSS(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~ConfigurationGNSS() {}

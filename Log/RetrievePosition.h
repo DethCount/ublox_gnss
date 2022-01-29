@@ -21,12 +21,9 @@ class LogRetrievePosition : public UBXMessage {
       msgId = MessageId::Log_RetrievePosition;
     }
 
-    LogRetrievePosition(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    LogRetrievePosition(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~LogRetrievePosition() {}

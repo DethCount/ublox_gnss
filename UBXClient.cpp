@@ -12,25 +12,25 @@ UBXClient::UBXClient(
   timeout = timeout;
 }
 
-void UBXClient::calcChecksum(UBXMessage* msg)
+void UBXClient::calcChecksum(UBXPacket* packet)
 {
-  msg->checksum[0] = highByte(msg->msgId);
-  msg->checksum[1] = msg->checksum[0];
-  msg->checksum[0] += lowByte(msg->msgId);
-  msg->checksum[1] += msg->checksum[0];
+  packet->checksum[0] = highByte(packet->msgId);
+  packet->checksum[1] = packet->checksum[0];
+  packet->checksum[0] += lowByte(packet->msgId);
+  packet->checksum[1] += packet->checksum[0];
 
-  msg->checksum[0] += lowByte(msg->payloadLength);
-  msg->checksum[1] += msg->checksum[0];
-  msg->checksum[0] += highByte(msg->payloadLength);
-  msg->checksum[1] += msg->checksum[0];
+  packet->checksum[0] += lowByte(packet->payloadLength);
+  packet->checksum[1] += packet->checksum[0];
+  packet->checksum[0] += highByte(packet->payloadLength);
+  packet->checksum[1] += packet->checksum[0];
 
-  for (int i = 0; i < msg->payloadLength; i++) {
-    msg->checksum[0] += msg->payload[i];
-    msg->checksum[1] += msg->checksum[0];
+  for (int i = 0; i < packet->payloadLength; i++) {
+    packet->checksum[0] += packet->payload[i];
+    packet->checksum[1] += packet->checksum[0];
   }
 }
 
-UBXRequestStatus UBXClient::trySendWithACK(UBXMessage* msg) {
+UBXRequestStatus UBXClient::trySendWithACK(UBXPacket* packet) {
   short tries = 0;
   UBXRequestStatus result;
 
@@ -40,8 +40,8 @@ UBXRequestStatus UBXClient::trySendWithACK(UBXMessage* msg) {
       Serial.println(tries + 1);
     #endif
 
-    send(msg);
-    result = nextACK(msg);
+    send(packet);
+    result = nextACK(packet);
     tries++;
   }
 
@@ -55,7 +55,7 @@ UBXRequestStatus UBXClient::trySendWithACK(UBXMessage* msg) {
 }
 
 UBXMessage* UBXClient::trySend(
-  UBXMessage* msg,
+  UBXPacket* packet,
   MessageId expectedResponseMsgId
 ) {
   UBXMessage* result = new UBXMessage();
@@ -68,7 +68,7 @@ UBXMessage* UBXClient::trySend(
       Serial.println(tries + 1);
     #endif
 
-    send(msg);
+    send(packet);
     result = next(expectedResponseMsgId);
     if (result->isValid) {
       return result;
@@ -86,10 +86,10 @@ UBXMessage* UBXClient::trySend(
   return result;
 }
 
-void UBXClient::send(UBXMessage* msg)
+void UBXClient::send(UBXPacket* packet)
 {
-  if (msg->checksum[0] == 0x00 && msg->checksum[1] == 0x00) {
-    calcChecksum(msg);
+  if (packet->checksum[0] == 0x00 && packet->checksum[1] == 0x00) {
+    calcChecksum(packet);
   }
 
   stream->write(SYNC_1);
@@ -105,53 +105,53 @@ void UBXClient::send(UBXMessage* msg)
     Serial.println(SYNC_2, HEX);
   #endif
 
-  stream->write(highByte(msg->msgId));
+  stream->write(highByte(packet->msgId));
   stream->flush();
   #ifdef GNSS_DEBUG
-    Serial.println(highByte(msg->msgId), HEX);
+    Serial.println(highByte(packet->msgId), HEX);
   #endif
 
-  stream->write(lowByte(msg->msgId));
+  stream->write(lowByte(packet->msgId));
   stream->flush();
   #ifdef GNSS_DEBUG
-    Serial.println(lowByte(msg->msgId), HEX);
+    Serial.println(lowByte(packet->msgId), HEX);
   #endif
 
-  stream->write(lowByte(msg->payloadLength));
+  stream->write(lowByte(packet->payloadLength));
   stream->flush();
   #ifdef GNSS_DEBUG
-    Serial.println(lowByte(msg->payloadLength), HEX);
+    Serial.println(lowByte(packet->payloadLength), HEX);
   #endif
 
-  stream->write(highByte(msg->payloadLength));
+  stream->write(highByte(packet->payloadLength));
   stream->flush();
   #ifdef GNSS_DEBUG
-    Serial.println(highByte(msg->payloadLength), HEX);
+    Serial.println(highByte(packet->payloadLength), HEX);
   #endif
 
-  for (int i = 0; i < msg->payloadLength; i++)
+  for (int i = 0; i < packet->payloadLength; i++)
   {
-    stream->write(msg->payload[i]);
+    stream->write(packet->payload[i]);
     stream->flush();
     #ifdef GNSS_DEBUG
-      Serial.println(msg->payload[i], HEX);
+      Serial.println(packet->payload[i], HEX);
     #endif
   }
 
-  if (msg->checksum[0] == 0x00 && msg->checksum[1] == 0x00) {
-    calcChecksum(msg);
+  if (packet->checksum[0] == 0x00 && packet->checksum[1] == 0x00) {
+    calcChecksum(packet);
   }
 
-  stream->write(msg->checksum[0]);
+  stream->write(packet->checksum[0]);
   stream->flush();
   #ifdef GNSS_DEBUG
-    Serial.println(msg->checksum[0], HEX);
+    Serial.println(packet->checksum[0], HEX);
   #endif
 
-  stream->write(msg->checksum[1]);
+  stream->write(packet->checksum[1]);
   stream->flush();
   #ifdef GNSS_DEBUG
-    Serial.println(msg->checksum[1], HEX);
+    Serial.println(packet->checksum[1], HEX);
     Serial.println("end sendUBX");
   #endif
 
@@ -165,7 +165,7 @@ UBXMessage* UBXClient::next(MessageId expectedId) {
 
 UBXMessage* UBXClient::next(MessageId expectedId, unsigned int timeout)
 {
-  UBXMessage *packet = new UBXMessage();
+  UBXPacket *packet = new UBXPacket();
   packet->isValid = false;
   uint8_t incoming_char;
   int byteIdx = 0;
@@ -177,27 +177,35 @@ UBXMessage* UBXClient::next(MessageId expectedId, unsigned int timeout)
 
   while (true) {
     if (millis() - start > timeout) {
-      Serial.println("Timeout");
-      Serial.println(timeout);
+      #ifdef GNSS_DEBUG
+        Serial.println("Timeout");
+        Serial.println(timeout);
+      #endif
+
       packet->isValid = false;
       return packet;
     }
 
     if (stream->available()) {
       incoming_char = stream->read();
-      Serial.println(incoming_char, HEX);
+      #ifdef GNSS_DEBUG
+        Serial.println(incoming_char, HEX);
+      #endif
 
       if (!packet->isValid) {
         byteIdx = 0;
 
         if (incoming_char == SYNC_1) {
-          Serial.println("Incoming packet");
+          #ifdef GNSS_DEBUG
+            Serial.println("Incoming packet");
+          #endif
+
           packet->isValid = true;
           hasValidChecksum = true;
           checksum[0] = 0x00;
           checksum[1] = 0x00;
           classId = NULL;
-          memset(packet->payload, 0x00, UBXMessage::PAYLOAD_SIZE);
+          memset(packet->payload, 0x00, UBXPacket::PAYLOAD_SIZE);
           byteIdx++;
         }
 
@@ -238,11 +246,11 @@ UBXMessage* UBXClient::next(MessageId expectedId, unsigned int timeout)
 
         Serial.print("payloadLength: ");
         Serial.println(packet->payloadLength);
-        packet->isValid &= packet->payloadLength <= UBXMessage::PAYLOAD_SIZE;
+        packet->isValid &= packet->payloadLength <= UBXPacket::PAYLOAD_SIZE;
         byteIdx++;
       } else if (byteIdx >= 6 && byteIdx < 6 + packet->payloadLength) {
         Serial.println("byte 6");
-        if (byteIdx < UBXMessage::PAYLOAD_SIZE) {
+        if (byteIdx < UBXPacket::PAYLOAD_SIZE) {
           packet->payload[byteIdx - 6] = incoming_char;
           checksum[0] += incoming_char;
           checksum[1] += checksum[0];
@@ -298,10 +306,12 @@ UBXRequestStatus UBXClient::nextACK(UBXMessage* msg)
   while (end - now > 0) {
     ack = static_cast<UBXAck*>(next(MessageId::ACK_ACK, end - now));
 
-    Serial.println("ACK received");
-    Serial.println(ack->isValid);
-    Serial.println(ack->incomingMsgId, HEX);
-    Serial.println(msg->msgId, HEX);
+    #ifdef GNSS_DEBUG
+      Serial.println("ACK received");
+      Serial.println(ack->isValid);
+      Serial.println(ack->incomingMsgId, HEX);
+      Serial.println(msg->msgId, HEX);
+    #endif
 
     if (ack->isValid
       && ack->incomingMsgId == msg->msgId

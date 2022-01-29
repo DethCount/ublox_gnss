@@ -15,17 +15,12 @@ class NavigationAOPStatus : public UBXMessage {
     // reserved3 U4
 
     NavigationAOPStatus() {
-      isValid = false;
-      msgId = MessageId::None;
-      payloadLength = 0;
+      msgId = MessageId::Navigation_AOPStatus;
     }
 
-    NavigationAOPStatus(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    NavigationAOPStatus(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~NavigationAOPStatus() {}

@@ -3,4 +3,11 @@ class MonitoringTransmitterBuffer : public MonitoringBuffer {
     MonitoringTransmitterBuffer() {
       msgId = MessageId::Monitoring_TransmitterBuffer;
     }
+
+    MonitoringTransmitterBuffer(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
+    }
+
+    virtual ~MonitoringTransmitterBuffer() {}
 };

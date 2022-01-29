@@ -7,14 +7,15 @@ class NavigationSBAS : public UBXMessage {
     byte service;
     uint8_t cnt;
     // reserved0 U1[3]
-    NavigationSBASItem* items[SBAS_MAX_ITEMS];
+    NavigationSBASItem* items[GNSS_MAX_SVID];
 
-    NavigationSBAS(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    NavigationSBAS() {
+      msgId = MessageId::Navigation_SBAS;
+    }
+
+    NavigationSBAS(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~NavigationSBAS() {}

@@ -7,12 +7,9 @@ class ConfigurationAntenna : public UBXMessage {
       msgId = MessageId::Configuration_Antenna;
     }
 
-    ConfigurationAntenna(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    ConfigurationAntenna(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~ConfigurationAntenna() {}

@@ -6,14 +6,13 @@ class AidingEphemeris : public UBXMessage {
     GPSSubframe2 *subframe2;
     GPSSubframe3 *subframe3;
 
-    AidingEphemeris() {}
+    AidingEphemeris() {
+      msgId = MessageId::Aiding_Ephemeris;
+    }
 
-    AidingEphemeris(UBXMessage & msg) {
-        isValid = msg.isValid;
-        msgId = msg.msgId;
-        payloadLength = msg.payloadLength;
-        memcpy(payload, msg.payload, PAYLOAD_SIZE);
-        memcpy(checksum, msg.checksum, 2);
+    AidingEphemeris(UBXMessage *msg) {
+        isValid = msg->isValid;
+        msgId = msg->msgId;
     }
 
     virtual ~AidingEphemeris() {}

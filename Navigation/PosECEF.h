@@ -6,12 +6,13 @@ class NavigationPosECEF : public UBXMessage {
     int32_t ecefZ;
     uint32_t pAcc;
 
-    NavigationPosECEF(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    NavigationPosECEF() {
+      msgId = MessageId::Navigation_PosECEF;
+    }
+
+    NavigationPosECEF(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~NavigationPosECEF() {}

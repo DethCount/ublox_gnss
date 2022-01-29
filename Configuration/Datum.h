@@ -18,12 +18,9 @@ class ConfigurationDatum : public UBXMessage {
       msgId = MessageId::Configuration_Datum;
     }
 
-    ConfigurationDatum(UBXMessage & msg) {
-      isValid = msg.isValid;
-      msgId = msg.msgId;
-      payloadLength = msg.payloadLength;
-      memcpy(payload, msg.payload, PAYLOAD_SIZE);
-      memcpy(checksum, msg.checksum, 2);
+    ConfigurationDatum(UBXMessage *msg) {
+      isValid = msg->isValid;
+      msgId = msg->msgId;
     }
 
     virtual ~ConfigurationDatum() {}
