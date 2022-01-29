@@ -201,6 +201,10 @@ enum struct AntennaPowerStatus : uint8_t {
 #include "ReceiverManager/SpaceVehicule.h"
 #include "ReceiverManager/SpaceVehiculeInfo.h"
 
+#include "Timing/Mark.h"
+#include "Timing/Pulse.h"
+#include "Timing/Verification.h"
+
 #include "UBXParser.h"
 #include "UBXClient.h"
 
@@ -210,6 +214,7 @@ enum struct AntennaPowerStatus : uint8_t {
 #include "GNSSLog.h"
 #include "GNSSMonitoring.h"
 #include "GNSSReceiverManager.h"
+#include "GNSSTiming.h"
 
 // definition of UBX class IDs
 // source: U-blox7 V14 Receiver Description Protocol page 88 https://www.u-blox.com/sites/default/files/products/documents/u-blox7-V14_ReceiverDescriptionProtocolSpec_%28GPS.G7-SW-12001%29_Public.pdf

@@ -10,6 +10,7 @@ class UBXParser {
     UBXMessage* parseLog(UBXPacket* packet);
     UBXMessage* parseMonitoring(UBXPacket* packet);
     UBXMessage* parseReceiverManager(UBXPacket* packet);
+    UBXMessage* parseTiming(UBXPacket* packet);
 
     AidingAlmanach* parseAidingAlmanach(UBXPacket* packet);
     AidingAlmanachPlus* parseAidingAlmanachPlus(UBXPacket* packet);
@@ -100,6 +101,10 @@ class UBXParser {
     ReceiverManagerSpaceVehiculeInfo* parseReceiverManagerSpaceVehiculeInfo(
       UBXPacket* packet
     );
+
+    TimingMark* parseTimingMark(UBXPacket* packet);
+    TimingPulse* parseTimingPulse(UBXPacket* packet);
+    TimingVerification* parseTimingVerification(UBXPacket* packet);
 
     uint8_t extractU1(uint8_t startIdx, byte* msgData);
     int8_t extractI1(uint8_t startIdx, byte* msgData);

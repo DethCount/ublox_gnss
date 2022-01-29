@@ -22,6 +22,8 @@ UBXMessage* UBXParser::parse(UBXPacket* packet)
       return parseMonitoring(packet);
     case MessageClass::ReceiverManager:
       return parseReceiverManager(packet);
+    case MessageClass::Timing:
+      return parseTiming(packet);
     default:
       break;
   }
@@ -255,6 +257,23 @@ UBXMessage* UBXParser::parseReceiverManager(UBXPacket* packet)
       return parseReceiverManagerRaw(packet);
     case MessageId::ReceiverManager_SVStatus:
       return parseReceiverManagerSpaceVehiculeInfo(packet);
+    default:
+      break;
+  }
+
+  return packet;
+}
+
+UBXMessage* UBXParser::parseTiming(UBXPacket* packet)
+{
+  switch (packet->msgId)
+  {
+    case MessageId::Timing_Mark:
+      return parseTimingMark(packet);
+    case MessageId::Timing_Pulse:
+      return parseTimingPulse(packet);
+    case MessageId::Timing_Verification:
+      return parseTimingVerification(packet);
     default:
       break;
   }
@@ -1888,6 +1907,65 @@ ReceiverManagerSpaceVehiculeInfo* UBXParser::parseReceiverManagerSpaceVehiculeIn
     msg->SVs[i]->age = extractX1(idx + 5, packet->payload);
     idx += 6;
   }
+
+  return msg;
+}
+
+TimingMark* UBXParser::parseTimingMark(UBXPacket* packet) {
+  TimingMark *msg = new TimingMark(packet);
+  msg->isValid &= packet->payloadLength == 28;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->ch = extractU1(0, packet->payload);
+  msg->flags = extractX1(1, packet->payload);
+  msg->count = extractU2(2, packet->payload);
+  msg->wnR = extractU2(4, packet->payload);
+  msg->wnF = extractU2(6, packet->payload);
+  msg->towMsR = extractU4(8, packet->payload);
+  msg->towSubMsR = extractU4(12, packet->payload);
+  msg->towMsF = extractU4(16, packet->payload);
+  msg->towSubMsF = extractU4(20, packet->payload);
+  msg->accEst = extractU4(24, packet->payload);
+
+  return msg;
+}
+
+TimingPulse* UBXParser::parseTimingPulse(UBXPacket* packet) {
+  TimingPulse *msg = new TimingPulse(packet);
+  msg->isValid &= packet->payloadLength == 16;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->towMS = extractU4(0, packet->payload);
+  msg->towSubMS = extractU4(4, packet->payload);
+  msg->qErr = extractI4(8, packet->payload);
+  msg->week = extractU2(12, packet->payload);
+  msg->flags = extractX1(14, packet->payload);
+  // reserved1 U1
+
+  return msg;
+}
+
+TimingVerification* UBXParser::parseTimingVerification(UBXPacket* packet) {
+  TimingVerification *msg = new TimingVerification(packet);
+  msg->isValid &= packet->payloadLength == 20;
+
+  if (!msg->isValid) {
+    return msg;
+  }
+
+  msg->iTOW = extractI4(0, packet->payload);
+  msg->frac = extractI4(4, packet->payload);
+  msg->deltaMs = extractI4(8, packet->payload);
+  msg->deltaNs = extractI4(12, packet->payload);
+  msg->wno = extractU2(16, packet->payload);
+  msg->flags = extractX1(18, packet->payload);
+  // reserved1 U1
 
   return msg;
 }
