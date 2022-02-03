@@ -23,4 +23,37 @@ class ConfigurationUSB : public UBXMessage {
     }
 
     virtual ~ConfigurationUSB() {}
+
+    virtual void print(Stream* stream) {
+      stream->println(F("ConfigurationUSB"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("vendorId: "));
+      stream->println(vendorId);
+
+      stream->print(F("productId: "));
+      stream->println(productId);
+
+      stream->print(F("powerConsumption: "));
+      stream->println(powerConsumption);
+
+      stream->print(F("flags: "));
+      stream->println(flags, HEX);
+
+      stream->print(F("vendorString: "));
+      stream->println(vendorString);
+
+      stream->print(F("productString: "));
+      stream->println(productString);
+
+      stream->print(F("serialNumber: "));
+      stream->println(serialNumber);
+
+      stream->println();
+    }
 };

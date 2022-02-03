@@ -21,8 +21,8 @@ UBXRequestStatus GNSSLog::create(
   packet->payload[5] = (uint8_t)(userDefinedSize >> 16);
   packet->payload[6] = (uint8_t)(userDefinedSize >> 24);
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Sending log create command... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Sending log create command... "));
   #endif
 
   return client->trySendWithACK(packet);
@@ -33,8 +33,8 @@ UBXRequestStatus GNSSLog::erase() {
   packet->msgId = MessageId::Log_Erase;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Sending log erase command... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Sending log erase command... "));
   #endif
 
   return client->trySendWithACK(packet);
@@ -65,8 +65,8 @@ LogFindTime* GNSSLog::findTime(
   packet->payload[10] = second;
   packet->payload[11] = 0x00; // reserved2
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Searching log by time... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Searching log by time... "));
   #endif
 
   return client->trySend(
@@ -80,8 +80,8 @@ LogInfo* GNSSLog::getInfo() {
   packet->msgId = MessageId::Log_Info;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting log info... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting log info... "));
   #endif
 
   return client->trySend(
@@ -116,8 +116,8 @@ uint32_t GNSSLog::retrieve(
   packet->payload[10] = 0x00; // reserved
   packet->payload[11] = 0x00; // reserved
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting log entries... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting log entries... "));
   #endif
 
   client->send(packet);
@@ -153,8 +153,8 @@ void GNSSLog::log(char* str, uint8_t length) {
     packet->payload[i] = (uint8_t) str[i];
   }
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Logging string... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Logging string... "));
   #endif
 
   return client->trySend(
@@ -163,3 +163,37 @@ void GNSSLog::log(char* str, uint8_t length) {
   );
 }
 
+void GNSSLog::print(Stream* stream) {
+  FREERAM_PRINT;
+
+  printInfo(stream);
+
+  FREERAM_PRINT;
+}
+
+void GNSSLog::printFindTime(
+  Stream* stream,
+  uint16_t year,
+  uint8_t month,
+  uint8_t day,
+  uint8_t hour,
+  uint8_t minute,
+  uint8_t second,
+  uint8_t version = 0
+) {
+  findTime(
+    year,
+    month,
+    day,
+    hour,
+    minute,
+    second,
+    version
+  )
+    ->print(stream);
+}
+
+void GNSSLog::printInfo(Stream* stream) {
+  getInfo()
+    ->print(stream);
+}

@@ -1,4 +1,4 @@
-enum MessageId : unsigned int {
+enum struct MessageId : uint16_t {
   None = 0x0000,
   Navigation_PosECEF = ((uint16_t) MessageClass::Navigation) << 8 | 0x01,
   Navigation_PosLLH = ((uint16_t) MessageClass::Navigation) << 8 | 0x02,

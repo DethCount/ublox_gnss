@@ -1,11 +1,14 @@
 #include "Arduino.h"
+#include "MemoryUsage.h"
+
 
 #ifdef __AVR__
   #include <util/delay.h>
   #include <SoftwareSerial.h>
 #endif
 
-#define GNSS_DEBUG
+#define GNSS_LOG_INFO
+// #define GNSS_LOG_DEBUG
 
 #define GNSS_NB_PORTS 6
 #define GNSS_NB_PROTOCOLS 8
@@ -61,8 +64,8 @@ enum struct GNSSProtocol : uint8_t {
 enum struct GNSSFixType : uint8_t {
   NoFix = 0x00,
   DeadReckoning = 0x01,
-  D2 = 0x02,
-  D3 = 0x03,
+  TwoDimensions = 0x02,
+  ThreeDimensions = 0x03,
   GNSSWithDeadReckoning = 0x04,
   Time = 0x05
 };
@@ -70,6 +73,23 @@ enum struct GNSSFixType : uint8_t {
 enum struct GNSSReferenceTime : uint16_t {
   UTC = 0x00,
   GPS = 0x01
+};
+
+enum struct GNSSTimeBase : uint8_t {
+  Receiver = 0x00,
+  GNSS = 0x01,
+  UTC = 0x02
+};
+
+enum struct GNSSTimeBase2 : uint8_t {
+  GNSS = 0x00,
+  UTC = 0x01
+};
+
+enum struct GNSSAidingTimeSource : uint8_t {
+  None = 0x00,
+  RTC = 0x01,
+  AidingInit = 0x03,
 };
 
 enum struct SBASMode : uint8_t {
@@ -99,6 +119,20 @@ enum struct LowPowerMode : uint8_t {
   Continuous = 0x00,
   PowerSave = 0x01,
   Continuous2 = 0x04,
+};
+
+enum struct PowerSaveModeStatus : uint8_t {
+  Acquisition = 0x00,
+  Tracking = 0x01,
+  PowerOptimizedTracking = 0x02,
+  Inactive = 0x03,
+};
+
+enum struct MapMatchingStatus : uint8_t {
+  None = 0x00,
+  Valid = 0x01, // received but too old
+  Used = 0x02, // applied
+  DeadReckoning = 0x03
 };
 
 enum struct GNSSLogSize : uint8_t {
@@ -171,13 +205,13 @@ enum struct AntennaPowerStatus : uint8_t {
 #include "Configuration/SBAS.h"
 #include "Configuration/TimePulse.h"
 #include "Configuration/USB.h"
-
+/*
 #include "Information/Debug.h"
 #include "Information/Error.h"
 #include "Information/Notice.h"
 #include "Information/Test.h"
 #include "Information/Warning.h"
-
+*/
 #include "Log/FindTime.h"
 #include "Log/Info.h"
 #include "Log/RetrievePosition.h"
@@ -215,6 +249,7 @@ enum struct AntennaPowerStatus : uint8_t {
 #include "GNSSMonitoring.h"
 #include "GNSSReceiverManager.h"
 #include "GNSSTiming.h"
+// #include "GNSSInformation.h"
 
 // definition of UBX class IDs
 // source: U-blox7 V14 Receiver Description Protocol page 88 https://www.u-blox.com/sites/default/files/products/documents/u-blox7-V14_ReceiverDescriptionProtocolSpec_%28GPS.G7-SW-12001%29_Public.pdf
@@ -225,6 +260,11 @@ class GNSS {
     GNSSAiding *aiding;
     GNSSNavigation *navigation;
     GNSSConfiguration *configuration;
+    GNSSLog *log;
+    GNSSMonitoring *monitoring;
+    GNSSReceiverManager *receiverManager;
+    GNSSTiming *timing;
+    // GNSSInformation *information;
 
     #ifdef __AVR__
       GNSS(SoftwareSerial *ss);

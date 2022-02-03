@@ -11,4 +11,17 @@ class GPSSubframe {
       nbWords = raw ? RAW_NB_WORDS : NB_WORDS;
       words = new uint32_t[nbWords];
     }
+
+    virtual void print(Stream* stream, char* name = "GPSSubframe") {
+      stream->println(name);
+
+      for (uint8_t i = 0; i < nbWords; i++) {
+        stream->print(F("word["));
+        stream->print(i);
+        stream->print(F("]: "));
+        stream->println(words[i]);
+      }
+
+      stream->println();
+    }
 };

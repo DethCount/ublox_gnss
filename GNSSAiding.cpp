@@ -9,14 +9,14 @@ AidingAlmanach* GNSSAiding::getAlmanach() {
 	packet->msgId = MessageId::Aiding_Almanach;
 	packet->payloadLength = 0;
 
-	#ifdef GNSS_DEBUG
-		Serial.print("Getting aiding almanach... ");
+	#ifdef GNSS_LOG_INFO
+		Serial.print(F("Getting aiding almanach... "));
 	#endif
 
-	return static_cast<AidingAlmanach*>(client->trySend(
+	return client->trySend(
 		packet,
 		MessageId::Aiding_Almanach
-	));
+	);
 }
 
 AidingAlmanach* GNSSAiding::getAlmanach(uint8_t svid) {
@@ -25,14 +25,14 @@ AidingAlmanach* GNSSAiding::getAlmanach(uint8_t svid) {
 	packet->payloadLength = 1;
 	packet->payload[0] = svid;
 
-	#ifdef GNSS_DEBUG
-		Serial.print("Getting aiding almanach... ");
+	#ifdef GNSS_LOG_INFO
+		Serial.print(F("Getting aiding almanach for given svid... "));
 	#endif
 
-	return static_cast<AidingAlmanach*>(client->trySend(
+	return client->trySend(
 		packet,
 		MessageId::Aiding_Almanach
-	));
+	);
 }
 
 AidingAlmanachPlus* GNSSAiding::getAlmanachPlus(
@@ -66,14 +66,14 @@ AidingAlmanachPlus* GNSSAiding::getAlmanachPlus(
 	packet->payload[14] = (id3 >> 16) & 0xFF;
 	packet->payload[15] = (id3 >> 24) & 0xFF;
 
-	#ifdef GNSS_DEBUG
-		Serial.print("Getting aiding almanach plus... ");
+	#ifdef GNSS_LOG_INFO
+		Serial.print(F("Getting aiding almanach plus... "));
 	#endif
 
-	return static_cast<AidingAlmanachPlus*>(client->trySend(
+	return client->trySend(
 		packet,
 		MessageId::Aiding_AlmanachPlus
-	));
+	);
 }
 
 AidingAOP* GNSSAiding::getAOP() {
@@ -81,14 +81,14 @@ AidingAOP* GNSSAiding::getAOP() {
 	packet->msgId = MessageId::Aiding_AOP;
 	packet->payloadLength = 0;
 
-	#ifdef GNSS_DEBUG
-		Serial.print("Getting aiding AOP... ");
+	#ifdef GNSS_LOG_INFO
+		Serial.print(F("Getting aiding AOP... "));
 	#endif
 
-	return static_cast<AidingAOP*>(client->trySend(
+	return client->trySend(
 		packet,
 		MessageId::Aiding_AOP
-	));
+	);
 }
 
 AidingAOP* GNSSAiding::getAOP(uint8_t svid) {
@@ -97,14 +97,14 @@ AidingAOP* GNSSAiding::getAOP(uint8_t svid) {
 	packet->payloadLength = 1;
 	packet->payload[0] = svid;
 
-	#ifdef GNSS_DEBUG
-		Serial.print("Getting aiding AOP for given svid... ");
+	#ifdef GNSS_LOG_INFO
+		Serial.print(F("Getting aiding AOP for given svid... "));
 	#endif
 
-	return static_cast<AidingAOP*>(client->trySend(
+	return client->trySend(
 		packet,
 		MessageId::Aiding_AOP
-	));
+	);
 }
 
 void GNSSAiding::getData() {
@@ -112,9 +112,9 @@ void GNSSAiding::getData() {
 	packet->msgId = MessageId::Aiding_Data;
 	packet->payloadLength = 0;
 
-	#ifdef GNSS_DEBUG
+	#ifdef GNSS_LOG_INFO
 		Serial.print(
-			"Requesting aiding data... Expecting AID-INI, AID-HUI, AID-EPH and AID-ALM messages."
+			F("Requesting aiding data... Expecting AID-INI, AID-HUI, AID-EPH and AID-ALM messages.")
 		);
 	#endif
 
@@ -129,14 +129,14 @@ AidingEphemeris* GNSSAiding::getEphemeris() {
 	packet->msgId = MessageId::Aiding_Ephemeris;
 	packet->payloadLength = 0;
 
-	#ifdef GNSS_DEBUG
-		Serial.print("Getting aiding ephemeris... ");
+	#ifdef GNSS_LOG_INFO
+		Serial.print(F("Getting aiding ephemeris... "));
 	#endif
 
-	return static_cast<AidingEphemeris*>(client->trySend(
+	return client->trySend(
 		packet,
 		MessageId::Aiding_Ephemeris
-	));
+	);
 }
 
 AidingEphemeris* GNSSAiding::getEphemeris(uint8_t svid) {
@@ -145,14 +145,14 @@ AidingEphemeris* GNSSAiding::getEphemeris(uint8_t svid) {
 	packet->payloadLength = 1;
 	packet->payload[0] = svid;
 
-	#ifdef GNSS_DEBUG
-		Serial.print("Getting aiding ephemeris for given svid... ");
+	#ifdef GNSS_LOG_INFO
+		Serial.print(F("Getting aiding ephemeris for given svid... "));
 	#endif
 
-	return static_cast<AidingEphemeris*>(client->trySend(
+	return client->trySend(
 		packet,
 		MessageId::Aiding_Ephemeris
-	));
+	);
 }
 
 AidingHealthUTCIonosphere* GNSSAiding::getHealthUTCIonosphere() {
@@ -160,14 +160,14 @@ AidingHealthUTCIonosphere* GNSSAiding::getHealthUTCIonosphere() {
 	packet->msgId = MessageId::Aiding_HealthUTCIonosphere;
 	packet->payloadLength = 0;
 
-	#ifdef GNSS_DEBUG
-		Serial.print("Getting aiding health, UTC and ionosphere... ");
+	#ifdef GNSS_LOG_INFO
+		Serial.print(F("Getting aiding health, UTC and ionosphere... "));
 	#endif
 
-	return static_cast<AidingHealthUTCIonosphere*>(client->trySend(
+	return client->trySend(
 		packet,
 		MessageId::Aiding_HealthUTCIonosphere
-	));
+	);
 }
 
 AidingInit* GNSSAiding::getInit() {
@@ -175,14 +175,14 @@ AidingInit* GNSSAiding::getInit() {
 	packet->msgId = MessageId::Aiding_Init;
 	packet->payloadLength = 0;
 
-	#ifdef GNSS_DEBUG
-		Serial.print("Getting aiding initial data... ");
+	#ifdef GNSS_LOG_INFO
+		Serial.print(F("Getting aiding initial data... "));
 	#endif
 
-	return static_cast<AidingInit*>(client->trySend(
+	return client->trySend(
 		packet,
 		MessageId::Aiding_Init
-	));
+	);
 }
 
 void GNSSAiding::requestAll() {
@@ -190,8 +190,8 @@ void GNSSAiding::requestAll() {
 	packet->msgId = MessageId::Aiding_Request;
 	packet->payloadLength = 0;
 
-	#ifdef GNSS_DEBUG
-		Serial.print("Request aiding data...");
+	#ifdef GNSS_LOG_INFO
+		Serial.print(F("Request aiding data..."));
 	#endif
 
 	client->trySend(
@@ -199,3 +199,82 @@ void GNSSAiding::requestAll() {
 		MessageId::Aiding_Request
 	);
 }
+
+void GNSSAiding::print(Stream* stream) {
+  FREERAM_PRINT;
+
+  printAlmanach(stream);
+  printAOP(stream);
+  printEphemeris(stream);
+  printHealthUTCIonosphere(stream);
+  printInit(stream);
+
+  FREERAM_PRINT;
+}
+
+void GNSSAiding::printAlmanach(Stream* stream) {
+  getAlmanach()
+    ->print(stream);
+}
+
+void GNSSAiding::printAlmanach(Stream* stream, uint8_t svid) {
+  getAlmanach(svid)
+    ->print(stream);
+}
+
+void GNSSAiding::printAlmanachPlus(
+  Stream* stream,
+  uint8_t idSize,
+  uint8_t type,
+  uint16_t ofs,
+  uint16_t size,
+  uint16_t fileId,
+  uint16_t dataSize,
+  uint8_t id1,
+  uint8_t id2,
+  uint16_t id3
+) {
+  getAlmanachPlus(
+    idSize,
+    type,
+    ofs,
+    size,
+    fileId,
+    dataSize,
+    id1,
+    id2,
+    id3
+  )
+    ->print(stream);
+}
+
+void GNSSAiding::printAOP(Stream* stream) {
+  getAOP()
+    ->print(stream);
+}
+
+void GNSSAiding::printAOP(Stream* stream, uint8_t svid) {
+  getAOP(svid)
+    ->print(stream);
+}
+
+void GNSSAiding::printEphemeris(Stream* stream) {
+  getEphemeris()
+    ->print(stream);
+}
+
+void GNSSAiding::printEphemeris(Stream* stream, uint8_t svid) {
+  getEphemeris(svid)
+    ->print(stream);
+}
+
+void GNSSAiding::printHealthUTCIonosphere(Stream* stream) {
+  getHealthUTCIonosphere()
+    ->print(stream);
+}
+
+void GNSSAiding::printInit(Stream* stream) {
+  getInit()
+    ->print(stream);
+}
+

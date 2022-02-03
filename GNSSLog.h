@@ -37,4 +37,17 @@ class GNSSLog {
     );
 
     void log(char* str, uint8_t length);
+
+    void print(Stream* stream);
+    void printFindTime(
+      Stream* stream,
+      uint16_t year,
+      uint8_t month,
+      uint8_t day,
+      uint8_t hour,
+      uint8_t minute,
+      uint8_t second,
+      uint8_t version = 0
+    );
+    void printInfo(Stream* stream);
 };

@@ -12,4 +12,31 @@ class MonitoringBuffer : public UBXMessage {
     }
 
     virtual ~MonitoringBuffer() {}
+
+    void print(Stream* stream) {
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      for (uint8_t i = 0; i < GNSS_NB_PORTS; i++) {
+        stream->print(F("pending["));
+        stream->print(i);
+        stream->print(F("]: "));
+        stream->println(pending[i]);
+
+        stream->print(F("usage["));
+        stream->print(i);
+        stream->print(F("]: "));
+        stream->println(usage[i]);
+
+        stream->print(F("peakUsage["));
+        stream->print(i);
+        stream->print(F("]: "));
+        stream->println(peakUsage[i]);
+      }
+
+      stream->println();
+    }
 };

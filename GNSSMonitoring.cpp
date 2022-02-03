@@ -9,8 +9,8 @@ MonitoringHardware* GNSSMonitoring::getHardware() {
   packet->msgId = MessageId::Monitoring_Hardware;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting hardware monitoring... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting hardware monitoring... "));
   #endif
 
   return client->trySend(
@@ -24,8 +24,8 @@ MonitoringHardwareExtended* GNSSMonitoring::getHardwareExtended() {
   packet->msgId = MessageId::Monitoring_HardwareExtended;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting hardware extended monitoring... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting hardware extended monitoring... "));
   #endif
 
   return client->trySend(
@@ -39,8 +39,8 @@ MonitoringIO* GNSSMonitoring::getIO() {
   packet->msgId = MessageId::Monitoring_IO;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting IO monitoring... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting IO monitoring... "));
   #endif
 
   return client->trySend(
@@ -54,8 +54,8 @@ MonitoringMsgParseProcess* GNSSMonitoring::getMsgParseProcess() {
   packet->msgId = MessageId::Monitoring_MsgParseProcess;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting msg parse and process monitoring... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting msg parse and process monitoring... "));
   #endif
 
   return client->trySend(
@@ -69,8 +69,8 @@ MonitoringReceiver* GNSSMonitoring::getReceiver() {
   packet->msgId = MessageId::Monitoring_Receiver;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting receiver status monitoring... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting receiver status monitoring... "));
   #endif
 
   return client->trySend(
@@ -84,8 +84,8 @@ MonitoringReceiverBuffer* GNSSMonitoring::getReceiverBuffer() {
   packet->msgId = MessageId::Monitoring_ReceiverBuffer;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting receiver buffer monitoring... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting receiver buffer monitoring... "));
   #endif
 
   return client->trySend(
@@ -99,8 +99,8 @@ MonitoringTransmitterBuffer* GNSSMonitoring::getTransmitterBuffer() {
   packet->msgId = MessageId::Monitoring_TransmitterBuffer;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting transmitter buffer monitoring... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting transmitter buffer monitoring... "));
   #endif
 
   return client->trySend(
@@ -114,12 +114,67 @@ MonitoringVersion* GNSSMonitoring::getVersion() {
   packet->msgId = MessageId::Monitoring_Version;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting version monitoring... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting version monitoring... "));
   #endif
 
   return client->trySend(
     packet,
     MessageId::Monitoring_Version
   );
+}
+
+void GNSSMonitoring::print(Stream* stream) {
+  FREERAM_PRINT;
+
+  printHardware(stream);
+  printHardwareExtended(stream);
+  printIO(stream);
+  printMsgParseProcess(stream);
+  printReceiver(stream);
+  printReceiverBuffer(stream);
+  printTransmitterBuffer(stream);
+  printVersion(stream);
+
+  FREERAM_PRINT;
+}
+
+void GNSSMonitoring::printHardware(Stream* stream) {
+  getHardware()
+    ->print(stream);
+}
+
+void GNSSMonitoring::printHardwareExtended(Stream* stream) {
+  getHardwareExtended()
+    ->print(stream);
+}
+
+void GNSSMonitoring::printIO(Stream* stream) {
+  getIO()
+    ->print(stream);
+}
+
+void GNSSMonitoring::printMsgParseProcess(Stream* stream) {
+  getMsgParseProcess()
+    ->print(stream);
+}
+
+void GNSSMonitoring::printReceiver(Stream* stream) {
+  getReceiver()
+    ->print(stream);
+}
+
+void GNSSMonitoring::printReceiverBuffer(Stream* stream) {
+  getReceiverBuffer()
+    ->print(stream);
+}
+
+void GNSSMonitoring::printTransmitterBuffer(Stream* stream) {
+  getTransmitterBuffer()
+    ->print(stream);
+}
+
+void GNSSMonitoring::printVersion(Stream* stream) {
+  getVersion()
+    ->print(stream);
 }

@@ -14,4 +14,26 @@ class ReceiverManagerAlmanach : public UBXMessage {
     }
 
     virtual ~ReceiverManagerAlmanach() {}
+
+    virtual void print(Stream* stream) {
+      stream->println(F("ReceiverManagerAlmanach"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("svid: "));
+      stream->println(svid);
+
+      stream->print(F("Week number: "));
+      stream->println(week);
+
+      if (week != 0) {
+        subframe->print(stream);
+      }
+
+      stream->println();
+    }
 };

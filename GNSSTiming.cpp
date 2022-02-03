@@ -9,8 +9,8 @@ TimingMark* GNSSTiming::getMark() {
   packet->msgId = MessageId::Timing_Mark;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting time mark data... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting time mark data... "));
   #endif
 
   return client->trySend(
@@ -24,8 +24,8 @@ TimingPulse* GNSSTiming::getPulse() {
   packet->msgId = MessageId::Timing_Pulse;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting time pulse... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting time pulse... "));
   #endif
 
   return client->trySend(
@@ -39,12 +39,37 @@ TimingVerification* GNSSTiming::getVerification() {
   packet->msgId = MessageId::Timing_Verification;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting time verification... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting time verification... "));
   #endif
 
   return client->trySend(
     packet,
     MessageId::Timing_Verification
   );
+}
+
+void GNSSTiming::print(Stream* stream) {
+  FREERAM_PRINT;
+
+  printMark(stream);
+  printPulse(stream);
+  printVerification(stream);
+
+  FREERAM_PRINT;
+}
+
+void GNSSTiming::printMark(Stream* stream) {
+  getMark()
+    ->print(stream);
+}
+
+void GNSSTiming::printPulse(Stream* stream) {
+  getPulse()
+    ->print(stream);
+}
+
+void GNSSTiming::printVerification(Stream* stream) {
+  getVerification()
+    ->print(stream);
 }

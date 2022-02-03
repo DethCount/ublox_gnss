@@ -9,8 +9,8 @@ ReceiverManagerAlmanach* GNSSReceiverManager::getAlmanach() {
   packet->msgId = MessageId::ReceiverManager_Almanach;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting alamanach from receiver menager... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting alamanach from receiver menager... "));
   #endif
 
   return client->trySend(
@@ -25,8 +25,10 @@ ReceiverManagerAlmanach* GNSSReceiverManager::getAlmanach(uint8_t svid) {
   packet->payloadLength = 1;
   packet->payload[0] = svid;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting alamanach from receiver menager for hoven svid... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(
+      F("Getting alamanach from receiver menager for hoven svid... ")
+    );
   #endif
 
   return client->trySend(
@@ -40,8 +42,8 @@ ReceiverManagerEphemeris* GNSSReceiverManager::getEphemeris() {
   packet->msgId = MessageId::ReceiverManager_Ephemeris;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting ephemeris from receiver manager... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting ephemeris from receiver manager... "));
   #endif
 
   return client->trySend(
@@ -56,8 +58,10 @@ ReceiverManagerEphemeris* GNSSReceiverManager::getEphemeris(uint8_t svid) {
   packet->payloadLength = 1;
   packet->payload[0] = svid;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting ephemeris from receiver manager for given svid... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(
+      F("Getting ephemeris from receiver manager for given svid... ")
+    );
   #endif
 
   return client->trySend(
@@ -79,8 +83,8 @@ void GNSSReceiverManager::powerRequest(uint32_t duration, uint32_t flags) {
   packet->payload[6] = (uint8_t)(flags >> 16);
   packet->payload[7] = (uint8_t)(flags >> 24);
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Sending power request to receiver manager... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Sending power request to receiver manager... "));
   #endif
 
   client->send(packet);
@@ -91,8 +95,8 @@ ReceiverManagerRaw* GNSSReceiverManager::getRaw() {
   packet->msgId = MessageId::ReceiverManager_Raw;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting raw measurement data from receiver manager... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting raw measurement data from receiver manager... "));
   #endif
 
   return client->trySend(
@@ -106,12 +110,55 @@ ReceiverManagerSpaceVehiculeInfo* GNSSReceiverManager::getSpaceVehiculeInfo() {
   packet->msgId = MessageId::ReceiverManager_SVStatus;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting space vehicules statuses from receiver manager... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(
+      F("Getting space vehicules statuses from receiver manager... ")
+    );
   #endif
 
   return client->trySend(
     packet,
     MessageId::ReceiverManager_SVStatus
   );
+}
+
+void GNSSReceiverManager::print(Stream* stream) {
+  FREERAM_PRINT;
+
+  printAlmanach(stream);
+  printEphemeris(stream);
+  printRaw(stream);
+  printSpaceVehiculeInfo(stream);
+
+  FREERAM_PRINT;
+}
+
+void GNSSReceiverManager::printAlmanach(Stream* stream) {
+  getAlmanach()
+    ->print(stream);
+}
+
+void GNSSReceiverManager::printAlmanach(Stream* stream, uint8_t svid) {
+  getAlmanach(svid)
+    ->print(stream);
+}
+
+void GNSSReceiverManager::printEphemeris(Stream* stream) {
+  getEphemeris()
+    ->print(stream);
+}
+
+void GNSSReceiverManager::printEphemeris(Stream* stream, uint8_t svid) {
+  getEphemeris(svid)
+    ->print(stream);
+}
+
+void GNSSReceiverManager::printRaw(Stream* stream) {
+  getRaw()
+    ->print(stream);
+}
+
+void GNSSReceiverManager::printSpaceVehiculeInfo(Stream* stream) {
+  getSpaceVehiculeInfo()
+    ->print(stream);
 }

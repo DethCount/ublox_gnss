@@ -20,4 +20,21 @@ class GNSSNavigation {
     NavigationTimeUTC* getTimeUTC();
     NavigationVelECEF* getVelECEF();
     NavigationVelNED* getVelNED();
+
+    void print(Stream* stream);
+    void printAOPStatus(Stream* stream);
+    void printClock(Stream* stream);
+    void printDGPS(Stream* stream);
+    void printDOP(Stream* stream);
+    void printPosECEF(Stream* stream);
+    void printPosLLH(Stream* stream);
+    void printPosVT(Stream* stream);
+    void printSBAS(Stream* stream);
+    void printSOL(Stream* stream);
+    void printStatus(Stream* stream);
+    void printSpaceVehiculeInfo(Stream* stream);
+    void printTimeGPS(Stream* stream);
+    void printTimeUTC(Stream* stream);
+    void printVelECEF(Stream* stream);
+    void printVelNED(Stream* stream);
 };

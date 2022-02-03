@@ -76,4 +76,47 @@ class GPSSubframe1 : public GPSSubframe  {
     uint8_t getSVClockDriftRateCorrectionCoefficient() { // a(f2)
       return (uint8_t)(words[raw ? 8 : 6] >> 16);
     }
+
+    virtual void print(Stream* stream) {
+      GPSSubframe::print(stream, "GPSSubframe1");
+
+      stream->print(F("week number (WN): "));
+      stream->println(getWeekNumber());
+
+      stream->print(F("user range accuracy index (URA Index): "));
+      stream->println(getUserRangeAccuracyIndex());
+
+      stream->print(F("user range accuracy index (URA Index): "));
+      stream->print(getUserRangeAccuracyIndexInMeters());
+      stream->println(F("m"));
+
+      stream->print(F("space vehicule health (SV Health): "));
+      stream->println(getSpaceVehiculeHealth());
+
+      stream->print(F("issue of data - clock (IODC): "));
+      stream->println(getIssueOfDataClock());
+
+      stream->print(F("telemetry group delay differential (T(gd)): "));
+      stream->println(getTelemetryGroupDelayDifferential());
+
+      stream->print(F("time of clock (t(oc)): "));
+      stream->println(getTimeOfClock());
+
+      stream->print(
+        F("space vehicule clock bias correction coefficient (a(f0)): ")
+      );
+      stream->println(getSVClockBiasCorrectionCoefficient());
+
+      stream->print(
+        F("space vehicule clock drift correction coefficient (a(f1)): ")
+      );
+      stream->println(getSVClockDriftCorrectionCoefficient());
+
+      stream->print(
+        F("space vehicule clock drift rate correction coefficient (a(f2)): ")
+      );
+      stream->println(getSVClockDriftRateCorrectionCoefficient());
+
+      stream->println();
+    }
 };

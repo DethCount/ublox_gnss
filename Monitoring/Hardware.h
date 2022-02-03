@@ -27,5 +27,67 @@ class MonitoringHardware : public UBXMessage {
       msgId = msg->msgId;
     }
 
-    virtual ~MonitoringHardware() {}
+    virtual ~MonitoringHardware() {
+      delete VP;
+    }
+
+    void print(Stream *stream) {
+      stream->println(F("MonitoringHardware: "));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        return;
+      }
+
+      stream->print(F("pinSel: "));
+      stream->println(pinSel, HEX);
+
+      stream->print(F("pinBank: "));
+      stream->println(pinBank, HEX);
+
+      stream->print(F("pinDir: "));
+      stream->println(pinDir, HEX);
+
+      stream->print(F("pinVal: "));
+      stream->println(pinVal, HEX);
+
+      stream->print(F("noisePerMS: "));
+      stream->println(noisePerMS);
+
+      stream->print(F("agcCnt: "));
+      stream->println(agcCnt);
+
+      stream->print(F("aStatus: "));
+      stream->println((uint8_t)aStatus, HEX);
+
+      stream->print(F("aPower: "));
+      stream->println((uint8_t)aPower, HEX);
+
+      stream->print(F("flags: "));
+      stream->println(flags, HEX);
+
+      stream->print(F("usedMask: "));
+      stream->println(usedMask, HEX);
+
+      for(int i = 0; i < sizeof(VP); i++) {
+        stream->print(F("VP["));
+        stream->print(i);
+        stream->print(F("]: "));
+        stream->println(VP[i], HEX);
+      }
+
+      stream->print(F("jamInd: "));
+      stream->println(jamInd, HEX);
+
+      stream->print(F("pinIrq: "));
+      stream->println(pinIrq, BIN);
+
+      stream->print(F("pullHigh: "));
+      stream->println(pullHigh, HEX);
+
+      stream->print(F("pullLow: "));
+      stream->println(pullLow, HEX);
+
+      stream->println();
+    }
 };

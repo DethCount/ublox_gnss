@@ -14,4 +14,25 @@ class LogFindTime : public UBXMessage {
     }
 
     virtual ~LogFindTime() {}
+
+    virtual void print(Stream* stream) {
+      stream->println(F("LogFindTime"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("Message version: "));
+      stream->println(version);
+
+      stream->print(F("Message type: "));
+      stream->println(type);
+
+      stream->print(F("Entry number: "));
+      stream->println(entryNumber);
+
+      stream->println();
+    }
 };

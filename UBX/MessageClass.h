@@ -1,4 +1,5 @@
-enum MessageClass : uint8_t {
+enum struct MessageClass : uint8_t {
+  None            = 0x00,
   Navigation      = 0x01, // Navigation Results: Position, Speed, Time, Acc, Heading, DOP, SVs used
   ReceiverManager = 0x02, // RXM Messages: Satellite Status, RTC Status
   Information     = 0x04, // Information Messages: Printf-Style Messages, with IDs such as Error, Warning, Notice

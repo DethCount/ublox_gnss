@@ -16,4 +16,36 @@ class NavigationVelECEF : public UBXMessage {
     }
 
     virtual ~NavigationVelECEF() {}
+
+    virtual void print(Stream* stream) {
+      stream->println(F("NavigationVelECEF"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("GPS time of week: "));
+      stream->print(iTOW);
+      stream->println(F("ms"));
+
+      stream->print(F("Earth-centered Earth-fixed X velocity: "));
+      stream->print(ecefVX);
+      stream->println("cm/s");
+
+      stream->print(F("Earth-centered Earth-fixed Y velocity: "));
+      stream->print(ecefVY);
+      stream->println("cm/s");
+
+      stream->print(F("Earth-centered Earth-fixed Z velocity: "));
+      stream->print(ecefVZ);
+      stream->println("cm/s");
+
+      stream->print(F("Speed accuracy estimate: "));
+      stream->print(sAcc);
+      stream->println("cm/s");
+
+      stream->println();
+    }
 };

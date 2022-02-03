@@ -6,7 +6,7 @@ class UBXParser {
     UBXMessage* parseAiding(UBXPacket* packet);
     UBXMessage* parseNavigation(UBXPacket* packet);
     UBXMessage* parseConfiguration(UBXPacket* packet);
-    UBXMessage* parseInformation(UBXPacket* packet);
+    // UBXMessage* parseInformation(UBXPacket* packet);
     UBXMessage* parseLog(UBXPacket* packet);
     UBXMessage* parseMonitoring(UBXPacket* packet);
     UBXMessage* parseReceiverManager(UBXPacket* packet);
@@ -69,13 +69,13 @@ class UBXParser {
     ConfigurationSBAS* parseConfigurationSBAS(UBXPacket* packet);
     ConfigurationTimePulse* parseConfigurationTimePulse(UBXPacket* packet);
     ConfigurationUSB* parseConfigurationUSB(UBXPacket* packet);
-
+    /*
     InformationDebug* parseInformationDebug(UBXPacket* packet);
     InformationError* parseInformationError(UBXPacket* packet);
     InformationNotice* parseInformationNotice(UBXPacket* packet);
     InformationTest* parseInformationTest(UBXPacket* packet);
     InformationWarning* parseInformationWarning(UBXPacket* packet);
-
+    */
     LogFindTime* parseLogFindTime(UBXPacket* packet);
     LogInfo* parseLogInfo(UBXPacket* packet);
     LogRetrievePosition* parseLogRetrievePosition(UBXPacket* packet);

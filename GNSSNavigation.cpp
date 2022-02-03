@@ -9,14 +9,14 @@ NavigationAOPStatus* GNSSNavigation::getAOPStatus() {
   packet->msgId = MessageId::Navigation_AOPStatus;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation AOP status... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation AOP status... "));
   #endif
 
-  return static_cast<NavigationAOPStatus*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_AOPStatus
-  ));
+  );
 }
 
 NavigationClock* GNSSNavigation::getClock() {
@@ -24,14 +24,14 @@ NavigationClock* GNSSNavigation::getClock() {
   packet->msgId = MessageId::Navigation_Clock;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation clock... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation clock... "));
   #endif
 
-  return static_cast<NavigationClock*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_Clock
-  ));
+  );
 }
 
 NavigationDGPS* GNSSNavigation::getDGPS() {
@@ -39,14 +39,14 @@ NavigationDGPS* GNSSNavigation::getDGPS() {
   packet->msgId = MessageId::Navigation_DGPS;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation DGPS... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation DGPS... "));
   #endif
 
-  return static_cast<NavigationDGPS*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_DGPS
-  ));
+  );
 }
 
 NavigationDOP* GNSSNavigation::getDOP() {
@@ -54,14 +54,14 @@ NavigationDOP* GNSSNavigation::getDOP() {
   packet->msgId = MessageId::Navigation_DillutionOfPrecision;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation DOP... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation DOP... "));
   #endif
 
-  return static_cast<NavigationDOP*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_DillutionOfPrecision
-  ));
+  );
 }
 
 NavigationPosECEF* GNSSNavigation::getPosECEF() {
@@ -69,14 +69,14 @@ NavigationPosECEF* GNSSNavigation::getPosECEF() {
   packet->msgId = MessageId::Navigation_PosECEF;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation ECEF position... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation ECEF position... "));
   #endif
 
-  return static_cast<NavigationPosECEF*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_PosECEF
-  ));
+  );
 }
 
 NavigationPosLLH* GNSSNavigation::getPosLLH() {
@@ -84,14 +84,14 @@ NavigationPosLLH* GNSSNavigation::getPosLLH() {
   packet->msgId = MessageId::Navigation_PosLLH;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation LLH position... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation LLH position... "));
   #endif
 
-  return static_cast<NavigationPosLLH*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_PosLLH
-  ));
+  );
 }
 
 NavigationPosVT* GNSSNavigation::getPosVT() {
@@ -99,14 +99,14 @@ NavigationPosVT* GNSSNavigation::getPosVT() {
   packet->msgId = MessageId::Navigation_PosVT;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation position velocity and time... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation position velocity and time... "));
   #endif
 
-  return static_cast<NavigationPosVT*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_PosVT
-  ));
+  );
 }
 
 NavigationSBAS* GNSSNavigation::getSBAS() {
@@ -114,14 +114,14 @@ NavigationSBAS* GNSSNavigation::getSBAS() {
   packet->msgId = MessageId::Navigation_SBAS;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation SBAS... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation SBAS... "));
   #endif
 
-  return static_cast<NavigationSBAS*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_SBAS
-  ));
+  );
 }
 
 NavigationSOL* GNSSNavigation::getSOL() {
@@ -129,14 +129,14 @@ NavigationSOL* GNSSNavigation::getSOL() {
   packet->msgId = MessageId::Navigation_SOL;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation SOL... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation SOL... "));
   #endif
 
-  return static_cast<NavigationSOL*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_SOL
-  ));
+  );
 }
 
 NavigationStatus* GNSSNavigation::getStatus() {
@@ -144,14 +144,14 @@ NavigationStatus* GNSSNavigation::getStatus() {
   packet->msgId = MessageId::Navigation_Status;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation status... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation status... "));
   #endif
 
-  return static_cast<NavigationStatus*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_Status
-  ));
+  );
 }
 
 NavigationSpaceVehiculeInfo* GNSSNavigation::getSpaceVehiculeInfo() {
@@ -159,14 +159,14 @@ NavigationSpaceVehiculeInfo* GNSSNavigation::getSpaceVehiculeInfo() {
   packet->msgId = MessageId::Navigation_SpaceVehiculeInfo;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation space vehicule information... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation space vehicule information... "));
   #endif
 
-  return static_cast<NavigationSpaceVehiculeInfo*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_SpaceVehiculeInfo
-  ));
+  );
 }
 
 NavigationTimeGPS* GNSSNavigation::getTimeGPS() {
@@ -174,14 +174,14 @@ NavigationTimeGPS* GNSSNavigation::getTimeGPS() {
   packet->msgId = MessageId::Navigation_TimeGPS;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation GPS time... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation GPS time... "));
   #endif
 
-  return static_cast<NavigationTimeGPS*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_TimeGPS
-  ));
+  );
 }
 
 NavigationTimeUTC* GNSSNavigation::getTimeUTC() {
@@ -189,14 +189,14 @@ NavigationTimeUTC* GNSSNavigation::getTimeUTC() {
   packet->msgId = MessageId::Navigation_TimeUTC;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation UTC time... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation UTC time... "));
   #endif
 
-  return static_cast<NavigationTimeUTC*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_TimeUTC
-  ));
+  );
 }
 
 NavigationVelECEF* GNSSNavigation::getVelECEF() {
@@ -204,14 +204,14 @@ NavigationVelECEF* GNSSNavigation::getVelECEF() {
   packet->msgId = MessageId::Navigation_VelECEF;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation ECEF velocity... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation ECEF velocity... "));
   #endif
 
-  return static_cast<NavigationVelECEF*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_VelECEF
-  ));
+  );
 }
 
 NavigationVelNED* GNSSNavigation::getVelNED() {
@@ -219,12 +219,110 @@ NavigationVelNED* GNSSNavigation::getVelNED() {
   packet->msgId = MessageId::Navigation_VelNED;
   packet->payloadLength = 0;
 
-  #ifdef GNSS_DEBUG
-    Serial.print("Getting navigation NED velocity... ");
+  #ifdef GNSS_LOG_INFO
+    Serial.print(F("Getting navigation NED velocity... "));
   #endif
 
-  return static_cast<NavigationVelNED*>(client->trySend(
+  return client->trySend(
     packet,
     MessageId::Navigation_VelNED
-  ));
+  );
 }
+
+void GNSSNavigation::print(Stream* stream) {
+  FREERAM_PRINT;
+
+  printAOPStatus(stream);
+  printClock(stream);
+  printDGPS(stream);
+  printDOP(stream);
+  printPosECEF(stream);
+  printPosLLH(stream);
+  printPosVT(stream);
+  printSBAS(stream);
+  printSOL(stream);
+  printStatus(stream);
+  printSpaceVehiculeInfo(stream);
+  printTimeGPS(stream);
+  printTimeUTC(stream);
+  printVelECEF(stream);
+  printVelNED(stream);
+
+  FREERAM_PRINT;
+}
+
+void GNSSNavigation::printAOPStatus(Stream* stream) {
+  getAOPStatus()
+    ->print(stream);
+}
+
+void GNSSNavigation::printClock(Stream* stream) {
+  getClock()
+    ->print(stream);
+}
+
+void GNSSNavigation::printDGPS(Stream* stream) {
+  getDGPS()
+    ->print(stream);
+}
+
+void GNSSNavigation::printDOP(Stream* stream) {
+  getDOP()
+    ->print(stream);
+}
+
+void GNSSNavigation::printPosECEF(Stream* stream) {
+  getPosECEF()
+    ->print(stream);
+}
+
+void GNSSNavigation::printPosLLH(Stream* stream) {
+  getPosLLH()
+    ->print(stream);
+}
+
+void GNSSNavigation::printPosVT(Stream* stream) {
+  getPosVT()
+    ->print(stream);
+}
+
+void GNSSNavigation::printSBAS(Stream* stream) {
+  getSBAS()
+    ->print(stream);
+}
+
+void GNSSNavigation::printSOL(Stream* stream) {
+  getSOL()
+    ->print(stream);
+}
+
+void GNSSNavigation::printStatus(Stream* stream) {
+  getStatus()
+    ->print(stream);
+}
+
+void GNSSNavigation::printSpaceVehiculeInfo(Stream* stream) {
+  getSpaceVehiculeInfo()
+    ->print(stream);
+}
+
+void GNSSNavigation::printTimeGPS(Stream* stream) {
+  getTimeGPS()
+    ->print(stream);
+}
+
+void GNSSNavigation::printTimeUTC(Stream* stream) {
+  getTimeUTC()
+    ->print(stream);
+}
+
+void GNSSNavigation::printVelECEF(Stream* stream) {
+  getVelECEF()
+    ->print(stream);
+}
+
+void GNSSNavigation::printVelNED(Stream* stream) {
+  getVelNED()
+    ->print(stream);
+}
+

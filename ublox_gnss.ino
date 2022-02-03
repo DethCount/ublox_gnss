@@ -6,15 +6,45 @@ GNSS *gnss = new GNSS(&ss);
 void setup()
 {
   Serial.begin(9600);
+  FREERAM_PRINT;
+  Serial.println("Setting up GNSS...");
   gnss->begin(PortRate::Bauds_9600); // Sets up the GNSS module to communicate with the Arduino over serial at 9600 baud
 
-  UBXMessage* packet;
-  
-  Serial.println("Disabling UBX time NAV data");
-  gnss->configuration->enableMessage(MessageId::Navigation_TimeUTC, false, 0x00);
+  gnss->ubxClient->numTries = 5;
+  gnss->ubxClient->timeout = 400;
 
-  Serial.println("Disabling UBX position NAV data");
-  gnss->configuration->enableMessage(MessageId::Navigation_PosLLH, false, 0x00);
+  // UBXMessage* packet;
+
+  // Serial.println("Disabling UBX time NAV data");
+  // gnss->configuration->enableMessage(MessageId::Navigation_TimeUTC, false, 0x00);
+
+  // Serial.println("Disabling UBX position NAV data");
+  // gnss->configuration->enableMessage(MessageId::Navigation_PosLLH, false, 0x00);
+
+/*
+  FREERAM_PRINT;
+
+  MonitoringHardware* hw = gnss->monitoring->getHardware();
+  FREERAM_PRINT;
+  hw->print(&Serial);
+  delete hw;
+*/
+
+  gnss->monitoring->print(&Serial);
+  gnss->configuration->print(&Serial);
+  gnss->aiding->print(&Serial);
+  gnss->navigation->print(&Serial);
+  gnss->log->print(&Serial);
+  gnss->receiverManager->print(&Serial);
+  gnss->timing->print(&Serial);
+
+  /*
+  ConfigurationMessaging *msgRate = gnss->configuration->getMsgRate(MessageId::Navigation_PosLLH);
+  Serial.println(msgRate->msgId);
+  for (uint8_t i = 0; i < sizeof(msgRate->portRate); i++) {
+    Serial.println(msgRate->portRate[i]);
+  }
+  //*/
 
   /*
   packet = gnss->configuration->getRate();
@@ -27,7 +57,7 @@ void setup()
   }
   */
 
-  ///*
+  /*
   packet = gnss->navigation->getPosVT();
   if (packet->isValid) {
     NavigationPosVT* posVT = static_cast<NavigationPosVT*>(packet);
@@ -63,15 +93,19 @@ void setup()
   }
   //*/
 
+  /*
   Serial.println("Enabling UBX time NAV data");
   gnss->configuration->enableMessage(MessageId::Navigation_TimeUTC, false, 0x01);
 
   Serial.println("Enabling UBX position NAV data");
   gnss->configuration->enableMessage(MessageId::Navigation_PosLLH, false, 0x01);
+  */
+  Serial.println("GNSS setup complete !");
 }
 
 void loop()
 {
+  /*
   UBXMessage* packet;
   
   packet = gnss->ubxClient->next();
@@ -124,4 +158,5 @@ void loop()
   }
   
   delay(10);
+  */
 }

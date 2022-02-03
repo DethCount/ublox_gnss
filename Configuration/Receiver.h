@@ -12,4 +12,19 @@ class ConfigurationReceiver : public UBXMessage {
     }
 
     virtual ~ConfigurationReceiver() {}
+
+    virtual void print(Stream* stream) {
+      stream->println(F("ConfigurationReceiver"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("lpMode: "));
+      stream->println(uint8_t(lpMode));
+
+      stream->println();
+    }
 };

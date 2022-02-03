@@ -48,4 +48,45 @@ class GPSSubframe2 : public GPSSubframe  {
     uint8_t getAgeOfDataOffset() { // AODO
       return ((uint8_t)(words[raw ? 9 : 7] >> 2)) & 0x1F;
     }
+
+    virtual void print(Stream* stream) {
+      GPSSubframe::print(stream, "GPSSubframe2");
+
+      stream->print(F("Issue of data - ephemeris (IODE): "));
+      stream->println(getIssueOfDataEphemeris());
+
+      stream->print(F("Orbit correction sine (C(rs)): "));
+      stream->println(getOrbitRadiusCorrectionSine());
+
+      stream->print(
+        F("Mean motion difference from computed value (delta n): ")
+      );
+      stream->println(getMeanMotionDifferenceFromComputedValue());
+
+      stream->print(F("Mean anomaly at reference time (M(0)): "));
+      stream->println(getMeanAnomalyAtReferenceTime());
+
+      stream->print(F("Lattitude correction cosine (C(UC)): "));
+      stream->println(getLatitudeCorrectionCosine());
+
+      stream->print(F("Lattitude correction sine (C(US)): "));
+      stream->println(getLatitudeCorrectionSine());
+
+      stream->print(F("Eccentricity (e): "));
+      stream->println(getEccentricity());
+
+      stream->print(F("Semi-major axis square root (sqrt(A)): "));
+      stream->println(getSemiMajorAxisSqrt());
+
+      stream->print(F("Time of ephemeris (t(oe)): "));
+      stream->println(getTimeOfEphemeris());
+
+      stream->print(F("FIT interval flag: "));
+      stream->println(getFitIntervalFlag());
+
+      stream->print(F("Age of data offset (AODO): "));
+      stream->println(getAgeOfDataOffset());
+
+      stream->println();
+    }
 };

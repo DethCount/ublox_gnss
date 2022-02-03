@@ -13,4 +13,22 @@ class ConfigurationInterferenceMonitor : public UBXMessage {
     }
 
     virtual ~ConfigurationInterferenceMonitor() {}
+
+    virtual void print(Stream* stream) {
+      stream->println(F("ConfigurationInterferenceMonitor"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("config: "));
+      stream->println(config);
+
+      stream->print(F("config2: "));
+      stream->println(config2);
+
+      stream->println();
+    }
 };

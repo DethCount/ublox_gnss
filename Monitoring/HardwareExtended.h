@@ -18,4 +18,37 @@ class MonitoringHardwareExtended : public UBXMessage {
     }
 
     virtual ~MonitoringHardwareExtended() {}
+
+    virtual void print(Stream* stream) {
+      stream->println(F("MonitoringHardwareExtended"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("ofsI: "));
+      stream->println(ofsI);
+
+      stream->print(F("magI: "));
+      stream->println(magI);
+
+      stream->print(F("ofsQ: "));
+      stream->println(ofsQ);
+
+      stream->print(F("magQ: "));
+      stream->println(magQ);
+
+      stream->print(F("cfgSource: "));
+      stream->println(cfgSource);
+
+      stream->print(F("lowLevCfg: "));
+      stream->println(lowLevCfg);
+
+      stream->print(F("postStatus: "));
+      stream->println(postStatus);
+
+      stream->println();
+    }
 };

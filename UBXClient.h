@@ -16,13 +16,17 @@ class UBXClient {
       unsigned int timeout = TIMEOUT
     );
 
-    UBXMessage* next(MessageId expectedId = MessageId::None);
+    UBXMessage* next(
+      MessageId expectedId = MessageId::None,
+      uint16_t expectedLength = 0
+    );
     UBXMessage* next(
       MessageId expectedId,
-      unsigned int timeout
+      unsigned int timeout,
+      uint16_t expectedLength
     );
 
-    UBXRequestStatus nextACK(UBXMessage* msg);
+    UBXRequestStatus nextACK(UBXPacket* packet);
 
     void calcChecksum(UBXPacket* packet);
 
@@ -30,5 +34,9 @@ class UBXClient {
 
     UBXRequestStatus trySendWithACK(UBXPacket* packet);
 
-    UBXMessage* trySend(UBXPacket* packet, MessageId expectedResponseMsgId);
+    UBXMessage* trySend(
+      UBXPacket* packet,
+      MessageId expectedResponseMsgId,
+      uint16_t expectedLength = 0
+    );
 };

@@ -1,10 +1,17 @@
-class UBXPacket : public UBXMessage {
+#define UBX_PAYLOAD_SIZE 0x3FF //0x0FFF
+
+class UBXPacket {
   public:
-    static const int PAYLOAD_SIZE = 0x0FFF;
+    bool isValid;
+    MessageId msgId;
+    uint16_t payloadLength = 0;
+    byte checksum[2] = {0x00, 0x00};
+    byte payload[UBX_PAYLOAD_SIZE];
 
-    uint16_t payloadLength;
-    byte checksum[2] = { 0x00, 0x00 };
-    byte payload[PAYLOAD_SIZE];
+    UBXPacket() {}
 
-    virtual ~UBXPacket() {}
+    virtual ~UBXPacket() {
+      // delete[] checksum;
+      // delete[] payload;
+    }
 };

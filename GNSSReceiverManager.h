@@ -16,4 +16,12 @@ class GNSSReceiverManager {
     ReceiverManagerSpaceVehiculeInfo* getSpaceVehiculeInfo();
 
     void powerRequest(uint32_t duration, uint32_t flags);
+
+    void print(Stream* stream);
+    void printAlmanach(Stream* stream);
+    void printAlmanach(Stream* stream, uint8_t svid);
+    void printEphemeris(Stream* stream);
+    void printEphemeris(Stream* stream, uint8_t svid);
+    void printRaw(Stream* stream);
+    void printSpaceVehiculeInfo(Stream* stream);
 };

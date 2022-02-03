@@ -13,4 +13,22 @@ class ConfigurationAntenna : public UBXMessage {
     }
 
     virtual ~ConfigurationAntenna() {}
+
+    virtual void print(Stream *stream) {
+      stream->println(F("ConfigurationAntenna"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("flags: "));
+      stream->println(flags, BIN);
+
+      stream->print(F("pins: "));
+      stream->println(pins, BIN);
+
+      stream->println();
+    }
 };

@@ -16,5 +16,46 @@ class TimingVerification : public UBXMessage {
       msgId = msg->msgId;
     }
 
+    GNSSAidingTimeSource getAidingTimeSource() {
+      return (GNSSAidingTimeSource) uint8_t(flags & 0x7);
+    }
+
     virtual ~TimingVerification() {}
+
+    virtual void print(Stream* stream) {
+      stream->println(F("TimingVerification"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("GNSS Time of week: "));
+      stream->print(iTOW);
+      stream->println(F("ms"));
+
+      stream->print(F("GNSS nanoseconds of time of week: "));
+      stream->print(frac);
+      stream->println(F("ns"));
+
+      stream->print(F("Delta time (local time - GNSS time): "));
+      stream->print(deltaMs);
+      stream->println(F("ms"));
+
+      stream->print(F("Delta nanoseconds (local time - GNSS time): "));
+      stream->print(deltaNs);
+      stream->println(F("ns"));
+
+      stream->print(F("GNSS Week number: "));
+      stream->println(wno);
+
+      stream->print(F("Flags: "));
+      stream->println(flags, HEX);
+
+      stream->print(F("Aiding time source: "));
+      stream->println(uint8_t(getAidingTimeSource()));
+
+      stream->println();
+    }
 };

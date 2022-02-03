@@ -24,4 +24,36 @@ class NavigationAOPStatus : public UBXMessage {
     }
 
     virtual ~NavigationAOPStatus() {}
+
+    bool useAOP() {
+      return bool(aopCfg & 0x1);
+    }
+
+    virtual void print(Stream* stream) {
+      stream->println(F("NavigationAOPStatus"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("GPS time of week: "));
+      stream->print(iTOW);
+      stream->println(F("ms"));
+
+      stream->print(F("AOP configuration flags: "));
+      stream->println(aopCfg, HEX);
+
+      stream->print(F("AOP enabled flag: "));
+      stream->println(useAOP());
+
+      stream->print(F("Status: "));
+      stream->println(uint8_t(aopCfg));
+
+      stream->print(F("Data availability mask for GPS SVs: "));
+      stream->println(availGPS, HEX);
+
+      stream->println();
+    }
 };

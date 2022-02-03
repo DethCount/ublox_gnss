@@ -17,4 +17,36 @@ class ReceiverManagerSpaceVehiculeInfo : public UBXMessage {
     }
 
     virtual ~ReceiverManagerSpaceVehiculeInfo() {}
+
+    virtual void print(Stream* stream) {
+      stream->println(F("ReceiverManagerSpaceVehiculeInfo"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("GPS time of week: "));
+      stream->print(iTOW);
+      stream->println(F("ms"));
+
+      stream->print(F("Local week number: "));
+      stream->println(week);
+
+      stream->print(F("Number of visible space vehicules: "));
+      stream->println(numVisibleSV);
+
+      stream->print(F("Number of space vehicules: "));
+      stream->println(numSV);
+
+      for (uint8_t i = 0; i < numSV; i++) {
+        stream->print(F("SVs["));
+        stream->print(i);
+        stream->print(F("]: "));
+        SVs[i]->print(stream);
+      }
+
+      stream->println();
+    }
 };

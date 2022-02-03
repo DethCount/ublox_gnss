@@ -1,2 +1,2 @@
-class InformationDebug : public UBXPacket {
+class InformationDebug : UBXPacket {
 };

@@ -18,4 +18,42 @@ class ConfigurationPower : public UBXMessage {
     }
 
     virtual ~ConfigurationPower() {}
+
+    virtual void print(Stream* stream) {
+      stream->println(F("ConfigurationPower"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("version: "));
+      stream->println(version);
+
+      stream->print(F("flags: "));
+      stream->println(flags, HEX);
+
+      stream->print(F("updatePeriod: "));
+      stream->print(updatePeriod);
+      stream->println(F("ms"));
+
+      stream->print(F("searchPeriod: "));
+      stream->print(searchPeriod);
+      stream->println(F("ms"));
+
+      stream->print(F("gridOffset: "));
+      stream->print(gridOffset);
+      stream->println(F("ms"));
+
+      stream->print(F("onTime: "));
+      stream->print(onTime);
+      stream->println(F("s"));
+
+      stream->print(F("minAcqTime: "));
+      stream->print(minAcqTime);
+      stream->println(F("s"));
+
+      stream->println();
+    }
 };

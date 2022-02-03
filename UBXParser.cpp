@@ -2,9 +2,7 @@
 
 UBXMessage* UBXParser::parse(UBXPacket* packet)
 {
-  bool successfull_parsing = false;
-
-  switch (highByte(packet->msgId))
+  switch ((MessageClass)highByte((uint16_t)packet->msgId))
   {
     case MessageClass::ACK:
       return parseACK(packet);
@@ -13,9 +11,9 @@ UBXMessage* UBXParser::parse(UBXPacket* packet)
     case MessageClass::Navigation:
       return parseNavigation(packet);
     case MessageClass::Configuration:
-      return parseConfiguration(packet);
+      return parseConfiguration(packet);/*
     case MessageClass::Information:
-      return parseInformation(packet);
+      return parseInformation(packet);*/
     case MessageClass::Log:
       return parseLog(packet);
     case MessageClass::Monitoring:
@@ -28,9 +26,9 @@ UBXMessage* UBXParser::parse(UBXPacket* packet)
       break;
   }
 
-  #ifdef GNSS_DEBUG
+  #ifdef GNSS_LOG_DEBUG
     Serial.println("--- MSG ---");
-    Serial.println(packet->msgId, HEX);
+    Serial.println((uint16_t)packet->msgId, HEX);
 
     for (int i = 0; i < packet->payloadLength; i++) {
       if (i > 0) {
@@ -45,12 +43,16 @@ UBXMessage* UBXParser::parse(UBXPacket* packet)
     Serial.println("!!!");
   #endif
 
-  return packet;
+  UBXMessage* msg = new UBXMessage();
+  msg->msgId = packet->msgId;
+  msg->isValid = packet->isValid;
+  return msg;
 }
 
 UBXAck* UBXParser::parseACK(UBXPacket* packet)
 {
-  UBXAck *msg = new UBXAck(packet);
+  UBXAck *msg = new UBXAck();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 2;
 
   if (msg->isValid) {
@@ -59,12 +61,6 @@ UBXAck* UBXParser::parseACK(UBXPacket* packet)
       | extractU1(1, packet->payload)
     );
   }
-
-  #ifdef GNSS_DEBUG
-    Serial.println("ACK ok");
-    Serial.println(msg->msgId, HEX);
-    Serial.println(msg->incomingMsgId, HEX);
-  #endif
 
   return msg;
 }
@@ -89,7 +85,10 @@ UBXMessage* UBXParser::parseAiding(UBXPacket* packet)
       break;
   }
 
-  return packet;
+  UBXMessage* msg = new UBXMessage();
+  msg->msgId = packet->msgId;
+  msg->isValid = packet->isValid;
+  return msg;
 }
 
 UBXMessage* UBXParser::parseNavigation(UBXPacket* packet)
@@ -130,7 +129,10 @@ UBXMessage* UBXParser::parseNavigation(UBXPacket* packet)
       break;
   }
 
-  return packet;
+  UBXMessage* msg = new UBXMessage();
+  msg->msgId = packet->msgId;
+  msg->isValid = packet->isValid;
+  return msg;
 }
 
 UBXMessage* UBXParser::parseConfiguration(UBXPacket* packet)
@@ -177,9 +179,13 @@ UBXMessage* UBXParser::parseConfiguration(UBXPacket* packet)
       break;
   }
 
-  return packet;
+  UBXMessage* msg = new UBXMessage();
+  msg->msgId = packet->msgId;
+  msg->isValid = packet->isValid;
+  return msg;
 }
 
+/*
 UBXMessage* UBXParser::parseInformation(UBXPacket* packet)
 {
   switch (packet->msgId)
@@ -198,9 +204,12 @@ UBXMessage* UBXParser::parseInformation(UBXPacket* packet)
       break;
   }
 
-  return packet;
+  UBXMessage* msg = new UBXMessage();
+  msg->msgId = packet->msgId;
+  msg->isValid = packet->isValid;
+  return msg;
 }
-
+*/
 UBXMessage* UBXParser::parseLog(UBXPacket* packet)
 {
   switch (packet->msgId)
@@ -217,7 +226,10 @@ UBXMessage* UBXParser::parseLog(UBXPacket* packet)
       break;
   }
 
-  return packet;
+  UBXMessage* msg = new UBXMessage();
+  msg->msgId = packet->msgId;
+  msg->isValid = packet->isValid;
+  return msg;
 }
 
 UBXMessage* UBXParser::parseMonitoring(UBXPacket* packet)
@@ -238,11 +250,16 @@ UBXMessage* UBXParser::parseMonitoring(UBXPacket* packet)
       return parseMonitoringReceiverBuffer(packet);
     case MessageId::Monitoring_TransmitterBuffer:
       return parseMonitoringTransmitterBuffer(packet);
+    case MessageId::Monitoring_Version:
+      return parseMonitoringVersion(packet);
     default:
       break;
   }
 
-  return packet;
+  UBXMessage* msg = new UBXMessage();
+  msg->msgId = packet->msgId;
+  msg->isValid = packet->isValid;
+  return msg;
 }
 
 UBXMessage* UBXParser::parseReceiverManager(UBXPacket* packet)
@@ -261,7 +278,10 @@ UBXMessage* UBXParser::parseReceiverManager(UBXPacket* packet)
       break;
   }
 
-  return packet;
+  UBXMessage* msg = new UBXMessage();
+  msg->msgId = packet->msgId;
+  msg->isValid = packet->isValid;
+  return msg;
 }
 
 UBXMessage* UBXParser::parseTiming(UBXPacket* packet)
@@ -278,12 +298,16 @@ UBXMessage* UBXParser::parseTiming(UBXPacket* packet)
       break;
   }
 
-  return packet;
+  UBXMessage* msg = new UBXMessage();
+  msg->msgId = packet->msgId;
+  msg->isValid = packet->isValid;
+  return msg;
 }
 
 AidingAlmanach* UBXParser::parseAidingAlmanach(UBXPacket* packet)
 {
-  AidingAlmanach *msg = new AidingAlmanach(packet);
+  AidingAlmanach *msg = new AidingAlmanach();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= 8;
 
   if (!msg->isValid) {
@@ -303,13 +327,13 @@ AidingAlmanach* UBXParser::parseAidingAlmanach(UBXPacket* packet)
   for (short i = 0; i < AidingAlmanach::MAX_NB_DWORD; i++) {
     msg->dword[i] = extractU4(8 + i * 4, packet->payload);
   }
-
   return msg;
 }
 
 AidingAlmanachPlus* UBXParser::parseAidingAlmanachPlus(UBXPacket* packet)
 {
-  AidingAlmanachPlus *msg = new AidingAlmanachPlus(packet);
+  AidingAlmanachPlus *msg = new AidingAlmanachPlus();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= 16;
 
   if (!msg->isValid) {
@@ -334,13 +358,13 @@ AidingAlmanachPlus* UBXParser::parseAidingAlmanachPlus(UBXPacket* packet)
   for (int i = 0; i < msg->dataSize; i++) {
     msg->data[i] = packet->payload[16 + i];
   }
-
   return msg;
 }
 
 AidingAOP* UBXParser::parseAidingAOP(UBXPacket* packet)
 {
-  AidingAOP *msg = new AidingAOP(packet);
+  AidingAOP *msg = new AidingAOP();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 60
     || packet->payloadLength == 204;
 
@@ -360,13 +384,13 @@ AidingAOP* UBXParser::parseAidingAOP(UBXPacket* packet)
   for (int i = 0; i < msg->dataSize; i++) {
     msg->data[i] = packet->payload[1 + i];
   }
-
   return msg;
 }
 
 AidingEphemeris* UBXParser::parseAidingEphemeris(UBXPacket* packet)
 {
-  AidingEphemeris *msg = new AidingEphemeris(packet);
+  AidingEphemeris *msg = new AidingEphemeris();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 8
     || packet->payloadLength == 104;
 
@@ -401,14 +425,14 @@ AidingEphemeris* UBXParser::parseAidingEphemeris(UBXPacket* packet)
       idx += 4;
     }
   }
-
   return msg;
 }
 
 AidingHealthUTCIonosphere* UBXParser::parseAidingHealthUTCIonosphere(
   UBXPacket* packet
 ) {
-  AidingHealthUTCIonosphere *msg = new AidingHealthUTCIonosphere(packet);
+  AidingHealthUTCIonosphere *msg = new AidingHealthUTCIonosphere();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 72;
 
   if (!msg->isValid) {
@@ -434,12 +458,12 @@ AidingHealthUTCIonosphere* UBXParser::parseAidingHealthUTCIonosphere(
   msg->klobB2 = extractR4(60, packet->payload);
   msg->klobB3 = extractR4(64, packet->payload);
   msg->flags = extractX4(68, packet->payload);
-
   return msg;
 }
 
 AidingInit* UBXParser::parseAidingInit(UBXPacket* packet) {
-  AidingInit *msg = new AidingInit(packet);
+  AidingInit *msg = new AidingInit();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 48;
 
   if (!msg->isValid) {
@@ -459,13 +483,13 @@ AidingInit* UBXParser::parseAidingInit(UBXPacket* packet) {
   msg->clkDOrFreq = extractI4(36, packet->payload);
   msg->clkDAccOrFreqAcc = extractU4(40, packet->payload);
   msg->flags = extractX4(44, packet->payload);
-
   return msg;
 }
 
 NavigationAOPStatus* UBXParser::parseNavigationAOPStatus(UBXPacket* packet)
 {
-  NavigationAOPStatus *msg = new NavigationAOPStatus(packet);
+  NavigationAOPStatus *msg = new NavigationAOPStatus();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 20;
 
   if (!msg->isValid) {
@@ -480,13 +504,13 @@ NavigationAOPStatus* UBXParser::parseNavigationAOPStatus(UBXPacket* packet)
   msg->availGPS = extractU4(8, packet->payload);
   // reserved2 U4
   // reserved3 U4
-
   return msg;
 }
 
 NavigationClock* UBXParser::parseNavigationClock(UBXPacket* packet)
 {
-  NavigationClock *msg = new NavigationClock(packet);
+  NavigationClock *msg = new NavigationClock();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 20;
 
   if (!msg->isValid) {
@@ -498,13 +522,13 @@ NavigationClock* UBXParser::parseNavigationClock(UBXPacket* packet)
   msg->clkD = extractI4(8, packet->payload);
   msg->tAcc = extractU4(12, packet->payload);
   msg->fAcc = extractU4(16, packet->payload);
-
   return msg;
 }
 
 NavigationDGPS* UBXParser::parseNavigationDGPS(UBXPacket* packet)
 {
-  NavigationDGPS *msg = new NavigationDGPS(packet);
+  NavigationDGPS *msg = new NavigationDGPS();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= 16;
 
   if (!msg->isValid) {
@@ -537,13 +561,13 @@ NavigationDGPS* UBXParser::parseNavigationDGPS(UBXPacket* packet)
 
     msg->channels[i] = chan;
   }
-
   return msg;
 }
 
 NavigationDOP* UBXParser::parseNavigationDOP(UBXPacket* packet)
 {
-  NavigationDOP *msg = new NavigationDOP(packet);
+  NavigationDOP *msg = new NavigationDOP();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 18;
 
   if (!msg->isValid) {
@@ -558,13 +582,13 @@ NavigationDOP* UBXParser::parseNavigationDOP(UBXPacket* packet)
   msg->hDOP = (double) extractU2(12, packet->payload) * 1e-2;
   msg->nDOP = (double) extractU2(14, packet->payload) * 1e-2;
   msg->eDOP = (double) extractU2(16, packet->payload) * 1e-2;
-
   return msg;
 }
 
 NavigationPosECEF* UBXParser::parseNavigationPosECEF(UBXPacket* packet)
 {
-  NavigationPosECEF *msg = new NavigationPosECEF(packet);
+  NavigationPosECEF *msg = new NavigationPosECEF();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 20;
 
   if (!msg->isValid) {
@@ -576,19 +600,19 @@ NavigationPosECEF* UBXParser::parseNavigationPosECEF(UBXPacket* packet)
   msg->ecefY = extractI4(8, packet->payload);
   msg->ecefZ = extractI4(12, packet->payload);
   msg->pAcc = extractU4(16, packet->payload);
-
   return msg;
 }
 
 NavigationPosLLH* UBXParser::parseNavigationPosLLH(UBXPacket* packet)
 {
-  NavigationPosLLH *msg = new NavigationPosLLH(packet);
+  NavigationPosLLH *msg = new NavigationPosLLH();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 28;
   if (!msg->isValid) {
     return msg;
   }
 
-  #ifdef GNSS_DEBUG
+  #ifdef GNSS_LOG_DEBUG
     for (int i = 0; i < packet->payloadLength; i++) {
       Serial.println(packet->payload[i], HEX);
     }
@@ -607,13 +631,14 @@ NavigationPosLLH* UBXParser::parseNavigationPosLLH(UBXPacket* packet)
 
 NavigationPosVT* UBXParser::parseNavigationPosVT(UBXPacket* packet)
 {
-  NavigationPosVT *msg = new NavigationPosVT(packet);
+  NavigationPosVT *msg = new NavigationPosVT();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 84;
   if (!msg->isValid) {
     return msg;
   }
 
-  #ifdef GNSS_DEBUG
+  #ifdef GNSS_LOG_DEBUG
     for (int i = 0; i < packet->payloadLength; i++) {
       Serial.println(packet->payload[i], HEX);
     }
@@ -649,13 +674,13 @@ NavigationPosVT* UBXParser::parseNavigationPosVT(UBXPacket* packet)
   msg->pDOP = (double) extractU2(76, packet->payload) * 1e-2;
   // reserved2 X2
   // reserved3 U4
-
   return msg;
 }
 
 NavigationSBAS* UBXParser::parseNavigationSBAS(UBXPacket* packet)
 {
-  NavigationSBAS *msg = new NavigationSBAS(packet);
+  NavigationSBAS *msg = new NavigationSBAS();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= 12;
 
   if (!msg->isValid) {
@@ -692,13 +717,13 @@ NavigationSBAS* UBXParser::parseNavigationSBAS(UBXPacket* packet)
 
     msg->items[i] = item;
   }
-
   return msg;
 }
 
 NavigationSOL* UBXParser::parseNavigationSOL(UBXPacket* packet)
 {
-  NavigationSOL *msg = new NavigationSOL(packet);
+  NavigationSOL *msg = new NavigationSOL();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 52;
 
   if (!msg->isValid) {
@@ -722,13 +747,13 @@ NavigationSOL* UBXParser::parseNavigationSOL(UBXPacket* packet)
   // reserved1 U1
   msg->numSV = extractU1(47, packet->payload);
   // reserved2 U4
-
   return msg;
 }
 
 NavigationStatus* UBXParser::parseNavigationStatus(UBXPacket* packet)
 {
-  NavigationStatus *msg = new NavigationStatus(packet);
+  NavigationStatus *msg = new NavigationStatus();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 16;
 
   if (!msg->isValid) {
@@ -742,14 +767,14 @@ NavigationStatus* UBXParser::parseNavigationStatus(UBXPacket* packet)
   msg->flags2 = extractX1(7, packet->payload);
   msg->ttff = extractU4(8, packet->payload);
   msg->msss = extractU4(12, packet->payload);
-
   return msg;
 }
 
 NavigationSpaceVehiculeInfo* UBXParser::parseNavigationSpaceVehiculeInfo(
   UBXPacket* packet
 ) {
-  NavigationSpaceVehiculeInfo *msg = new NavigationSpaceVehiculeInfo(packet);
+  NavigationSpaceVehiculeInfo *msg = new NavigationSpaceVehiculeInfo();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= 8;
 
   if (!msg->isValid) {
@@ -782,13 +807,13 @@ NavigationSpaceVehiculeInfo* UBXParser::parseNavigationSpaceVehiculeInfo(
 
     msg->spaceVehicules[i] = sv;
   }
-
   return msg;
 }
 
 NavigationTimeGPS* UBXParser::parseNavigationTimeGPS(UBXPacket* packet)
 {
-  NavigationTimeGPS *msg = new NavigationTimeGPS(packet);
+  NavigationTimeGPS *msg = new NavigationTimeGPS();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 16;
 
   if (!msg->isValid) {
@@ -803,24 +828,18 @@ NavigationTimeGPS* UBXParser::parseNavigationTimeGPS(UBXPacket* packet)
   msg->tAcc = extractU4(12, packet->payload);
 
   msg->isValid &= msg->valid == 0x07;
-
   return msg;
 }
 
 NavigationTimeUTC* UBXParser::parseNavigationTimeUTC(UBXPacket* packet)
 {
-  NavigationTimeUTC *msg = new NavigationTimeUTC(packet);
+  NavigationTimeUTC *msg = new NavigationTimeUTC();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 20;
 
   if (!msg->isValid) {
     return msg;
   }
-
-  Serial.println("TimeUTC");
-  for (int i = 0; i < packet->payloadLength; i++) {
-    Serial.println(packet->payload[i], HEX);
-  }
-  Serial.println("end TimeUTC");
 
   msg->iTOW = extractU4(0, packet->payload);
   msg->tAcc = extractU4(4, packet->payload);
@@ -831,15 +850,19 @@ NavigationTimeUTC* UBXParser::parseNavigationTimeUTC(UBXPacket* packet)
   msg->hour = extractU1(16, packet->payload);
   msg->minute = extractU1(17, packet->payload);
   msg->second = extractU1(18, packet->payload);
-  msg->flags = extractX1(19, packet->payload);
-  msg->isValid &= msg->flags == 0x07;
+  msg->valid = extractX1(19, packet->payload);
+
+  msg->isValid &= msg->isUTCValid()
+    & msg->isTimeOfWeekValid()
+    & msg->isWeekNumberValid();
 
   return msg;
 }
 
 NavigationVelECEF* UBXParser::parseNavigationVelECEF(UBXPacket* packet)
 {
-  NavigationVelECEF *msg = new NavigationVelECEF(packet);
+  NavigationVelECEF *msg = new NavigationVelECEF();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 20;
 
   if (!msg->isValid) {
@@ -851,13 +874,13 @@ NavigationVelECEF* UBXParser::parseNavigationVelECEF(UBXPacket* packet)
   msg->ecefVY = extractI4(8, packet->payload);
   msg->ecefVZ = extractI4(12, packet->payload);
   msg->sAcc = extractU4(16, packet->payload);
-
   return msg;
 }
 
 NavigationVelNED* UBXParser::parseNavigationVelNED(UBXPacket* packet)
 {
-  NavigationVelNED *msg = new NavigationVelNED(packet);
+  NavigationVelNED *msg = new NavigationVelNED();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 36;
 
   if (!msg->isValid) {
@@ -869,17 +892,17 @@ NavigationVelNED* UBXParser::parseNavigationVelNED(UBXPacket* packet)
   msg->velocityEast = extractI4(8, packet->payload);
   msg->velocityDown = extractI4(12, packet->payload);
   msg->speed = extractU4(16, packet->payload);
-  msg->gSpeed = extractU4(20, packet->payload);
+  msg->groundSpeed = extractU4(20, packet->payload);
   msg->heading = (double) extractI4(24, packet->payload) * 1e-5;
   msg->sAcc = extractU4(28, packet->payload);
   msg->cAcc = (double) extractU4(32, packet->payload) * 1e-5;
-
   return msg;
 }
 
 ConfigurationAntenna* UBXParser::parseConfigurationAntenna(UBXPacket* packet)
 {
-  ConfigurationAntenna *msg = new ConfigurationAntenna(packet);
+  ConfigurationAntenna *msg = new ConfigurationAntenna();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 4;
 
   if (!msg->isValid) {
@@ -888,13 +911,13 @@ ConfigurationAntenna* UBXParser::parseConfigurationAntenna(UBXPacket* packet)
 
   msg->flags = extractX2(0, packet->payload);
   msg->pins = extractX2(2, packet->payload);
-
   return msg;
 }
 
 ConfigurationDatum* UBXParser::parseConfigurationDatum(UBXPacket* packet)
 {
-  ConfigurationDatum *msg = new ConfigurationDatum(packet);
+  ConfigurationDatum *msg = new ConfigurationDatum();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 52;
 
   if (!msg->isValid) {
@@ -918,7 +941,8 @@ ConfigurationDatum* UBXParser::parseConfigurationDatum(UBXPacket* packet)
 
 ConfigurationGNSS* UBXParser::parseConfigurationGNSS(UBXPacket* packet)
 {
-  ConfigurationGNSS *msg = new ConfigurationGNSS(packet);
+  ConfigurationGNSS *msg = new ConfigurationGNSS();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= 4;
 
   if (!msg->isValid) {
@@ -948,7 +972,6 @@ ConfigurationGNSS* UBXParser::parseConfigurationGNSS(UBXPacket* packet)
     msg->blocks[i] = block;
     idx += 8;
   }
-
   return msg;
 }
 
@@ -956,7 +979,8 @@ ConfigurationInformation* UBXParser::parseConfigurationInformation(
   UBXPacket* packet,
   uint16_t startIdx
 ) {
-  ConfigurationInformation *msg = new ConfigurationInformation(packet);
+  ConfigurationInformation *msg = new ConfigurationInformation();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= startIdx + 10;
 
   if (!msg->isValid) {
@@ -971,7 +995,9 @@ ConfigurationInformation* UBXParser::parseConfigurationInformation(
     msg->infMsgMask[i] = extractX1(startIdx + 4 + i, packet->payload);
   }
 
-  if (packet->payloadLength > startIdx + 10) {
+  msg->hasNext = packet->payloadLength > startIdx + 10;
+
+  if (msg->hasNext) {
     msg->next = parseConfigurationInformation(packet, startIdx + 10);
   }
 
@@ -982,8 +1008,9 @@ ConfigurationInterferenceMonitor* UBXParser::parseConfigurationInterferenceMonit
   UBXPacket* packet
 ) {
   ConfigurationInterferenceMonitor *msg
-    = new ConfigurationInterferenceMonitor(packet);
+    = new ConfigurationInterferenceMonitor();
 
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 8;
 
   if (!msg->isValid) {
@@ -999,7 +1026,7 @@ ConfigurationInterferenceMonitor* UBXParser::parseConfigurationInterferenceMonit
 ConfigurationLogFilter* UBXParser::parseConfigurationLogFilter(
   UBXPacket* packet
 ) {
-  ConfigurationLogFilter *msg = new ConfigurationLogFilter(packet);
+  ConfigurationLogFilter *msg = new ConfigurationLogFilter();
   msg->isValid &= packet->payloadLength == 12;
 
   if (!msg->isValid) {
@@ -1012,23 +1039,36 @@ ConfigurationLogFilter* UBXParser::parseConfigurationLogFilter(
   msg->timeThreshold = extractU2(4, packet->payload);
   msg->speedThreshold = extractU2(6, packet->payload);
   msg->positionThreshold = extractU4(8, packet->payload);
-
   return msg;
 }
 
 ConfigurationMessaging* UBXParser::parseConfigurationMessaging(
   UBXPacket* packet
 ) {
-  ConfigurationMessaging *msg = new ConfigurationMessaging(packet);
-  msg->isValid &= packet->payloadLength == 3;
+  ConfigurationMessaging *msg = new ConfigurationMessaging();
+  msg->isValid = packet->isValid;
+  msg->isValid &= packet->payloadLength == 6
+    || packet->payloadLength == 8;
 
   if (!msg->isValid) {
     return msg;
   }
 
-  msg->msgClass = extractU1(0, packet->payload);
-  msg->msgId = (msg->msgClass << 8) | extractX1(1, packet->payload);
-  msg->rate = extractU1(2, packet->payload);
+  uint8_t idx = 0;
+  msg->cfgMsgClass = MessageClass::None;
+  msg->cfgMsgId = MessageId::None;
+  if (packet->payloadLength == 8) {
+    msg->cfgMsgClass = (MessageClass) extractU1(0, packet->payload);
+    msg->cfgMsgId = (MessageId)(
+      (((uint16_t)msg->cfgMsgClass) << 8)
+        | ((uint16_t)extractU1(1, packet->payload))
+    );
+    idx += 2;
+  }
+
+  for (unsigned short i = 0; i < GNSS_NB_PORTS; i++) {
+    msg->portRate[i] = extractU1(idx + i, packet->payload);
+  }
 
   return msg;
 }
@@ -1036,7 +1076,8 @@ ConfigurationMessaging* UBXParser::parseConfigurationMessaging(
 ConfigurationNavigation* UBXParser::parseConfigurationNavigation(
   UBXPacket* packet
 ) {
-  ConfigurationNavigation *msg = new ConfigurationNavigation(packet);
+  ConfigurationNavigation *msg = new ConfigurationNavigation();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 36;
 
   if (!msg->isValid) {
@@ -1061,7 +1102,6 @@ ConfigurationNavigation* UBXParser::parseConfigurationNavigation(
   // reserved2 U2
   // reserved3 U4
   // reserved4 U4
-
   return msg;
 }
 
@@ -1069,8 +1109,9 @@ ConfigurationNavigationExpert* UBXParser::parseConfigurationNavigationExpert(
   UBXPacket* packet
 ) {
   ConfigurationNavigationExpert *msg
-    = new ConfigurationNavigationExpert(packet);
+    = new ConfigurationNavigationExpert();
 
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 40;
 
   if (!msg->isValid) {
@@ -1108,7 +1149,8 @@ ConfigurationNavigationExpert* UBXParser::parseConfigurationNavigationExpert(
 }
 
 ConfigurationNMEA* UBXParser::parseConfigurationNMEA(UBXPacket* packet) {
-  ConfigurationNMEA *msg = new ConfigurationNMEA(packet);
+  ConfigurationNMEA *msg = new ConfigurationNMEA();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= 4;
 
   if (!msg->isValid) {
@@ -1135,7 +1177,6 @@ ConfigurationNMEA* UBXParser::parseConfigurationNMEA(UBXPacket* packet) {
   msg->mainTalkerId = extractU1(9, packet->payload);
   msg->gsvTalkerId = extractU1(10, packet->payload);
   // reserved U1
-
   return msg;
 }
 
@@ -1143,7 +1184,8 @@ ConfigurationPort* UBXParser::parseConfigurationPort(
   UBXPacket* packet,
   uint16_t startIdx
 ) {
-  ConfigurationPort *msg = new ConfigurationPort(packet);
+  ConfigurationPort *msg = new ConfigurationPort();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= startIdx + 20;
 
   if (!msg->isValid) {
@@ -1160,7 +1202,9 @@ ConfigurationPort* UBXParser::parseConfigurationPort(
   msg->flags = extractX2(startIdx + 16, packet->payload);
   // reserved5 U2
 
-  if (packet->payloadLength > startIdx + 20) {
+  msg->hasNext = packet->payloadLength > startIdx + 20;
+
+  if (msg->hasNext) {
     msg->next = parseConfigurationPort(packet, startIdx + 20);
   }
 
@@ -1170,7 +1214,8 @@ ConfigurationPort* UBXParser::parseConfigurationPort(
 ConfigurationPower* UBXParser::parseConfigurationPower(
   UBXPacket* packet
 ) {
-  ConfigurationPower *msg = new ConfigurationPower(packet);
+  ConfigurationPower *msg = new ConfigurationPower();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 44;
 
   if (!msg->isValid) {
@@ -1195,13 +1240,13 @@ ConfigurationPower* UBXParser::parseConfigurationPower(
   // reserved9 U1
   // reserved10 U2
   // reserved11 U4
-
   return msg;
 }
 
 ConfigurationRate* UBXParser::parseConfigurationRate(UBXPacket* packet)
 {
-  ConfigurationRate *msg = new ConfigurationRate(packet);
+  ConfigurationRate *msg = new ConfigurationRate();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 6;
 
   if (!msg->isValid) {
@@ -1211,14 +1256,14 @@ ConfigurationRate* UBXParser::parseConfigurationRate(UBXPacket* packet)
   msg->measRate = (DataRate) extractU2(0, packet->payload);
   msg->navRate = extractU2(2, packet->payload);
   msg->timeRef = (GNSSReferenceTime) extractU2(4, packet->payload);
-
   return msg;
 }
 
 ConfigurationRemoteInventory* UBXParser::parseConfigurationRemoteInventory(
   UBXPacket* packet
 ) {
-  ConfigurationRemoteInventory *msg = new ConfigurationRemoteInventory(packet);
+  ConfigurationRemoteInventory *msg = new ConfigurationRemoteInventory();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= 1
     && packet->payloadLength - 1 <= ConfigurationRemoteInventory::MAX_DATA_SIZE;
 
@@ -1232,14 +1277,14 @@ ConfigurationRemoteInventory* UBXParser::parseConfigurationRemoteInventory(
   for (int i = 0; i < msg->dataSize; i++) {
     msg->data[i] = packet->payload[1 + i];
   }
-
   return msg;
 }
 
 ConfigurationReceiver* UBXParser::parseConfigurationReceiver(
   UBXPacket* packet
 ) {
-  ConfigurationReceiver *msg = new ConfigurationReceiver(packet);
+  ConfigurationReceiver *msg = new ConfigurationReceiver();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 2;
 
   if (!msg->isValid) {
@@ -1248,12 +1293,12 @@ ConfigurationReceiver* UBXParser::parseConfigurationReceiver(
 
   // reserved1 U1
   msg->lpMode = (LowPowerMode) extractU1(1, packet->payload);
-
   return msg;
 }
 
 ConfigurationSBAS* UBXParser::parseConfigurationSBAS(UBXPacket* packet) {
-  ConfigurationSBAS *msg = new ConfigurationSBAS(packet);
+  ConfigurationSBAS *msg = new ConfigurationSBAS();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 8;
 
   if (!msg->isValid) {
@@ -1265,14 +1310,14 @@ ConfigurationSBAS* UBXParser::parseConfigurationSBAS(UBXPacket* packet) {
   msg->maxSBAS = extractU1(2, packet->payload);
   msg->scanmode2 = extractX1(3, packet->payload);
   msg->scanmode1 = extractX4(4, packet->payload);
-
   return msg;
 }
 
 ConfigurationTimePulse* UBXParser::parseConfigurationTimePulse(
   UBXPacket* packet
 ) {
-  ConfigurationTimePulse *msg = new ConfigurationTimePulse(packet);
+  ConfigurationTimePulse *msg = new ConfigurationTimePulse();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 32;
 
   if (!msg->isValid) {
@@ -1290,12 +1335,12 @@ ConfigurationTimePulse* UBXParser::parseConfigurationTimePulse(
   msg->pulseLenRatioLock = extractU4(20, packet->payload);
   msg->userConfigDelay = extractI4(24, packet->payload);
   msg->flags = extractX4(28, packet->payload);
-
   return msg;
 }
 
 ConfigurationUSB* UBXParser::parseConfigurationUSB(UBXPacket* packet) {
-  ConfigurationUSB *msg = new ConfigurationUSB(packet);
+  ConfigurationUSB *msg = new ConfigurationUSB();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 12
     + ConfigurationUSB::VENDOR_NAME_SIZE
     + ConfigurationUSB::PRODUCT_NAME_SIZE
@@ -1339,29 +1384,35 @@ ConfigurationUSB* UBXParser::parseConfigurationUSB(UBXPacket* packet) {
 
   return msg;
 }
-
+/*
 InformationDebug* UBXParser::parseInformationDebug(UBXPacket* packet) {
-  return static_cast<InformationDebug*>(packet);
+  return static_cast<InformationDebug*>();
+  msg->isValid = packet->isValid;
 }
 
 InformationError* UBXParser::parseInformationError(UBXPacket* packet) {
-  return static_cast<InformationError*>(packet);
+  return static_cast<InformationError*>();
+  msg->isValid = packet->isValid;
 }
 
 InformationNotice* UBXParser::parseInformationNotice(UBXPacket* packet) {
-  return static_cast<InformationNotice*>(packet);
+  return static_cast<InformationNotice*>();
+  msg->isValid = packet->isValid;
 }
 
 InformationTest* UBXParser::parseInformationTest(UBXPacket* packet) {
-  return static_cast<InformationTest*>(packet);
+  return static_cast<InformationTest*>();
+  msg->isValid = packet->isValid;
 }
 
 InformationWarning* UBXParser::parseInformationWarning(UBXPacket* packet) {
-  return static_cast<InformationWarning*>(packet);
+  return static_cast<InformationWarning*>();
+  msg->isValid = packet->isValid;
 }
-
+*/
 LogFindTime* UBXParser::parseLogFindTime(UBXPacket* packet) {
-  LogFindTime *msg = new LogFindTime(packet);
+  LogFindTime *msg = new LogFindTime();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 8;
 
   if (!msg->isValid) {
@@ -1372,12 +1423,12 @@ LogFindTime* UBXParser::parseLogFindTime(UBXPacket* packet) {
   msg->type = extractU1(1, packet->payload);
   // reserved1 U2
   msg->entryNumber = extractU4(4, packet->payload);
-
   return msg;
 }
 
 LogInfo* UBXParser::parseLogInfo(UBXPacket* packet) {
-  LogInfo *msg = new LogInfo(packet);
+  LogInfo *msg = new LogInfo();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 48;
 
   if (!msg->isValid) {
@@ -1408,12 +1459,12 @@ LogInfo* UBXParser::parseLogInfo(UBXPacket* packet) {
   // reserved5 U1
   msg->status = extractX1(44, packet->payload);
   // reserved6 U1[3]
-
   return msg;
 }
 
 LogRetrievePosition* UBXParser::parseLogRetrievePosition(UBXPacket* packet) {
-  LogRetrievePosition *msg = new LogRetrievePosition(packet);
+  LogRetrievePosition *msg = new LogRetrievePosition();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 40;
 
   if (!msg->isValid) {
@@ -1425,7 +1476,7 @@ LogRetrievePosition* UBXParser::parseLogRetrievePosition(UBXPacket* packet) {
   msg->lat = ((double) extractI4(8, packet->payload)) * 1e-7;
   msg->hMSL = ((double) extractI4(12, packet->payload)) * 1e-7;
   msg->hAcc = extractU4(16, packet->payload);
-  msg->gSpeed = extractU4(20, packet->payload);
+  msg->groundSpeed = extractU4(20, packet->payload);
   msg->heading = extractU4(24, packet->payload);
   msg->version = extractU1(28, packet->payload);
   msg->fixType = (GNSSFixType) extractU1(29, packet->payload);
@@ -1438,12 +1489,12 @@ LogRetrievePosition* UBXParser::parseLogRetrievePosition(UBXPacket* packet) {
   // reserved1 U1
   msg->numSV = extractU1(38, packet->payload);
   // reserved2 U1
-
   return msg;
 }
 
 LogRetrieveString* UBXParser::parseLogRetrieveString(UBXPacket* packet) {
-  LogRetrieveString *msg = new LogRetrieveString(packet);
+  LogRetrieveString *msg = new LogRetrieveString();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= 16;
 
   if (!msg->isValid) {
@@ -1471,12 +1522,12 @@ LogRetrieveString* UBXParser::parseLogRetrieveString(UBXPacket* packet) {
   for (int i = 0; i < msg->byteCount; i++) {
     msg->bytes[i] = packet->payload[16 + i];
   }
-
   return msg;
 }
 
 MonitoringHardware* UBXParser::parseMonitoringHardware(UBXPacket* packet) {
-  MonitoringHardware *msg = new MonitoringHardware(packet);
+  MonitoringHardware *msg = new MonitoringHardware();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength
     == 28 + MonitoringHardware::NB_PINS + 15;
 
@@ -1513,14 +1564,14 @@ MonitoringHardware* UBXParser::parseMonitoringHardware(UBXPacket* packet) {
   idx += 4;
   msg->pullLow = extractX4(idx, packet->payload);
   idx += 4;
-
   return msg;
 }
 
 MonitoringHardwareExtended* UBXParser::parseMonitoringHardwareExtended(
   UBXPacket* packet
 ) {
-  MonitoringHardwareExtended *msg = new MonitoringHardwareExtended(packet);
+  MonitoringHardwareExtended *msg = new MonitoringHardwareExtended();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 28;
 
   if (!msg->isValid) {
@@ -1537,7 +1588,6 @@ MonitoringHardwareExtended* UBXParser::parseMonitoringHardwareExtended(
   // reserved1 U4[2]
   msg->postStatus = extractU4(20, packet->payload);
   // reserved2 U4
-
   return msg;
 }
 
@@ -1545,7 +1595,8 @@ MonitoringIO* UBXParser::parseMonitoringIO(
   UBXPacket* packet,
   uint16_t startIdx
 ) {
-  MonitoringIO *msg = new MonitoringIO(packet);
+  MonitoringIO *msg = new MonitoringIO();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= startIdx + 20;
 
   if (!msg->isValid) {
@@ -1562,7 +1613,9 @@ MonitoringIO* UBXParser::parseMonitoringIO(
   msg->txBusy = extractU1(startIdx + 17, packet->payload);
   // reserved1 U2
 
-  if (packet->payloadLength > startIdx + 20) {
+  msg->hasNext = packet->payloadLength > startIdx + 20;
+
+  if (msg->hasNext) {
     msg->next = parseMonitoringIO(packet, startIdx + 20);
   }
 
@@ -1572,7 +1625,8 @@ MonitoringIO* UBXParser::parseMonitoringIO(
 MonitoringMsgParseProcess* UBXParser::parseMonitoringMsgParseProcess(
   UBXPacket* packet
 ) {
-  MonitoringMsgParseProcess *msg = new MonitoringMsgParseProcess(packet);
+  MonitoringMsgParseProcess *msg = new MonitoringMsgParseProcess();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength
     == 2 * GNSS_NB_PORTS
         * GNSS_NB_PROTOCOLS
@@ -1599,12 +1653,12 @@ MonitoringMsgParseProcess* UBXParser::parseMonitoringMsgParseProcess(
       packet->payload
     );
   }
-
   return msg;
 }
 
 MonitoringReceiver* UBXParser::parseMonitoringReceiver(UBXPacket* packet) {
-  MonitoringReceiver *msg = new MonitoringReceiver(packet);
+  MonitoringReceiver *msg = new MonitoringReceiver();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 1;
 
   if (!msg->isValid) {
@@ -1612,14 +1666,14 @@ MonitoringReceiver* UBXParser::parseMonitoringReceiver(UBXPacket* packet) {
   }
 
   msg->flags = extractX1(0, packet->payload);
-
   return msg;
 }
 
 MonitoringReceiverBuffer* UBXParser::parseMonitoringReceiverBuffer(
   UBXPacket* packet
 ) {
-  MonitoringReceiverBuffer *msg = new MonitoringReceiverBuffer(packet);
+  MonitoringReceiverBuffer *msg = new MonitoringReceiverBuffer();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 24;
 
   if (!msg->isValid) {
@@ -1642,14 +1696,14 @@ MonitoringReceiverBuffer* UBXParser::parseMonitoringReceiverBuffer(
       packet->payload
     );
   }
-
   return msg;
 }
 
 MonitoringTransmitterBuffer* UBXParser::parseMonitoringTransmitterBuffer(
   UBXPacket* packet
 ) {
-  MonitoringTransmitterBuffer *msg = new MonitoringTransmitterBuffer(packet);
+  MonitoringTransmitterBuffer *msg = new MonitoringTransmitterBuffer();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 24;
 
   if (!msg->isValid) {
@@ -1672,23 +1726,25 @@ MonitoringTransmitterBuffer* UBXParser::parseMonitoringTransmitterBuffer(
       packet->payload
     );
   }
-
   return msg;
 }
 
 MonitoringVersion* UBXParser::parseMonitoringVersion(UBXPacket* packet) {
-  MonitoringVersion *msg = new MonitoringVersion(packet);
+  MonitoringVersion *msg = new MonitoringVersion();
+  msg->isValid = packet->isValid;
   int extensionsLength = packet->payloadLength - (
     MonitoringVersion::SOFTWARE_VERSION_SIZE
     + MonitoringVersion::HARDWARE_VERSION_SIZE
   );
 
   float nbExtensions = extensionsLength / MonitoringVersion::EXTENSION_SIZE;
+  msg->nbExtensions = int8_t(nbExtensions);
 
   msg->isValid &= packet->payloadLength
       >= MonitoringVersion::SOFTWARE_VERSION_SIZE
         + MonitoringVersion::HARDWARE_VERSION_SIZE
-    & nbExtensions == int(nbExtensions);
+    & nbExtensions == msg->nbExtensions
+    & msg->nbExtensions <= MonitoringVersion::MAX_NB_EXTENSION;
 
   if (!msg->isValid) {
     return msg;
@@ -1727,7 +1783,8 @@ MonitoringVersion* UBXParser::parseMonitoringVersion(UBXPacket* packet) {
 ReceiverManagerAlmanach* UBXParser::parseReceiverManagerAlmanach(
   UBXPacket* packet
 ) {
-  ReceiverManagerAlmanach *msg = new ReceiverManagerAlmanach(packet);
+  ReceiverManagerAlmanach *msg = new ReceiverManagerAlmanach();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= 8;
 
   if (!msg->isValid) {
@@ -1748,14 +1805,14 @@ ReceiverManagerAlmanach* UBXParser::parseReceiverManagerAlmanach(
   for (uint8_t i = 0; i < msg->subframe->nbWords; i++) {
     msg->subframe->words[i] = extractU4(8 + 4 * i, packet->payload);
   }
-
   return msg;
 }
 
 ReceiverManagerEphemeris* UBXParser::parseReceiverManagerEphemeris(
   UBXPacket* packet
 ) {
-  ReceiverManagerEphemeris *msg = new ReceiverManagerEphemeris(packet);
+  ReceiverManagerEphemeris *msg = new ReceiverManagerEphemeris();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= 8;
 
   if (!msg->isValid) {
@@ -1790,12 +1847,12 @@ ReceiverManagerEphemeris* UBXParser::parseReceiverManagerEphemeris(
     msg->subframe1->words[i] = extractU4(idx, packet->payload);
     idx += 4;
   }
-
   return msg;
 }
 
 ReceiverManagerRaw* UBXParser::parseReceiverManagerRaw(UBXPacket* packet) {
-  ReceiverManagerRaw *msg = new ReceiverManagerRaw(packet);
+  ReceiverManagerRaw *msg = new ReceiverManagerRaw();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= 8;
 
   if (!msg->isValid) {
@@ -1828,14 +1885,14 @@ ReceiverManagerRaw* UBXParser::parseReceiverManagerRaw(UBXPacket* packet) {
     msg->SVs[i]->lli = extractU1(idx + 23, packet->payload);
     idx += 24;
   }
-
   return msg;
 }
 
 ReceiverManagerSubframe* UBXParser::parseReceiverManagerSubframe(
   UBXPacket* packet
 ) {
-  ReceiverManagerSubframe *msg = new ReceiverManagerSubframe(packet);
+  ReceiverManagerSubframe *msg = new ReceiverManagerSubframe();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 42;
 
   if (!msg->isValid) {
@@ -1846,9 +1903,9 @@ ReceiverManagerSubframe* UBXParser::parseReceiverManagerSubframe(
   msg->svid = extractU1(1, packet->payload);
   uint32_t word0 = extractX4(5, packet->payload);
   uint32_t word1 = extractX4(9, packet->payload);
-  uint8_t subframeId = (word1 >> 2) & 0x7;
+  msg->subframeId = (word1 >> 2) & 0x7;
 
-  switch (subframeId) {
+  switch (msg->subframeId) {
     case 1:
       msg->subframe = new GPSSubframe1(true);
       break;
@@ -1878,7 +1935,8 @@ ReceiverManagerSubframe* UBXParser::parseReceiverManagerSubframe(
 ReceiverManagerSpaceVehiculeInfo* UBXParser::parseReceiverManagerSpaceVehiculeInfo(
   UBXPacket* packet
 ) {
-  ReceiverManagerSpaceVehiculeInfo *msg = new ReceiverManagerSpaceVehiculeInfo(packet);
+  ReceiverManagerSpaceVehiculeInfo *msg = new ReceiverManagerSpaceVehiculeInfo();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength >= 8;
 
   if (!msg->isValid) {
@@ -1907,12 +1965,12 @@ ReceiverManagerSpaceVehiculeInfo* UBXParser::parseReceiverManagerSpaceVehiculeIn
     msg->SVs[i]->age = extractX1(idx + 5, packet->payload);
     idx += 6;
   }
-
   return msg;
 }
 
 TimingMark* UBXParser::parseTimingMark(UBXPacket* packet) {
-  TimingMark *msg = new TimingMark(packet);
+  TimingMark *msg = new TimingMark();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 28;
 
   if (!msg->isValid) {
@@ -1929,30 +1987,30 @@ TimingMark* UBXParser::parseTimingMark(UBXPacket* packet) {
   msg->towMsF = extractU4(16, packet->payload);
   msg->towSubMsF = extractU4(20, packet->payload);
   msg->accEst = extractU4(24, packet->payload);
-
   return msg;
 }
 
 TimingPulse* UBXParser::parseTimingPulse(UBXPacket* packet) {
-  TimingPulse *msg = new TimingPulse(packet);
+  TimingPulse *msg = new TimingPulse();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 16;
 
   if (!msg->isValid) {
     return msg;
   }
 
-  msg->towMS = extractU4(0, packet->payload);
-  msg->towSubMS = extractU4(4, packet->payload);
+  msg->towMs = extractU4(0, packet->payload);
+  msg->towSubMs = extractU4(4, packet->payload);
   msg->qErr = extractI4(8, packet->payload);
   msg->week = extractU2(12, packet->payload);
   msg->flags = extractX1(14, packet->payload);
   // reserved1 U1
-
   return msg;
 }
 
 TimingVerification* UBXParser::parseTimingVerification(UBXPacket* packet) {
-  TimingVerification *msg = new TimingVerification(packet);
+  TimingVerification *msg = new TimingVerification();
+  msg->isValid = packet->isValid;
   msg->isValid &= packet->payloadLength == 20;
 
   if (!msg->isValid) {
@@ -1966,7 +2024,6 @@ TimingVerification* UBXParser::parseTimingVerification(UBXPacket* packet) {
   msg->wno = extractU2(16, packet->payload);
   msg->flags = extractX1(18, packet->payload);
   // reserved1 U1
-
   return msg;
 }
 

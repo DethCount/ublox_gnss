@@ -33,7 +33,7 @@ class GNSSConfiguration {
 
     ConfigurationLogFilter* getLogFilter();
 
-    uint8_t getMsgRate(MessageId msgId);
+    ConfigurationMessaging* getMsgRate(MessageId msgId);
     UBXRequestStatus enableMessage(
       uint16_t msgId,
       bool changePort = false,
@@ -73,4 +73,29 @@ class GNSSConfiguration {
     ConfigurationTimePulse* getTimePulse(uint8_t tpIdx);
 
     ConfigurationUSB* getUSB();
+
+    void GNSSConfiguration::print(Stream* stream);
+    void GNSSConfiguration::printAntenna(Stream* stream);
+    void GNSSConfiguration::printDatum(Stream* stream);
+    void GNSSConfiguration::printGNSS(Stream* stream);
+    void GNSSConfiguration::printInformation(
+      Stream* stream,
+      GNSSProtocol protocolId
+    );
+    void GNSSConfiguration::printInterferenceMonitor(Stream* stream);
+    void GNSSConfiguration::printLogFilter(Stream* stream);
+    void GNSSConfiguration::printMsgRate(Stream* stream, MessageId msgId);
+    void GNSSConfiguration::printNavigation(Stream* stream);
+    void GNSSConfiguration::printNavigationExpert(Stream* stream);
+    void GNSSConfiguration::printNMEA(Stream* stream);
+    void GNSSConfiguration::printPort(Stream* stream);
+    void GNSSConfiguration::printPort(Stream* stream, PortId portId);
+    void GNSSConfiguration::printPower(Stream* stream);
+    void GNSSConfiguration::printRate(Stream* stream);
+    void GNSSConfiguration::printReceiver(Stream* stream);
+    void GNSSConfiguration::printRemoteInventory(Stream* stream);
+    void GNSSConfiguration::printSBAS(Stream* stream);
+    void GNSSConfiguration::printTimePulse(Stream* stream);
+    void GNSSConfiguration::printTimePulse(Stream* stream, uint8_t tpIdx);
+    void GNSSConfiguration::printUSB(Stream* stream);
 };

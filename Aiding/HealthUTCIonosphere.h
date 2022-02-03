@@ -30,4 +30,77 @@ class AidingHealthUTCIonosphere : public UBXMessage {
   	}
 
     virtual ~AidingHealthUTCIonosphere() {}
+
+    virtual void print(Stream* stream) {
+      stream->println(F("AidingHealthUTCIonosphere"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("health: "));
+      stream->println(health);
+
+      stream->print(F("utcA0: "));
+      stream->print(uint32_t(utcA0 >> 32));
+      stream->print(F(" "));
+      stream->println(uint32_t(utcA0));
+
+      stream->print(F("utcA1: "));
+      stream->print(uint32_t(utcA1 >> 32));
+      stream->print(F(" "));
+      stream->println(uint32_t(utcA1));
+
+      stream->print(F("utcTOW: "));
+      stream->println(utcTOW);
+
+      stream->print(F("utcWNT: "));
+      stream->println(utcWNT);
+
+      stream->print(F("utcLS: "));
+      stream->println(utcLS);
+
+      stream->print(F("utcWNF: "));
+      stream->println(utcWNF);
+
+      stream->print(F("utcDN: "));
+      stream->println(utcDN);
+
+      stream->print(F("utcLSF: "));
+      stream->println(utcLSF);
+
+      stream->print(F("utcSpare: "));
+      stream->println(utcSpare);
+
+      stream->print(F("klobA0: "));
+      stream->println(klobA0);
+
+      stream->print(F("klobA1: "));
+      stream->println(klobA1);
+
+      stream->print(F("klobA2: "));
+      stream->println(klobA2);
+
+      stream->print(F("klobA3: "));
+      stream->println(klobA3);
+
+      stream->print(F("klobB0: "));
+      stream->println(klobB0);
+
+      stream->print(F("klobB1: "));
+      stream->println(klobB1);
+
+      stream->print(F("klobB2: "));
+      stream->println(klobB2);
+
+      stream->print(F("klobB3: "));
+      stream->println(klobB3);
+
+      stream->print(F("flags: "));
+      stream->println(flags, HEX);
+
+      stream->println();
+    }
 };

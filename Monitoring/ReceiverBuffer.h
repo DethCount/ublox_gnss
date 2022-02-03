@@ -10,4 +10,10 @@ class MonitoringReceiverBuffer : public MonitoringBuffer {
     }
 
     virtual ~MonitoringReceiverBuffer() {}
+
+    virtual void print(Stream* stream) {
+      stream->println(F("MonitoringReceiverBuffer"));
+
+      MonitoringBuffer::print(stream);
+    }
 };

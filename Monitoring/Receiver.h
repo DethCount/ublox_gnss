@@ -12,4 +12,17 @@ class MonitoringReceiver : public UBXMessage {
     }
 
     virtual ~MonitoringReceiver() {}
+
+    virtual void print(Stream* stream) {
+      stream->println(F("MonitoringReceiver"));
+
+      if (!isValid) {
+        stream->println(F("Invalid"));
+        stream->println();
+        return;
+      }
+
+      stream->print(F("flags: "));
+      stream->print(flags, HEX);
+    }
 };
