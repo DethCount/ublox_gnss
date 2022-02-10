@@ -39,6 +39,30 @@ class NavigationPosVT : public UBXMessage {
 
     virtual ~NavigationPosVT() {}
 
+    bool hasValidUTCDate() {
+      return bool(valid & 0x1);
+    }
+
+    bool hasValidUTCTime() {
+      return bool(valid & 0x2);
+    }
+
+    bool hasFullyResolvedUTCTime() {
+      return bool(valid & 0x4);
+    }
+
+    bool isValidFix() {
+      return bool(flags & 0x1);
+    }
+
+    bool hasAppliedDifferentialCorrections() {
+      return bool(flags & 0x2);
+    }
+
+    PowerSaveModeStatus2 getPowerSaveModeStatus() {
+      return (PowerSaveModeStatus2) (uint8_t(flags >> 2) & 0x7);
+    }
+
     virtual void print(Stream* stream) {
       stream->println(F("NavigationPosVT"));
 
@@ -73,8 +97,17 @@ class NavigationPosVT : public UBXMessage {
       stream->print(F("UTC Nanosecond of second: "));
       stream->println(nano);
 
-      stream->print(F("Validity flags: "));
+      stream->print(F("Validity flags: 0x"));
       stream->println(valid, HEX);
+
+      stream->print(F("Is UTC Date valid ? : "));
+      stream->println(hasValidUTCDate());
+
+      stream->print(F("Is UTC Time valid ? : "));
+      stream->println(hasValidUTCTime());
+
+      stream->print(F("Is UTC Time fully resolved ? : "));
+      stream->println(hasFullyResolvedUTCTime());
 
       stream->print(F("Time accuracy estimate: "));
       stream->print(tAcc);
@@ -83,11 +116,17 @@ class NavigationPosVT : public UBXMessage {
       stream->print(F("GNSS fix type: "));
       stream->println(uint8_t(fixType));
 
-      stream->print(F("Flags: "));
+      stream->print(F("Flags: 0x"));
       stream->println(flags, HEX);
 
+      stream->print(F("Is valid fix ? : "));
+      stream->println(isValidFix());
+
+      stream->print(F("Were differential solution corrections applied ? : "));
+      stream->println(hasAppliedDifferentialCorrections());
+
       stream->print(F("Number of space vehicules used: "));
-      stream->println(numSV, HEX);
+      stream->println(numSV);
 
       stream->print(F("Longitude: "));
       stream->print(longitude);

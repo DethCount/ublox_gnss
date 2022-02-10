@@ -49,11 +49,11 @@ class TimingPulse : public UBXMessage {
       stream->print(F("Week number according to time base: "));
       stream->println(week);
 
-      stream->print(F("Flags: "));
+      stream->print(F("Flags: 0x"));
       stream->println(flags, HEX);
 
-      stream->print(F("Time base: "));
-      stream->println(uint8_t(getTimeBase()));
+      stream->print(F("Time base: 0x"));
+      stream->println(uint8_t(getTimeBase()), HEX);
 
       stream->print(F("Is UTC available: "));
       stream->println(isUTCAvailable());

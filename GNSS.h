@@ -56,6 +56,13 @@ enum struct PortId : uint8_t {
   SPI = 0x04
 };
 
+enum struct GNSSJammingStatus : uint8_t {
+  UnknownOrDisabled = 0x00,
+  NoSignificantJamming = 0x01,
+  InterferenceVisibleButFixed = 0x02, // warning
+  InterferenceVisibleNoFix = 0x03 // critical
+};
+
 enum struct GNSSProtocol : uint8_t {
   UBX = 0x00,
   NMEA = 0x01
@@ -128,6 +135,15 @@ enum struct PowerSaveModeStatus : uint8_t {
   Inactive = 0x03,
 };
 
+enum struct PowerSaveModeStatus2 : uint8_t {
+  Unknown = 0x00,
+  Enabled = 0x01,
+  Acquisition = 0x02,
+  Tracking = 0x03,
+  PowerOptimizedTracking = 0x04,
+  Inactive = 0x05,
+};
+
 enum struct MapMatchingStatus : uint8_t {
   None = 0x00,
   Valid = 0x01, // received but too old
@@ -156,9 +172,12 @@ enum struct AntennaPowerStatus : uint8_t {
 };
 
 #include "GPS/Subframe.h"
+#include "GPS/AlmanachSubframe.h"
 #include "GPS/Subframe1.h"
 #include "GPS/Subframe2.h"
 #include "GPS/Subframe3.h"
+#include "GPS/Subframe4.h"
+#include "GPS/Subframe5.h"
 
 #include "Aiding/Almanach.h"
 #include "Aiding/AlmanachPlus.h"

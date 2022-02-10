@@ -18,6 +18,18 @@ class ConfigurationLogFilter : public UBXMessage {
 
     virtual ~ConfigurationLogFilter() {}
 
+    bool isRecordingEnabled() {
+      return bool(flags & 0x1);
+    }
+
+    bool isSinglePositionPerWakeUpEnabled() {
+      return bool(flags & 0x2);
+    }
+
+    bool applyAllFilterSettings() {
+      return bool(flags & 0x4);
+    }
+
     virtual void print(Stream* stream) {
       stream->println(F("ConfigurationLogFilter"));
 
@@ -30,8 +42,17 @@ class ConfigurationLogFilter : public UBXMessage {
       stream->print(F("version: "));
       stream->println(version);
 
-      stream->print(F("flags: "));
-      stream->println(flags);
+      stream->print(F("flags: 0x"));
+      stream->println(flags, HEX);
+
+      stream->print(F("Is recording enabled: "));
+      stream->println(isRecordingEnabled());
+
+      stream->print(F("Record a single position on each Power Save Mode wake up period ? : "));
+      stream->println(isSinglePositionPerWakeUpEnabled());
+
+      stream->print(F("Update all settings ? : "));
+      stream->println(applyAllFilterSettings());
 
       stream->print(F("minInterval: "));
       stream->print(minInterval);

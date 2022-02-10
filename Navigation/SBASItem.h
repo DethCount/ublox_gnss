@@ -36,16 +36,16 @@ class NavigationSBASItem {
       stream->print(F("svid: "));
       stream->println(svid);
 
-      stream->print(F("Flags: "));
+      stream->print(F("Flags: 0x"));
       stream->println(flags, HEX);
 
-      stream->print(F("Monitoring status: "));
+      stream->print(F("Monitoring status: 0x"));
       stream->println(udre, HEX);
 
-      stream->print(F("SBAS system: "));
-      stream->println(uint8_t(svSys));
+      stream->print(F("SBAS system: 0x"));
+      stream->println(uint8_t(svSys), HEX);
 
-      stream->print(F("Service: "));
+      stream->print(F("Service: 0x"));
       stream->println(svService, HEX);
 
       stream->print(F("Ranging service: "));

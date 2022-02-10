@@ -62,7 +62,7 @@ class TimingMark : public UBXMessage {
       stream->print(F("Channel number: "));
       stream->println(ch);
 
-      stream->print(F("Flags: "));
+      stream->print(F("Flags: 0x"));
       stream->println(flags, HEX);
 
       stream->print(F("Is in running mode ? : "));
@@ -74,8 +74,8 @@ class TimingMark : public UBXMessage {
       stream->print(F("Is new falling edge detected ? : "));
       stream->println(isNewFallingEdgeDetected());
 
-      stream->print(F("Time base : "));
-      stream->println(uint8_t(getTimeBase()));
+      stream->print(F("Time base : 0x"));
+      stream->println(uint8_t(getTimeBase()), HEX);
 
       stream->print(F("Is UTC available ? : "));
       stream->println(isUTCAvailable());

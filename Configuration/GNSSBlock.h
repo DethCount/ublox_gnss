@@ -9,6 +9,10 @@ class ConfigurationGNSSBlock {
 
     virtual ~ConfigurationGNSSBlock() {}
 
+    bool isEnabled() {
+      return bool(flags & 0x1);
+    }
+
     virtual void print(Stream *stream) {
       stream->println(F("ConfigurationGNSSBlock"));
 
@@ -21,8 +25,11 @@ class ConfigurationGNSSBlock {
       stream->print(F("maxTrkCh: "));
       stream->println(maxTrkCh);
 
-      stream->print(F("flags: "));
-      stream->println(flags, BIN);
+      stream->print(F("flags: 0x"));
+      stream->println(flags, HEX);
+
+      stream->print(F("Is enabled ? : "));
+      stream->println(isEnabled());
 
       stream->println();
     }

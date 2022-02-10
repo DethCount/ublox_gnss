@@ -101,6 +101,96 @@ void setup()
   gnss->configuration->enableMessage(MessageId::Navigation_PosLLH, false, 0x01);
   */
   Serial.println("GNSS setup complete !");
+
+  /*
+  Serial.println("Calculating SVs positions... !");
+
+  NavigationSpaceVehiculeInfo* svInfo = gnss->navigation->getSpaceVehiculeInfo();
+
+  if (!svInfo->isValid) {
+    return;
+  }
+
+  for (uint8_t i = 0; i < svInfo->numCh; i++) {
+    if (!svInfo->spaceVehicules[i]->isSVUsedForNavigation()
+      || svInfo->spaceVehicules[i]->isUnhealthy()
+      || !svInfo->spaceVehicules[i]->isEphemerisAvailable()
+    ) {
+      continue;
+    }
+
+    AidingEphemeris* ephemeris = gnss->aiding->getEphemeris(
+      svInfo->spaceVehicules[i]->svid
+    );
+
+    if (!ephemeris->isValid) {
+      continue;
+    }
+
+    NavigationPosVT* posVT = gnss->navigation->getPosVT();
+    if (!posVT->isValid) {
+      continue;
+    }
+
+    uint32_t t = posVT->iTOW * 1e-3;
+    uint32_t toe = svInfo->iTOW * 1e-3;
+
+    uint32_t sqrta = ephemeris->subframe2->getSemiMajorAxisSqrt();
+    uint32_t dn = ephemeris->subframe2
+      ->getMeanMotionDifferenceFromComputedValue();
+    uint32_t m0 = ephemeris->subframe2->getMeanAnomalyAtReferenceTime();
+    uint32_t e = ephemeris->subframe2->getEccentricity();
+
+    uint32_t o = ephemeris->subframe3->getArgumentOfPerigee();
+    uint32_t o0 = ephemeris->subframe3
+      ->getLongitudeOfAscendingNodeOfOrbitPlaneAtWeeklyEpoch();
+    uint32_t i0 = ephemeris->subframe3->getInclinationAngleAtReferenceTime();
+
+    // calculate sat positions
+    uint32_t tk = t - toe;
+
+    uint32_t n0 = sqrt(3.986005e14) / pow(sqrta, 6); // 1 / 2^-19
+
+    uint32_t n = n0 + dn; // 2^-11 + 2^-43
+
+    uint32_t mk = m0 + n * tk; // 2^-11 + 2^-31 + 2^-43
+
+    uint32_t ek = mk;
+    for (uint8_t j = 0; j < 3; j++) {
+      ek += ((mk - ek) + e * sin(ek))
+        / (1 - e * cos(ek));
+    }
+
+    uint32_t vk = 2 * atan(
+      sqrt((1 + e) / (1 - e))
+      * tan(ek / 2)
+    );
+
+    uint32_t r = pow(sqrta, 2) * (1 + e);
+
+    // (A, e, OMEGA, i, omega) -> ECI
+    uint32_t orbitPlaneX = r * cos(o + vk);
+    uint32_t orbitPlaneY = r * sin(o + vk);
+
+    uint32_t x = orbitPlaneX;
+    uint32_t y = orbitPlaneY;
+    uint32_t z = 0;
+
+    // apply inclinaition
+    uint32_t ci0 = cos(i0);
+    uint32_t si0 = sin(i0);
+    y = y * ci0 - z * si0;
+    z = y * si0 + z * ci0;
+
+    // apply longitude of ascending node
+    uint32_t co0 = cos(o0);
+    uint32_t so0 = sin(o0);
+    x = x * co0 - y * so0;
+    y = x * so0 + y * co0;
+  }
+
+  Serial.println("SVs positions calculated !");
+  */
 }
 
 void loop()
@@ -114,7 +204,7 @@ void loop()
     delay(10);
     return;
   }
-  
+
   Serial.println(packet->msgId);
   if (packet->msgId == MessageId::Navigation_TimeUTC) {
     // Print UTC time hh:mm:ss

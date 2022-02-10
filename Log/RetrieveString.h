@@ -61,7 +61,7 @@ class LogRetrieveString : public UBXMessage {
       for (uint16_t i = 0; i < byteCount; i++) {
         stream->print(F("bytes["));
         stream->print(i);
-        stream->print(F("]: "));
+        stream->print(F("]: 0x"));
         stream->println(bytes[i], HEX);
       }
 

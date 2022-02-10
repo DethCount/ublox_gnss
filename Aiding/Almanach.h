@@ -4,7 +4,8 @@ class AidingAlmanach : public UBXMessage {
 
     uint32_t svid;
     uint32_t week;
-    uint32_t dword[MAX_NB_DWORD];
+    uint8_t subframeId;
+    GPSSubframe* subframe;
 
     AidingAlmanach() {
       msgId = MessageId::Aiding_Almanach;
@@ -32,11 +33,8 @@ class AidingAlmanach : public UBXMessage {
       stream->print(F("week: "));
       stream->println(week);
 
-      for (uint8_t i = 0; i < MAX_NB_DWORD; i++) {
-        stream->print(F("dword["));
-        stream->print(i);
-        stream->print(F("]: "));
-        stream->println(dword[i]);
+      if (week != 0) {
+        subframe->print(stream);
       }
 
       stream->println();

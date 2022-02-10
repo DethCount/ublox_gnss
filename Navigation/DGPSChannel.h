@@ -10,14 +10,28 @@ class NavigationDGPSChannel {
 
     virtual ~NavigationDGPSChannel() {}
 
+    uint8_t getChannel() {
+      return flags & 0xF;
+    }
+
+    bool isUsed() {
+      return bool(flags & 0x10);
+    }
+
     virtual void print(Stream* stream) {
       stream->println(F("NavigationDGPSChannel"));
 
       stream->print(F("svid: "));
       stream->println(svid);
 
-      stream->print(F("flags: "));
-      stream->println(flags);
+      stream->print(F("Flags: 0x"));
+      stream->println(flags, HEX);
+
+      stream->print(F("Channel number: "));
+      stream->println(getChannel());
+
+      stream->print(F("Is DGPS channel used ? : "));
+      stream->println(isUsed());
 
       stream->print(F("Age of latest correction data: "));
       stream->print(ageC);

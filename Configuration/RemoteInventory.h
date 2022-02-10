@@ -17,6 +17,14 @@ class ConfigurationRemoteInventory : public UBXMessage {
 
     virtual ~ConfigurationRemoteInventory() {}
 
+    bool isDataDumpAtStartupEnabled() {
+      return bool(flags & 0x1);
+    }
+
+    bool isDataBinary() {
+      return bool(flags & 0x2);
+    }
+
     virtual void print(Stream* stream) {
       stream->println(F("ConfigurationRemoteInventory"));
 
@@ -26,8 +34,14 @@ class ConfigurationRemoteInventory : public UBXMessage {
         return;
       }
 
-      stream->print(F("flags: "));
+      stream->print(F("flags: 0x"));
       stream->println(flags, HEX);
+
+      stream->print(F("Is data dumped at startup ? : "));
+      stream->println(isDataDumpAtStartupEnabled());
+
+      stream->print(F("Is data binary ? : "));
+      stream->println(isDataBinary());
 
       stream->print(F("dataSize: "));
       stream->println(dataSize);
@@ -35,7 +49,7 @@ class ConfigurationRemoteInventory : public UBXMessage {
       for (uint16_t i = 0; i < dataSize; i++) {
         stream->print(F("data["));
         stream->print(i);
-        stream->print(F("]: "));
+        stream->print(F("]: 0x"));
         stream->println(data[i], HEX);
       }
 

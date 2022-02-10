@@ -50,11 +50,11 @@ class TimingVerification : public UBXMessage {
       stream->print(F("GNSS Week number: "));
       stream->println(wno);
 
-      stream->print(F("Flags: "));
+      stream->print(F("Flags: 0x"));
       stream->println(flags, HEX);
 
-      stream->print(F("Aiding time source: "));
-      stream->println(uint8_t(getAidingTimeSource()));
+      stream->print(F("Aiding time source: 0x"));
+      stream->println(uint8_t(getAidingTimeSource()), HEX);
 
       stream->println();
     }

@@ -60,10 +60,10 @@ class NavigationStatus : public UBXMessage {
       stream->print(iTOW);
       stream->println(F("ms"));
 
-      stream->print(F("GNSS fix type: "));
-      stream->println(uint8_t(gpsFix));
+      stream->print(F("GNSS fix type: 0x"));
+      stream->println(uint8_t(gpsFix), HEX);
 
-      stream->print(F("Flags: "));
+      stream->print(F("Flags: 0x"));
       stream->println(flags, HEX);
 
       stream->print(F("Is GNSS fix Ok ? : "));
@@ -78,20 +78,20 @@ class NavigationStatus : public UBXMessage {
       stream->print(F("Is time of week valid ? : "));
       stream->println(isTimeOfWeekValid());
 
-      stream->print(F("Flags 2: "));
+      stream->print(F("Flags 2: 0x"));
       stream->println(flags2, HEX);
 
-      stream->print(F("Power save mode status: "));
-      stream->println(uint8_t(getPowerSaveModeStatus()));
+      stream->print(F("Power save mode status: 0x"));
+      stream->println(uint8_t(getPowerSaveModeStatus()), HEX);
 
-      stream->print(F("GNSS fix stat: "));
+      stream->print(F("GNSS fix stat: 0x"));
       stream->println(fixStat, HEX);
 
       stream->print(F("is PR+PRR Correction enabled as DGPS input ? : "));
       stream->println(isDGPSInputEnabled());
 
-      stream->print(F("Map matching status : "));
-      stream->println(uint8_t(getMapMatchingStatus()));
+      stream->print(F("Map matching status : 0x"));
+      stream->println(uint8_t(getMapMatchingStatus()), HEX);
 
       stream->print(F("Time To First Fix: "));
       stream->print(ttff);

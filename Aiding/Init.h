@@ -133,8 +133,17 @@ class AidingInit : public UBXMessage {
         stream->println(F("ppb"));
       }
 
-      stream->print(F("Flags: "));
+      stream->print(F("Flags: 0x"));
       stream->println(flags, HEX);
+
+      stream->print(F("Is Longitude / Latitude / Altitude ? : "));
+      stream->println(isLLA());
+
+      stream->print(F("Is clock drift ? : "));
+      stream->println(isClockDrift());
+
+      stream->print(F("Is clock drift frequency ? : "));
+      stream->println(isClockDriftFrequency());
 
       stream->println();
     }

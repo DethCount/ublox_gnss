@@ -18,8 +18,8 @@ class GPSSubframe {
       for (uint8_t i = 0; i < nbWords; i++) {
         stream->print(F("word["));
         stream->print(i);
-        stream->print(F("]: "));
-        stream->println(words[i]);
+        stream->print(F("]: 0x"));
+        stream->println(words[i], HEX);
       }
 
       stream->println();

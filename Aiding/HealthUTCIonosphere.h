@@ -31,6 +31,18 @@ class AidingHealthUTCIonosphere : public UBXMessage {
 
     virtual ~AidingHealthUTCIonosphere() {}
 
+    bool isHealthValid() {
+      return bool(flags & 0x1);
+    }
+
+    bool isUTCValid() {
+      return bool(flags & 0x2);
+    }
+
+    bool isKlobValid() {
+      return bool(flags & 0x4);
+    }
+
     virtual void print(Stream* stream) {
       stream->println(F("AidingHealthUTCIonosphere"));
 
@@ -98,8 +110,17 @@ class AidingHealthUTCIonosphere : public UBXMessage {
       stream->print(F("klobB3: "));
       stream->println(klobB3);
 
-      stream->print(F("flags: "));
+      stream->print(F("flags: 0x"));
       stream->println(flags, HEX);
+
+      stream->print(F("Is health valid ? : "));
+      stream->println(isHealthValid());
+
+      stream->print(F("Is UTC vaid ? : "));
+      stream->println(isUTCValid());
+
+      stream->print(F("Is klob valid ? : "));
+      stream->println(isKlobValid());
 
       stream->println();
     }

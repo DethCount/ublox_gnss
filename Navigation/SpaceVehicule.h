@@ -56,7 +56,7 @@ class NavigationSpaceVehicule {
       stream->print(F("svid: "));
       stream->println(svid);
 
-      stream->print(F("Flags: "));
+      stream->print(F("Flags: 0x"));
       stream->println(flags, HEX);
 
       stream->print(F("Is SV used for navigation ? : "));
@@ -83,7 +83,7 @@ class NavigationSpaceVehicule {
       stream->print(F("Is carrier smoothed pseudorange used ? : "));
       stream->println(isSmoothedPseudorange());
 
-      stream->print(F("Quality: "));
+      stream->print(F("Quality: 0x"));
       stream->println(quality, HEX);
 
       stream->print(F("Carrier noise ratio (signal strength): "));
@@ -99,7 +99,7 @@ class NavigationSpaceVehicule {
       stream->println(F("°"));
 
       stream->print(F("Pseudorange residual: "));
-      stream->println(prRes);
+      stream->print(prRes);
       stream->println(F("cm"));
 
       stream->println();

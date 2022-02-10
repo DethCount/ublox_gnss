@@ -13,6 +13,10 @@ class MonitoringReceiver : public UBXMessage {
 
     virtual ~MonitoringReceiver() {}
 
+    bool isAwake() {
+      return bool(flags & 0x1);
+    }
+
     virtual void print(Stream* stream) {
       stream->println(F("MonitoringReceiver"));
 
@@ -22,7 +26,10 @@ class MonitoringReceiver : public UBXMessage {
         return;
       }
 
-      stream->print(F("flags: "));
+      stream->print(F("flags: 0x"));
       stream->print(flags, HEX);
+
+      stream->print(F("Is awake ? (not in backup mode) : "));
+      stream->print(isAwake());
     }
 };

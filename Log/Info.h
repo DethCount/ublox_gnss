@@ -105,7 +105,7 @@ class LogInfo : public UBXMessage {
       stream->print(F("Newest entry UTC second: "));
       stream->println(newestSecond);
 
-      stream->print(F("Status: "));
+      stream->print(F("Status: 0x"));
       stream->println(status, HEX);
 
       stream->print(F("Is recording ? : "));

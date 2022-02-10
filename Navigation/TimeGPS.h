@@ -54,7 +54,7 @@ class NavigationTimeGPS : public UBXMessage {
       stream->print(leapS);
       stream->println(F("s"));
 
-      stream->print(F("Validity flags: "));
+      stream->print(F("Validity flags: 0x"));
       stream->println(valid);
 
       stream->print(F("Is time of week valid ? : "));

@@ -15,6 +15,10 @@ class AidingEphemeris : public UBXMessage {
         msgId = msg->msgId;
     }
 
+    uint32_t getTimeOfWeek() {
+      return (how >> 13) & 0x1FFFF;
+    }
+
     virtual ~AidingEphemeris() {}
 
     virtual void print(Stream* stream) {
@@ -31,6 +35,9 @@ class AidingEphemeris : public UBXMessage {
 
       stream->print(F("how: "));
       stream->println(how);
+
+      stream->print(F("Raw time of week: "));
+      stream->println(getTimeOfWeek());
 
       if (how != 0) {
         subframe1->print(stream);

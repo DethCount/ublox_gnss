@@ -24,6 +24,14 @@ class ConfigurationUSB : public UBXMessage {
 
     virtual ~ConfigurationUSB() {}
 
+    bool doForceReEnumeration() {
+      return bool(flags & 0x1);
+    }
+
+    bool isSelfPowered() {
+      return bool(flags & 0x2);
+    }
+
     virtual void print(Stream* stream) {
       stream->println(F("ConfigurationUSB"));
 
@@ -42,8 +50,14 @@ class ConfigurationUSB : public UBXMessage {
       stream->print(F("powerConsumption: "));
       stream->println(powerConsumption);
 
-      stream->print(F("flags: "));
+      stream->print(F("flags: 0x"));
       stream->println(flags, HEX);
+
+      stream->print(F("Force re-enumeration ? : "));
+      stream->println(doForceReEnumeration());
+
+      stream->print(F("Is self powered ? : "));
+      stream->println(isSelfPowered());
 
       stream->print(F("vendorString: "));
       stream->println(vendorString);

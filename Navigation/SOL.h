@@ -29,6 +29,22 @@ class NavigationSOL : public UBXMessage {
 
     virtual ~NavigationSOL() {}
 
+    bool isValidFix() {
+      return bool(flags & 0x1);
+    }
+
+    bool hasAppliedDifferentialCorrections() {
+      return bool(flags & 0x2);
+    }
+
+    bool isWeekNumberValid() {
+      return bool(flags & 0x4);
+    }
+
+    bool isTimeOfWeekValid() {
+      return bool(flags & 0x8);
+    }
+
     virtual void print(Stream* stream) {
       stream->println(F("NavigationSOL"));
 
@@ -52,8 +68,20 @@ class NavigationSOL : public UBXMessage {
       stream->print(F("GPS fix type: "));
       stream->println(uint8_t(gpsFix));
 
-      stream->print(F("Flags: "));
+      stream->print(F("Flags: 0x"));
       stream->println(flags, HEX);
+
+      stream->print(F("Is valid fix ? : "));
+      stream->println(isValidFix());
+
+      stream->print(F("Were differential solution corrections applied ? : "));
+      stream->println(hasAppliedDifferentialCorrections());
+
+      stream->print(F("Is week number valid ? : "));
+      stream->println(isWeekNumberValid());
+
+      stream->print(F("Is time of week valid ? : "));
+      stream->println(isTimeOfWeekValid());
 
       stream->print(F("Earth-centered Earth-fixed X: "));
       stream->print(ecefX);
@@ -90,7 +118,7 @@ class NavigationSOL : public UBXMessage {
       stream->print(F("Position dillution of precision: "));
       stream->println(pDOP);
 
-      stream->print(F("Number of space vehicules used: "));
+      stream->print(F("Number of space vehicules used: 0x"));
       stream->println(numSV, HEX);
 
       stream->println();

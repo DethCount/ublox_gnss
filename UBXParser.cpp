@@ -324,9 +324,14 @@ AidingAlmanach* UBXParser::parseAidingAlmanach(UBXPacket* packet)
     return msg;
   }
 
-  for (short i = 0; i < AidingAlmanach::MAX_NB_DWORD; i++) {
-    msg->dword[i] = extractU4(8 + i * 4, packet->payload);
+  msg->subframe = new GPSAlmanachSubframe();
+
+  int idx = 8;
+  for (uint8_t i = 0; i < msg->subframe->nbWords; i++) {
+    msg->subframe->words[i] = extractX4(idx, packet->payload);
+    idx += 4;
   }
+
   return msg;
 }
 
@@ -1704,7 +1709,7 @@ MonitoringTransmitterBuffer* UBXParser::parseMonitoringTransmitterBuffer(
 ) {
   MonitoringTransmitterBuffer *msg = new MonitoringTransmitterBuffer();
   msg->isValid = packet->isValid;
-  msg->isValid &= packet->payloadLength == 24;
+  msg->isValid &= packet->payloadLength == 28;
 
   if (!msg->isValid) {
     return msg;
@@ -1726,6 +1731,12 @@ MonitoringTransmitterBuffer* UBXParser::parseMonitoringTransmitterBuffer(
       packet->payload
     );
   }
+
+  msg->tUsage = extractU1(24, packet->payload);
+  msg->tPeakUsage = extractU1(25, packet->payload);
+  msg->errors = extractX1(26, packet->payload);
+  // reserved1 U1
+
   return msg;
 }
 
@@ -1914,6 +1925,12 @@ ReceiverManagerSubframe* UBXParser::parseReceiverManagerSubframe(
       break;
     case 3:
       msg->subframe = new GPSSubframe3(true);
+      break;
+    case 4:
+      msg->subframe = new GPSSubframe4(true);
+      break;
+    case 5:
+      msg->subframe = new GPSSubframe5(true);
       break;
     default:
       msg->subframe = new GPSSubframe(true);

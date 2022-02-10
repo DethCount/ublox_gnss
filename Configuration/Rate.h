@@ -32,8 +32,8 @@ class ConfigurationRate : public UBXMessage {
       stream->print(navRate);
       stream->println(F("cycles"));
 
-      stream->print(F("timeRef: "));
-      stream->println(uint16_t(timeRef));
+      stream->print(F("timeRef: 0x"));
+      stream->println(uint16_t(timeRef), HEX);
 
       stream->println();
     }

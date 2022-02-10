@@ -29,8 +29,8 @@ class ReceiverManagerEphemeris : public UBXMessage {
       stream->print(F("svid: "));
       stream->println(svid);
 
-      stream->print(F("Hand-Over Word: "));
-      stream->println(how);
+      stream->print(F("Hand-Over Word: 0x"));
+      stream->println(how, HEX);
 
       if (how != 0) {
         subframe1->print(stream);

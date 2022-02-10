@@ -34,7 +34,7 @@ class NavigationSpaceVehiculeInfo : public UBXMessage {
       stream->print(iTOW);
       stream->println(F("ms"));
 
-      stream->print(F("Flags: "));
+      stream->print(F("Flags: 0x"));
       stream->println(globalFlags, HEX);
 
       stream->print(F("Chip generation: "));

@@ -27,6 +27,38 @@ class ConfigurationNavigation : public UBXMessage {
 
     virtual ~ConfigurationNavigation() {}
 
+    bool applyDynamicModelSettings() {
+      return bool(mask & 0x1);
+    }
+
+    bool applyMinElevationSettings() {
+      return bool(mask & 0x2);
+    }
+
+    bool applyFixModeSettings() {
+      return bool(mask & 0x4);
+    }
+
+    bool applyDrLimitSettings() {
+      return bool(mask & 0x8);
+    }
+
+    bool applyPositionMaskSettings() {
+      return bool(mask & 0x10);
+    }
+
+    bool applyTimeMaskSettings() {
+      return bool(mask & 0x20);
+    }
+
+    bool applyStaticHoldSettings() {
+      return bool(mask & 0x40);
+    }
+
+    bool applyDGPSSettings() {
+      return bool(mask & 0x80);
+    }
+
     virtual void print(Stream* stream) {
       stream->println(F("ConfigurationNavigation"));
 
@@ -36,13 +68,37 @@ class ConfigurationNavigation : public UBXMessage {
         return;
       }
 
-      stream->print(F("mask: "));
+      stream->print(F("mask: 0x"));
       stream->println(mask, HEX);
 
-      stream->print(F("dynModel: "));
+      stream->print(F("Apply dynamic model settings ? : "));
+      stream->println(applyDynamicModelSettings());
+
+      stream->print(F("Apply min elevation settings ? : "));
+      stream->println(applyMinElevationSettings());
+
+      stream->print(F("Apply fix mode settings ? : "));
+      stream->println(applyFixModeSettings());
+
+      stream->print(F("Apply drLimit settings ? : "));
+      stream->println(applyDrLimitSettings());
+
+      stream->print(F("Apply position mask settings ? : "));
+      stream->println(applyPositionMaskSettings());
+
+      stream->print(F("Apply time mask settings ? : "));
+      stream->println(applyTimeMaskSettings());
+
+      stream->print(F("Apply static hold settings ? : "));
+      stream->println(applyStaticHoldSettings());
+
+      stream->print(F("Apply DGPS settings ? : "));
+      stream->println(applyDGPSSettings());
+
+      stream->print(F("dynModel: 0x"));
       stream->println((byte)dynModel, HEX);
 
-      stream->print(F("fixMode: "));
+      stream->print(F("fixMode: 0x"));
       stream->println((byte)fixMode, HEX);
 
       stream->print(F("fixedAlt: "));

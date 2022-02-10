@@ -22,8 +22,8 @@ class ConfigurationReceiver : public UBXMessage {
         return;
       }
 
-      stream->print(F("lpMode: "));
-      stream->println(uint8_t(lpMode));
+      stream->print(F("lpMode: 0x"));
+      stream->println(uint8_t(lpMode), HEX);
 
       stream->println();
     }

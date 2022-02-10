@@ -54,25 +54,25 @@ class NavigationSBAS : public UBXMessage {
       );
       stream->println(geo);
 
-      stream->print(F("SBAS mode: "));
-      stream->println(uint8_t(mode));
+      stream->print(F("SBAS mode: 0x"));
+      stream->println(uint8_t(mode), HEX);
 
-      stream->print(F("SBAS system: "));
-      stream->println(uint8_t(sys));
+      stream->print(F("SBAS system: 0x"));
+      stream->println(uint8_t(sys), HEX);
 
-      stream->print(F("Service: "));
+      stream->print(F("Service: 0x"));
       stream->println(service, HEX);
 
       stream->print(F("Ranging service: "));
       stream->println(hasRangingService());
 
-      stream->print(F("Corrections service: "));
+      stream->print(F("Has correction service ? : "));
       stream->println(hasCorrectionsService());
 
-      stream->print(F("Integrity service: "));
+      stream->print(F("Has integrity service ? : "));
       stream->println(hasIntegrityService());
 
-      stream->print(F("Testmode service: "));
+      stream->print(F("Has test mode service ? : "));
       stream->println(hasTestmodeService());
 
       stream->print(F("Number of space vehicules data: "));

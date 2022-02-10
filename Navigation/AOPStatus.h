@@ -42,7 +42,7 @@ class NavigationAOPStatus : public UBXMessage {
       stream->print(iTOW);
       stream->println(F("ms"));
 
-      stream->print(F("AOP configuration flags: "));
+      stream->print(F("AOP configuration flags: 0x"));
       stream->println(aopCfg, HEX);
 
       stream->print(F("AOP enabled flag: "));
@@ -51,7 +51,7 @@ class NavigationAOPStatus : public UBXMessage {
       stream->print(F("Status: "));
       stream->println(uint8_t(aopCfg));
 
-      stream->print(F("Data availability mask for GPS SVs: "));
+      stream->print(F("Data availability mask for GPS SVs: 0x"));
       stream->println(availGPS, HEX);
 
       stream->println();

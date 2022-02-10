@@ -141,7 +141,7 @@ ConfigurationInformation* GNSSConfiguration::getInformation() {
 	packet->payloadLength = 0;
 
 	#ifdef GNSS_LOG_INFO
-		Serial.println(F("Getting GNSS protocols configuration... "));
+		Serial.println(F("Getting GNSS protocols information configuration... "));
 	#endif
 
 	return client->trySend(
@@ -159,7 +159,9 @@ ConfigurationInformation* GNSSConfiguration::getInformation(
 	packet->payload[0] = (uint8_t) protocolId;
 
 	#ifdef GNSS_LOG_INFO
-		Serial.println(F("Getting GNSS protocol configuration... "));
+		Serial.println(
+			F("Getting information configuration for given GNSS protocol... ")
+		);
 	#endif
 
 	return client->trySend(

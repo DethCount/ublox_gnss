@@ -44,8 +44,8 @@ class ReceiverManagerSpaceVehicule : public UBXMessage {
       stream->print(F("svid: "));
       stream->println(svid);
 
-      stream->print(F("Flags: "));
-      stream->println(svFlag);
+      stream->print(F("Flags: 0x"));
+      stream->println(svFlag, HEX);
 
       stream->print(F("URA Index: "));
       stream->println(getURAIndex());
@@ -70,14 +70,14 @@ class ReceiverManagerSpaceVehicule : public UBXMessage {
       stream->print(elev);
       stream->println(F("°"));
 
-      stream->print(F("Age: "));
+      stream->print(F("Age: 0x"));
       stream->print(age, HEX);
 
-      stream->print(F("Age of almanach: "));
+      stream->print(F("Age of almanach offset by 4: "));
       stream->print(getAlmanachAge());
       stream->println(F("days"));
 
-      stream->print(F("Age of ephemeris: "));
+      stream->print(F("Age of ephemeris offset by 4: "));
       stream->print(getEphemerisAge());
       stream->println(F("days"));
 

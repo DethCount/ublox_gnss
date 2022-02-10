@@ -50,8 +50,8 @@ class NavigationDGPS : public UBXMessage {
       stream->print(F("Number of channels: "));
       stream->println(numCh);
 
-      stream->print(F("Status: "));
-      stream->println(uint8_t(status));
+      stream->print(F("Status: 0x"));
+      stream->println(uint8_t(status), HEX);
 
       for (uint8_t i = 0; i < numCh; i++) {
         stream->print("channels[");

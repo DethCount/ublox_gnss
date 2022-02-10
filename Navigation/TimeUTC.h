@@ -72,7 +72,7 @@ class NavigationTimeUTC : public UBXMessage {
       stream->print(F("UTC Nanosecond of second: "));
       stream->println(nano);
 
-      stream->print(F("Validity flags: "));
+      stream->print(F("Validity flags: 0x"));
       stream->println(valid, HEX);
 
       stream->print(F("Is time of week valid ? : "));
